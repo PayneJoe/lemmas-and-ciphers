@@ -211,3 +211,16 @@ Proof : TODO
 
 Proof : TODO
 
+<br />
+
+If `V1` and `V2` are finite-dimensional vector spaces, then the dimension of their sum satisfies
+$$
+\dim(V1 + V2) = \dim(V1) + \dim(V2) - \dim(V1 \cap V2).
+$$
+more specially, if `V1 \cap V2 = \{0\}`, then
+$$
+\dim(V1 + V2) = \dim(V1) + \dim(V2).
+$$
+
+
+Proof : TODO
