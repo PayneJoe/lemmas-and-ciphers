@@ -1,0 +1,482 @@
+\documentclass[11pt]{article}
+
+% ---------- Packages (all available by default on Overleaf) ----------
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black,citecolor=blue!50!black}
+\titleformat{\section}{\Large\bfseries\color{blue!35!black}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{blue!25!black}}{\thesubsection}{0.6em}{}
+\setlength{\parskip}{2pt}
+
+% ---------- Lean4 code style ----------
+\definecolor{codebg}{RGB}{246,248,250}
+\definecolor{codekw}{RGB}{175,0,120}
+\definecolor{codecomment}{RGB}{110,110,110}
+\lstdefinelanguage{Lean4}{
+  morekeywords={class,structure,extends,instance,where,def,example,by,intro,have,calc,exact,fun,export},
+  sensitive=true,
+  morecomment=[l]{--},
+  morecomment=[s]{/-}{-/},
+}
+\lstset{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codekw}\bfseries,
+  commentstyle=\color{codecomment}\itshape,
+  showstringspaces=false,
+  frame=single,
+  rulecolor=\color{gray!40},
+  framesep=4pt,
+  breaklines=true,
+  language=Lean4,
+  xleftmargin=8pt,
+  xrightmargin=8pt,
+}
+
+% ---------- Colored boxes ----------
+% Definition box: colored by section theme, titled with the class name.
+\newtcolorbox{defbox}[2]{
+  colback=gray!4, colframe=#1!60!black,
+  colbacktitle=#1!60!black, coltitle=white,
+  fonttitle=\bfseries\ttfamily, title={#2},
+  boxrule=0.5pt, arc=2pt, left=6pt, right=6pt, top=3pt, bottom=3pt,
+  breakable
+}
+% Key-idea callout.
+\newtcolorbox{takeaway}[1][]{
+  colback=blue!5!white, colframe=blue!40!black,
+  boxrule=0.6pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt,
+  breakable, title={\textbf{Key Idea}}, fonttitle=\bfseries, #1
+}
+
+\title{\vspace{-1.5cm}\textbf{Chapter 8 Summary}\\[2pt]\Large Algebraic Hierarchies in Lean 4}
+\author{Reading notes}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-0.6cm}
+
+\begin{abstract}
+\noindent Lean's mathematical library organizes algebraic structures (groups, rings, modules) and the maps between them (homomorphisms) as a layered hierarchy of \texttt{class}/\texttt{structure} declarations. Each layer \texttt{extends} the layer(s) below it and adds \emph{exactly one} new piece of data or axiom, so no property is ever proved twice. This note walks through the full hierarchy built in Chapter 8: from the bare \texttt{Dia}/\texttt{One}/\texttt{Inv} building blocks, up through \texttt{Monoid} and \texttt{Group}, into \texttt{Ring} and \texttt{Module}, and finally the parallel hierarchy of structure-preserving morphisms. A complete reference table is given in Section~\ref{sec:reference}.
+\end{abstract}
+\vspace{-0.3cm}
+\tableofcontents
+
+% =====================================================================
+\section{The Abstract Group Hierarchy}
+% =====================================================================
+
+A \emph{group} has one carrier type, one binary operator (abstracted as $\diamond$), and one identity element (abstracted as $\mathbf{1}$). Lean builds it up from three independent, minimal pieces --- \texttt{Dia}, \texttt{One}, \texttt{Inv} --- and then combines them.
+
+\subsection{The raw ingredients: \texttt{Dia}, \texttt{One}, \texttt{Inv}}
+
+\begin{defbox}{blue}{Dia\textsubscript{1} --- the operator}
+\begin{lstlisting}
+class Dia1 (a : Type) where
+  dia : a -> a -> a
+-- notation:  a diamond b  ~~>  a <> b
+\end{lstlisting}
+Declares a binary operation $\diamond : \alpha \to \alpha \to \alpha$ with no properties attached yet --- not even associativity.
+\end{defbox}
+
+\begin{defbox}{blue}{One\textsubscript{1} --- the identity}
+\begin{lstlisting}
+class One1 (a : Type) where
+  one : a
+-- notation:  One1.one  ~~>  1 (as a distinguished element, not the literal 1)
+\end{lstlisting}
+Only asserts that \emph{some} distinguished element $\mathbf{1}$ exists in $\alpha$; it says nothing about how it interacts with $\diamond$.
+\end{defbox}
+
+\begin{defbox}{blue}{Inv\textsubscript{1} --- the inverse function}
+\begin{lstlisting}
+class Inv1 (a : Type) where
+  inv : a -> a
+-- notation:  Inv1.inv a  ~~>  a^{-1}
+\end{lstlisting}
+A unary function $\alpha \to \alpha$, again with no law relating it to $\diamond$ or $\mathbf{1}$ yet.
+\end{defbox}
+
+\subsection{Adding laws: \texttt{Semigroup} and \texttt{DiaOneClass}}
+
+\begin{defbox}{blue}{Semigroup\textsubscript{1} --- extends Dia\textsubscript{1}}
+\begin{lstlisting}
+class Semigroup1 (a : Type) extends Dia1 a where
+  dia_assoc : forall x y z : a, (x <> y) <> z = x <> (y <> z)
+\end{lstlisting}
+Adds associativity of $\diamond$. Nothing about identity yet.
+\end{defbox}
+
+\begin{defbox}{blue}{DiaOneClass\textsubscript{1} --- extends One\textsubscript{1}, Dia\textsubscript{1}}
+\begin{lstlisting}
+class DiaOneClass1 (a : Type) extends One1 a, Dia1 a where
+  one_dia : forall x : a, 1 <> x = x   -- one is a left neutral element
+  dia_one : forall x : a, x <> 1 = x   -- one is a right neutral element
+\end{lstlisting}
+Adds the two neutral-element laws that relate $\mathbf{1}$ and $\diamond$. It needs \emph{both} \texttt{One} and \texttt{Dia}, but not associativity.
+\end{defbox}
+
+\subsection{Monoid and Group}
+
+\begin{defbox}{blue}{Monoid\textsubscript{1} --- extends Semigroup\textsubscript{1}, DiaOneClass\textsubscript{1}}
+\begin{lstlisting}
+class Monoid1 (a : Type) extends Semigroup1 a, DiaOneClass1 a
+\end{lstlisting}
+Adds \emph{no new axioms} --- it is purely the conjunction of associativity (from \texttt{Semigroup}) and the two identity laws (from \texttt{DiaOneClass}). This is the pattern used repeatedly in this hierarchy: a class that only combines two independent parents.
+\end{defbox}
+
+\begin{defbox}{blue}{Group\textsubscript{1} --- extends Monoid\textsubscript{1}, Inv\textsubscript{1}}
+\begin{lstlisting}
+class Group1 (G : Type) extends Monoid1 G, Inv1 G where
+  inv_dia : forall x : G, x^{-1} <> x = 1
+\end{lstlisting}
+Adds the single new law $x^{-1}\diamond x = \mathbf{1}$ on top of everything \texttt{Monoid} already provides, and requires \texttt{Inv} for the inverse function itself.
+\end{defbox}
+
+\begin{takeaway}
+Every arrow in this hierarchy is an \texttt{extends} clause, and every class adds \emph{at most one} new axiom relative to what it extends. \texttt{Monoid} = \texttt{Semigroup} $\wedge$ \texttt{DiaOneClass} (no new axiom); \texttt{Group} = \texttt{Monoid} $\wedge$ \texttt{Inv}, plus exactly one new law ($x^{-1}\diamond x=\mathbf{1}$).
+\end{takeaway}
+
+% =====================================================================
+\section{Specializing the Operator: \texorpdfstring{$+$}{+} and \texorpdfstring{$*$}{*}}
+% =====================================================================
+
+The abstract pair $(\diamond,\mathbf{1})$ cannot be used directly in ordinary mathematics --- we always work with a \emph{concrete} operator. Instantiating with $(+,0)$ gives the \texttt{Add}-prefixed hierarchy; instantiating with $(*,1)$ gives the un-prefixed hierarchy, which is Lean's default (i.e.\ plain \texttt{Group} means \emph{multiplicative} group).
+
+\subsection{Building the additive side directly}
+
+\begin{defbox}{purple}{AddSemigroup\textsubscript{3} --- extends Add}
+\begin{lstlisting}
+class AddSemigroup3 (a : Type) extends Add a where
+  add_assoc3 : forall x y z : a, (x + y) + z = x + (y + z)
+\end{lstlisting}
+\texttt{Add} plays the role \texttt{Dia} played in the abstract hierarchy, specialized to $+$.
+\end{defbox}
+
+\begin{defbox}{purple}{AddMonoid\textsubscript{3} --- extends AddSemigroup\textsubscript{3}, AddZeroClass}
+\begin{lstlisting}
+class AddMonoid3 (a : Type) extends AddSemigroup3 a, AddZeroClass a
+\end{lstlisting}
+\texttt{AddZeroClass} plays the role of \texttt{DiaOneClass} for $(+,0)$. As with \texttt{Monoid}, no new axiom is added here.
+\end{defbox}
+
+\begin{defbox}{purple}{AddGroup\textsubscript{3} --- extends AddMonoid\textsubscript{3}, Neg}
+\begin{lstlisting}
+class AddGroup3 (G : Type) extends AddMonoid3 G, Neg G where
+  neg_add : forall x : G, -x + x = 0
+\end{lstlisting}
+\texttt{Neg} plays the role of \texttt{Inv}; the group law becomes $-x + x = 0$.
+\end{defbox}
+
+\subsection{The \texttt{to\_additive} attribute}
+
+Rather than writing the multiplicative and additive hierarchies twice, Lean writes the multiplicative version and tags it \verb|@[to_additive AddX]|, which auto-generates the additive class \texttt{AddX} by textually replacing $*\!\to\!+$, $1\!\to\!0$, \texttt{inv}$\to$\texttt{neg}, etc.
+
+\begin{lstlisting}
+@[to_additive AddSemigroup3]
+class Semigroup3 (a : Type) extends Mul a where
+  mul_assoc3 : forall x y z : a, (x * y) * z = x * (y * z)
+
+@[to_additive AddGroup3]
+class Group3 (G : Type) extends Monoid3 G, Inv G where
+  inv_mul : forall x : G, x^{-1} * x = 1
+\end{lstlisting}
+
+\begin{takeaway}
+Only \emph{one} side of each pair is proved by hand; \verb|@[to_additive]| generates the other automatically along with its lemmas and notation. This is why the source only proves the multiplicative \texttt{Group3} in full, and gets \texttt{AddGroup3} for free.
+\end{takeaway}
+
+\subsection{Commutative variants and Additive Commutative Group}
+
+\begin{lstlisting}
+class AddCommSemigroup3 (a : Type) extends AddSemigroup3 a where
+  add_comm : forall x y : a, x + y = y + x
+
+@[to_additive AddCommSemigroup3]
+class CommSemigroup3 (a : Type) extends Semigroup3 a where
+  mul_comm : forall x y : a, x * y = y * x
+
+class AddCommMonoid3 (a : Type) extends AddMonoid3 a, AddCommSemigroup3 a
+
+@[to_additive AddCommMonoid3]
+class CommMonoid3 (a : Type) extends Monoid3 a, CommSemigroup3 a
+
+class AddCommGroup3 (G : Type) extends AddGroup3 G, AddCommMonoid3 G
+\end{lstlisting}
+
+\texttt{AddCommGroup} (an additive group with commutativity) is the standard name for what mathematicians call an \emph{Abelian group}. Because $*$ is Lean's default operator, one sometimes also sees ``Abelian group'' used loosely to refer to the multiplicative \texttt{CommGroup} --- the two are the same structure up to \texttt{to\_additive}.
+
+% =====================================================================
+\section{Ring: Two Operators on One Carrier}
+% =====================================================================
+
+A \emph{ring} $R$ combines \textbf{both} operators on the \emph{same} carrier set: an additive structure and a multiplicative structure, glued together by an absorption law and distributivity.
+
+\begin{itemize}[leftmargin=1.4em,itemsep=1pt]
+  \item object: \texttt{AddGroup} $R$ with $+$ \quad (\emph{not} \texttt{AddCommGroup} --- see below)
+  \item scalar: \texttt{Monoid} $R$ with $*$
+  \item $0 * a = a * 0 = 0$ \hfill (\texttt{MulZeroClass})
+  \item $a*(b+c) = a*b + a*c$ and $(a+b)*c = a*c + b*c$ \hfill (left/right distributivity)
+\end{itemize}
+
+\begin{defbox}{teal}{Ring\textsubscript{3} --- extends AddGroup\textsubscript{3}, Monoid\textsubscript{3}, MulZeroClass}
+\begin{lstlisting}
+class Ring3 (R : Type) extends AddGroup3 R, Monoid3 R, MulZeroClass R where
+  left_distrib  : forall a b c : R, a * (b + c) = a * b + a * c
+  right_distrib : forall a b c : R, (a + b) * c = a * c + b * c
+\end{lstlisting}
+In general a ring is \emph{not} assumed to have multiplicative commutativity.
+\end{defbox}
+
+\subsection{Commutativity of \texorpdfstring{$+$}{+} is derived, not assumed}
+
+\texttt{Ring3} extends the plain \texttt{AddGroup3}, not \texttt{AddCommGroup3} --- yet every ring's addition \emph{is} commutative. The reason: commutativity of $+$ is a theorem that follows from distributivity, so it does not need to be assumed as an extra axiom.
+
+\[
+(1+1)*(a+b) \;=\; (a+b)+(a+b) \;=\; (a+a)+(b+b)
+\]
+
+Expanding the left-hand side two different ways (via \texttt{right\_distrib} then \texttt{left\_distrib}, or vice versa) and cancelling gives $a+b=b+a$. Lean proves this directly:
+
+\begin{lstlisting}
+instance {R : Type} [Ring3 R] : AddCommGroup3 R :=
+{ add_comm := by
+    intro a b
+    have : a + (a + b + b) = a + (b + a + b) := calc
+      a + (a + b + b) = (a + a) + (b + b)         := by simp [add_assoc3]
+      _ = (1 * a + 1 * a) + (1 * b + 1 * b)       := by simp
+      _ = (1 + 1) * a + (1 + 1) * b               := by simp [Ring3.right_distrib]
+      _ = (1 + 1) * (a + b)                       := by simp [Ring3.left_distrib]
+      _ = 1 * (a + b) + 1 * (a + b)                := by simp [Ring3.right_distrib]
+      _ = (a + b) + (a + b)                       := by simp
+      _ = a + (b + a + b)                         := by simp [add_assoc3]
+    exact add_right_cancel3 (add_left_cancel3 this) }
+\end{lstlisting}
+
+\begin{takeaway}
+Whenever a stronger property can be \emph{proved} from weaker axioms already in scope, Lean's hierarchy design avoids asserting it as an independent axiom. This keeps each class's axiom list minimal and keeps instance proofs shorter (fewer obligations to discharge when constructing a concrete ring).
+\end{takeaway}
+
+% =====================================================================
+\section{Module: Two Carrier Sets, One Scalar Action}
+% =====================================================================
+
+A \emph{module} again has two components --- an object and a scalar --- but this time they live on \textbf{two different} carrier sets, related by a scalar-multiplication action $\bullet$.
+
+\begin{itemize}[leftmargin=1.4em,itemsep=1pt]
+  \item the object $M$ is an \texttt{AddCommGroup} with operator $+$
+  \item the scalar $R$ is a \texttt{Ring} with operators $*$ and $+$
+  \item the action $\bullet : R \to M \to M$ (\texttt{SMul}, ``scalar-mul'') connects them
+\end{itemize}
+
+\begin{defbox}{orange}{SMul\textsubscript{3} and Module\textsubscript{1}}
+\begin{lstlisting}
+class SMul3 (a : Type) (b : Type) where
+  smul : a -> b -> b
+-- notation:  a bullet m  ~~>  a SMul3.smul m
+
+class Module1 (R : Type) [Ring3 R] (M : Type) [AddCommGroup3 M] extends SMul3 R M where
+  zero_smul : forall m : M, (0 : R) . m = 0
+  one_smul  : forall m : M, (1 : R) . m = m
+  mul_smul  : forall (a b : R) (m : M), (a * b) . m = a . b . m
+  add_smul  : forall (a b : R) (m : M), (a + b) . m = a . m + b . m
+  smul_add  : forall (a : R) (m n : M), a . (m + n) = a . m + a . n
+\end{lstlisting}
+Five axioms govern how scalars interact with $M$'s zero, $R$'s identity, $R$'s multiplication, and both distributivity directions.
+\end{defbox}
+
+\subsection{A ring is a module over itself}
+
+Since \texttt{Ring} already has all the structure \texttt{Module} needs (an \texttt{AddCommGroup} to act on, and a \texttt{Ring} to act with), $R$ can be viewed as a module over itself, with $\bullet$ instantiated to $*$:
+
+\begin{lstlisting}
+instance selfModule (R : Type) [Ring3 R] : Module1 R R where
+  smul      := fun r s => r * s
+  zero_smul := zero_mul
+  one_smul  := one_mul
+  mul_smul  := mul_assoc3
+  add_smul  := Ring3.right_distrib
+  smul_add  := Ring3.left_distrib
+\end{lstlisting}
+
+\renewcommand{\arraystretch}{1.2}
+\begin{center}
+\begin{tabular}{@{}p{2.6cm}p{5.4cm}p{5.4cm}@{}}
+\toprule
+\textbf{Module field} & \textbf{Abstract statement} & \textbf{Instantiated as (\texttt{selfModule})} \\
+\midrule
+\texttt{smul}      & $a \bullet m$              & $a * m$ \\
+\texttt{zero\_smul} & $0_R \bullet m = 0_M$      & \texttt{zero\_mul} \\
+\texttt{one\_smul}  & $1_R \bullet m = m$        & \texttt{one\_mul} \\
+\texttt{mul\_smul}  & $(a*b)\bullet m = a\bullet(b\bullet m)$ & \texttt{mul\_assoc3} \\
+\texttt{add\_smul}  & $(a+b)\bullet m = a\bullet m + b\bullet m$ & \texttt{Ring3.right\_distrib} \\
+\texttt{smul\_add}  & $a\bullet(m+n) = a\bullet m + a\bullet n$ & \texttt{Ring3.left\_distrib} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{takeaway}
+\texttt{selfModule} is \emph{not} a fully concrete instance --- \texttt{R} is still an arbitrary \texttt{Ring}. It is a bridge lemma: once it exists, any concrete ring ($\mathbb{Z}$, $\mathbb{F}[X]$, matrix rings, \dots) automatically gets a module-over-itself instance, and every generic module lemma becomes available for it for free.
+\end{takeaway}
+
+% =====================================================================
+\section{The \texttt{export} Mechanism}
+% =====================================================================
+
+Field names declared inside a \texttt{class} are normally accessed with a qualified name such as \texttt{DiaOneClass.one\_dia}. The \texttt{export} command re-exposes them as unqualified top-level names:
+
+\begin{lstlisting}
+export DiaOneClass1 (one_dia dia_one)
+export Semigroup1 (dia_assoc)
+export Group1 (inv_dia)
+\end{lstlisting}
+
+After this, \texttt{one\_dia}, \texttt{dia\_one}, \texttt{dia\_assoc}, and \texttt{inv\_dia} can be used directly, without the class-name prefix --- purely a naming convenience, with no effect on the type hierarchy itself.
+
+% =====================================================================
+\section{Morphisms: Structure-Preserving Maps}
+% =====================================================================
+
+A homomorphism bundles a function together with \emph{proofs} that it preserves every operation of the source structure.
+
+\subsection{Monoid, additive monoid, and ring homomorphisms}
+
+\begin{defbox}{teal}{MonoidHom\textsubscript{1} and AddMonoidHom\textsubscript{1}}
+\begin{lstlisting}
+structure MonoidHom1 (G H : Type) [Monoid G] [Monoid H] where
+  toFun   : G -> H
+  map_one : toFun 1 = 1
+  map_mul : forall g g' : G, toFun (g * g') = toFun g * toFun g'
+
+structure AddMonoidHom1 (G H : Type) [AddMonoid G] [AddMonoid H] where
+  toFun    : G -> H
+  map_zero : toFun 0 = 0
+  map_add  : forall g g' : G, toFun (g + g') = toFun g + toFun g'
+\end{lstlisting}
+Each bundles the underlying function (\texttt{toFun}) with a proof that identity maps to identity, and a proof that the operation is preserved.
+\end{defbox}
+
+\begin{defbox}{teal}{RingHom\textsubscript{1} --- extends both}
+\begin{lstlisting}
+structure RingHom1 (R S : Type) [Ring R] [Ring S]
+    extends MonoidHom1 R S, AddMonoidHom1 R S
+\end{lstlisting}
+A ring has two operators, so a ring homomorphism is exactly the conjunction of a monoid homomorphism (for $*$, giving $1\mapsto 1$ and $f(ab)=f(a)f(b)$) and an additive-monoid homomorphism (for $+$, giving $0\mapsto 0$ and $f(a+b)=f(a)+f(b)$) --- no new fields are added.
+\end{defbox}
+
+\subsection{Homomorphism classes}
+
+A \texttt{structure} like \texttt{MonoidHom} is one concrete \emph{bundled} type of maps. A \texttt{class} like \texttt{MonoidHomClass} instead says: ``any type \texttt{F} of maps $M \to N$ satisfying these laws can be treated as a monoid homomorphism,'' which lets multiple unrelated wrapper types share the same lemma library.
+
+\begin{lstlisting}
+class MonoidHomClass1 (F : Type) (M N : Type) [Monoid M] [Monoid N] where
+  toFun   : F -> M -> N
+  map_one : forall f : F, toFun f 1 = 1
+  map_mul : forall f g g' : F, toFun f (g * g') = toFun f g * toFun f g'
+
+instance (M N : Type) [Monoid M] [Monoid N] :
+    MonoidHomClass2 (MonoidHom1 M N) M N where
+  toFun   := MonoidHom1.toFun
+  map_one := fun f => f.map_one
+  map_mul := fun f => f.map_mul
+
+instance (R S : Type) [Ring R] [Ring S] :
+    MonoidHomClass2 (RingHom1 R S) R S where
+  toFun   := fun f => f.toMonoidHom1.toFun
+  map_one := fun f => f.toMonoidHom1.map_one
+  map_mul := fun f => f.toMonoidHom1.map_mul
+\end{lstlisting}
+
+Since \texttt{RingHom} already extends \texttt{MonoidHom}, the \texttt{RingHom} instance reaches its multiplicative-monoid proof obligations via \texttt{toMonoidHom1} rather than re-proving them.
+
+\begin{takeaway}
+\textbf{Structure vs.\ class, in one line:} a \texttt{structure} homomorphism is a specific bundled object; a homomorphism \texttt{class} is a predicate over \emph{any} carrier type \texttt{F}, letting new bundled types (e.g.\ order-preserving homs, below) plug into existing generic lemmas instead of duplicating them.
+\end{takeaway}
+
+\subsection{Order-preserving homomorphisms}
+
+\begin{lstlisting}
+structure OrderPresHom (a b : Type) [LE a] [LE b] where
+  toFun    : a -> b
+  le_of_le : forall x x' : a, x <= x' -> toFun x <= toFun x'
+
+structure OrderPresMonoidHom (M N : Type) [Monoid M] [LE M] [Monoid N] [LE N]
+    extends MonoidHom1 M N, OrderPresHom M N
+
+class OrderPresHomClass (F : Type) (a b : outParam Type) [LE a] [LE b]
+
+instance (a b : Type) [LE a] [LE b] :
+    OrderPresHomClass (OrderPresHom a b) a b where
+
+instance (a b : Type) [LE a] [Monoid a] [LE b] [Monoid b] :
+    OrderPresHomClass (OrderPresMonoidHom a b) a b where
+
+instance (a b : Type) [LE a] [Monoid a] [LE b] [Monoid b] :
+    MonoidHomClass3 (OrderPresMonoidHom a b) a b where
+  coe             := fun f => f.toOrderPresHom.toFun
+  coe_injective' _ _ := OrderPresMonoidHom.ext
+  map_one         := fun f => f.toMonoidHom1.map_one
+  map_mul         := fun f => f.toMonoidHom1.map_mul
+\end{lstlisting}
+
+\texttt{OrderPresMonoidHom} extends \emph{both} \texttt{MonoidHom} (operator-preserving) and \texttt{OrderPresHom} (order-preserving, $x \le x' \Rightarrow f(x) \le f(x')$), and instances register it under \emph{both} \texttt{OrderPresHomClass} and \texttt{MonoidHomClass}: one wrapper type, two independent class memberships, each reusing an existing lemma library.
+
+% =====================================================================
+\section{Full Hierarchy Reference}
+\label{sec:reference}
+% =====================================================================
+
+\begin{longtable}{@{}p{3.1cm}p{4.6cm}p{6.3cm}@{}}
+\toprule
+\textbf{Class / Structure} & \textbf{Extends} & \textbf{Adds} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Class / Structure} & \textbf{Extends} & \textbf{Adds} \\
+\midrule
+\endhead
+\texttt{Dia} & --- & operator $\diamond:\alpha\to\alpha\to\alpha$ \\
+\texttt{One} & --- & distinguished element $\mathbf{1}$ \\
+\texttt{Inv} & --- & function $(\cdot)^{-1}:\alpha\to\alpha$ \\
+\texttt{Semigroup} & \texttt{Dia} & associativity of $\diamond$ \\
+\texttt{DiaOneClass} & \texttt{Dia}, \texttt{One} & $\mathbf{1}\diamond a = a = a\diamond\mathbf{1}$ \\
+\texttt{Monoid} & \texttt{Semigroup}, \texttt{DiaOneClass} & (combination only) \\
+\texttt{Group} & \texttt{Monoid}, \texttt{Inv} & $a^{-1}\diamond a = \mathbf{1}$ \\
+\midrule
+\texttt{AddSemigroup} / \texttt{Semigroup} & \texttt{Add} / \texttt{Mul} & associativity of $+$ / $*$ \\
+\texttt{AddMonoid} / \texttt{Monoid} & \texttt{AddSemigroup}+\texttt{AddZeroClass} (resp.\ \texttt{Mul} analogue) & (combination only) \\
+\texttt{AddGroup} / \texttt{Group} & \texttt{AddMonoid}+\texttt{Neg} (resp.\ \texttt{Inv} analogue) & $-a+a=0$ / $a^{-1}*a=1$ \\
+\texttt{AddCommSemigroup} / \texttt{CommSemigroup} & \texttt{AddSemigroup} / \texttt{Semigroup} & commutativity \\
+\texttt{AddCommMonoid} / \texttt{CommMonoid} & \texttt{AddMonoid}+\texttt{AddCommSemigroup} (resp.\ analogue) & (combination only) \\
+\texttt{AddCommGroup} & \texttt{AddGroup}, \texttt{AddCommMonoid} & (combination only; = Abelian group) \\
+\midrule
+\texttt{Ring} & \texttt{AddGroup}, \texttt{Monoid}, \texttt{MulZeroClass} & left/right distributivity \\
+\texttt{AddCommGroup} (for a \texttt{Ring}) & \emph{(instance, not a hypothesis)} & \texttt{add\_comm} \emph{derived} from distributivity \\
+\midrule
+\texttt{SMul} & --- & action $\bullet:R\to M\to M$ \\
+\texttt{Module} & \texttt{SMul} over \texttt{Ring}~$R$ and \texttt{AddCommGroup}~$M$ & \texttt{zero\_smul}, \texttt{one\_smul}, \texttt{mul\_smul}, \texttt{add\_smul}, \texttt{smul\_add} \\
+\texttt{selfModule} & \emph{(instance)} \texttt{Module}~$R$~$R$ & scalar-mul instantiated to $*$ \\
+\midrule
+\texttt{MonoidHom} & --- & \texttt{toFun}, $f(1){=}1$, $f(gg'){=}f(g)f(g')$ \\
+\texttt{AddMonoidHom} & --- & \texttt{toFun}, $f(0){=}0$, $f(g{+}g'){=}f(g){+}f(g')$ \\
+\texttt{RingHom} & \texttt{MonoidHom}, \texttt{AddMonoidHom} & (combination only) \\
+\texttt{MonoidHomClass} & --- & predicate: type $F$ acts like a \texttt{MonoidHom} on $M\to N$ \\
+\texttt{OrderPresHom} & --- & \texttt{toFun}, $x\le x'\Rightarrow f(x)\le f(x')$ \\
+\texttt{OrderPresMonoidHom} & \texttt{MonoidHom}, \texttt{OrderPresHom} & (combination only) \\
+\texttt{OrderPresHomClass} & --- & predicate: type $F$ acts like an \texttt{OrderPresHom} \\
+\bottomrule
+\end{longtable}
+
+\end{document}
