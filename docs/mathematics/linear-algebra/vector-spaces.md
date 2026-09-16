@@ -509,6 +509,8 @@ which implies $\dim \text{range}(f) = \dim V - \dim \text{null}(f) \le \dim V = 
 
 ### Matrix of a linear map
 
+![matrix-of-linear-map](./img/matrix_of_linear_map.png)
+
 **Definition :** Given a linear map $T: \mathcal{L}(V, W)$ and bases $\{v_1, \dots, v_n\}$ for $V$ and $\{w_1, \dots, w_m\}$ for $W$, the matrix of $T$ with respect to these bases is a $m \times n$ matrix $A$ whose $(i,j)$-th entry $A_{ij}$ is defined by
 $$
 T(v_j) = \sum_{i=1}^m A_{ij} w_i.
