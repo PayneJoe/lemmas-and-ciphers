@@ -33,7 +33,7 @@ $$
 
 <br />
 
-> [!Note] 
+> [!Note] Analogous to The Union of Sets 
 > Sum of subspaces $U$ and $V$ is the smallest subspace that contains both $U$ and $V$, which is analogous to the union of sets in set theory but within the context of vector spaces.
 
 <br />
@@ -47,7 +47,7 @@ $$
 
 <br />
 
-> [!Important] 
+> [!Important] Uniqueness of Representation ?
 > Is the representation of any element of sum of subspaces unique or not? In the following section we will focus on this question.
 
 ### Direct Sums
@@ -68,13 +68,15 @@ $$
 \bigoplus_i U_i = \left\{ \sum_i u_i \mid u_i \in U_i \text{ and this representation is unique} \right\}.
 $$
 
-> [!Note]
+> [!Note] Direct Sum VS Sum
 > Direct-sum is a stronger condition than the ordinary sum of subspaces, as it requires the representation of each vector as a sum of vectors from the subspaces to be **unique**.
+
+So it seems that direct sum is more important than the ordinary sum of subspaces, as it provides a stronger **structural** property by ensuring uniqueness of representation. **Structural** or **structure** is a crucial concept in all algebraic contexts, including linear algebra for sure. We will explore this concept further in the subsequent sections.
 
 <br />
 
-> [!Important] Direct Sum Criterion
-How can we determine if a given family of subspaces forms a direct sum? Do we have to check the uniqueness of the representation for every vector individually? 
+> [!Important] Direct Sum Criterion ?
+How can we determine if a given family of subspaces forms a direct sum? Do we have to check the uniqueness of the representation for every vector individually? We will see the answer in the following propositions.
 
 <br />
 
