@@ -1,4 +1,6 @@
-## Table of Contents
+<details>
+<summary><strong>Contents</strong> (click to expand)</summary>
+
 - [Ch01 - Vector Spaces](#ch01---vector-spaces)
   - [Subspace](#subspace)
     - [Sum of Subspaces](#sum-of-subspaces)
@@ -17,6 +19,8 @@
     - [Column-row factoring](#column-row-factoring)
   - [Invertibility and Isomorphisms](#invertibility-and-isomorphisms)
     - [Isomorphic Vector Spaces](#isomorphic-vector-spaces)
+
+</details>
 
 # Ch01 - Vector Spaces
 
