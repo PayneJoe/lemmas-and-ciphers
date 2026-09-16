@@ -130,6 +130,9 @@ Regarding the backward direction, the proof is similar to that of Proposition 1.
 
 <br />
 
+> [!Important] Is Dimension Important ?
+> The dimension of a vector space is a fundamental concept that measures the "size" of the space in terms of the number of vectors in a basis. It plays a crucial role in understanding the structure and properties of vector spaces. And we will mainly focus on finite-dimensional vector spaces which is more manageable and widely applicable in practice.
+
 # Ch02 - Finite-Dimensional
 
 ## Span and Linear Independence
