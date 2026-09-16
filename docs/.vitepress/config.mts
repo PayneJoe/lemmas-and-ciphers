@@ -53,7 +53,7 @@ export default defineConfig({
       provider: 'local',
     },
     editLink: {
-      pattern: 'https://github.com/PayneJoe/mathematics/edit/main/docs/:path',
+      pattern: 'https://github.com/PayneJoe/mathematics-notes/edit/main/docs/:path',
       text: 'Edit this page on GitHub',
     },
     footer: {
