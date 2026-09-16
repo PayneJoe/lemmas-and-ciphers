@@ -2,9 +2,9 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   lang: 'en-US',
-  title: 'Mathematics Notes',
+  title: 'Lemmas & Ciphers',
   description: 'Personal notes on mathematics, cryptography, and formal verification.',
-  base: process.env.GITHUB_ACTIONS ? '/mathematics-notes/' : '/',
+  base: process.env.GITHUB_ACTIONS ? '/lemmas-and-ciphers/' : '/',
   cleanUrls: true,
   lastUpdated: true,
   markdown: {
@@ -14,7 +14,7 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
   ],
   themeConfig: {
-    siteTitle: 'Mathematics Notes',
+    siteTitle: 'Lemmas & Ciphers',
     nav: [
       { text: 'Mathematics', link: '/mathematics/' },
       { text: 'Cryptography', link: '/cryptography/' },
@@ -53,7 +53,7 @@ export default defineConfig({
       provider: 'local',
     },
     editLink: {
-      pattern: 'https://github.com/PayneJoe/mathematics-notes/edit/main/docs/:path',
+      pattern: 'https://github.com/PayneJoe/lemmas-and-ciphers/edit/main/docs/:path',
       text: 'Edit this page on GitHub',
     },
     footer: {

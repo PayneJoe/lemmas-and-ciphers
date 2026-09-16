@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: Mathematics Notes
+  name: Lemmas & Ciphers
   text: A scholarly learning notebook
   tagline: Notes, proofs, and executable explorations in mathematics, cryptography, and formal verification.
   actions:

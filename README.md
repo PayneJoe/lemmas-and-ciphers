@@ -1,4 +1,4 @@
-# Mathematics and Cryptography Notes
+# Lemmas & Ciphers
 
 A personal, Markdown-first collection of notes on mathematics, cryptography, and
 formal verification with Lean.
