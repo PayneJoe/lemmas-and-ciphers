@@ -1,2 +1,8 @@
 # cache and other artifacts produced by Lean's Lake build tool
 .lake/
+.DS_Store
+
+# dependencies and output produced by the VitePress site
+node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/

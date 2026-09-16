@@ -1,0 +1,24 @@
+:root {
+  --vp-c-brand-1: #2563eb;
+  --vp-c-brand-2: #3b82f6;
+  --vp-c-brand-3: #60a5fa;
+  --vp-font-family-base: "Inter", "Avenir Next", "Segoe UI", sans-serif;
+}
+
+.VPContent .content-container {
+  max-width: 800px;
+}
+
+.vp-doc {
+  line-height: 1.75;
+}
+
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3 {
+  letter-spacing: -0.02em;
+}
+
+.vp-doc div[class*='language-'] {
+  margin: 1.25rem 0;
+}

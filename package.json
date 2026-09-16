@@ -1,0 +1,23 @@
+{
+  "name": "mathematics-notes",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Personal notes on mathematics, cryptography, and formal verification",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.3"
+  },
+  "dependencies": {
+    "markdown-it-mathjax3": "^4.3.2"
+  },
+  "overrides": {
+    "@xmldom/xmldom": "0.9.12"
+  }
+}
