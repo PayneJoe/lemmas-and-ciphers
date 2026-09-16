@@ -1,60 +1,134 @@
-# Vector Spaces
+## Table of Contents
+- [Ch01 - Vector Spaces](#ch01---vector-spaces)
+  - [Subspace](#subspace)
+    - [Sum of Subspaces](#sum-of-subspaces)
+    - [Direct Sums](#direct-sums)
+- [Ch02 - Finite-Dimensional](#ch02---finite-dimensional)
+  - [Span and Linear Independence](#span-and-linear-independence)
+    - [Linear combinations and span](#linear-combinations-and-span)
+    - [Linear independence](#linear-independence)
+  - [Bases](#bases)
+  - [Dimension](#dimension)
+- [Ch03 - Linear Maps](#ch03---linear-maps)
+  - [Vector space of linear maps](#vector-space-of-linear-maps)
+  - [Null Space and Ranges](#null-space-and-ranges)
+  - [Matrices](#matrices)
+    - [Matrix of a linear map](#matrix-of-a-linear-map)
+    - [Column-row factoring](#column-row-factoring)
+  - [Invertibility and Isomorphisms](#invertibility-and-isomorphisms)
+    - [Isomorphic Vector Spaces](#isomorphic-vector-spaces)
 
-## Definition 
-
-TODO
+# Ch01 - Vector Spaces
 
 ## Subspace
 
-**Sum of subspaces** 
+### Sum of Subspaces 
 
-*Definition : Given two subspaces `U` and `V` of a vector space, their sum `U + V` is defined as the set of all vectors that can be written as the sum of a vector from `U` and a vector from `V`*
+**Definition 1.1 - Sum of two subspaces** 
+
+Given two subspaces $U$ and $V$ of some (any) vector space, their sum $U + V$ is defined as the set of all vectors that can be written as the sum of a vector from $U$ and a vector from $V$, that is
 $$
 U + V = \{ u + v \mid u \in U, v \in V \}.
 $$
 
-Sum of subspaces is the smallest subspace of the vector space that contains both `U` and `V`, which is analogous to the union of sets in set theory but within the context of vector spaces.
+<br />
+
+> [!Note] 
+> Sum of subspaces $U$ and $V$ is the smallest subspace that contains both $U$ and $V$, which is analogous to the union of sets in set theory but within the context of vector spaces.
 
 <br />
 
-**Direct-sum of family of subspaces**
+**Definition 1.2 - Sum of a family of subspaces** 
 
-*Definition : Given a family of subspaces `{U_i}` of a vector space, their direct sum `⊕ U_i` is defined as the set of all vectors that can be uniquely written as the sum of vectors from each `U_i`*
-
+Given a family of subspaces $\{U_i\}$ of a vector space, their sum $\sum_i U_i$ is defined as the set of all vectors that can be written as the sum of vectors from each $U_i$, that is
 $$
-\bigoplus_i U_i = \left\{ \sum_i u_i \mid u_i \in U_i \text{ and this representation is unique} \right\}.
+\sum_i U_i = \left\{ \sum_i u_i \mid u_i \in U_i \right\}.
 $$
 
-Note that direct-sum is a stronger condition than the ordinary sum of subspaces, as it requires the representation of each vector as a sum of vectors from the subspaces to be unique.
-
 <br />
 
-The natural question arises: how can we determine if a given family of subspaces forms a direct sum? Do we need to check the uniqueness of the representation for every vector individually? The answer is provided by the following criterion.
+> [!Important] 
+> Is the representation of any element of sum of subspaces unique or not? In the following section we will focus on this question.
 
-*Criterion : The direct sum of a family of subspaces `{U_i}` holds if and only if the only way to represent the zero vector as a sum of vectors from each `U_i` is by taking all vectors to be zero.*
+### Direct Sums
 
-Proof : TODO
+**Definition 1.3 - Direct sum of two subspaces** 
 
-<br />
-
-**Direct-sum of two subspaces**
-
-*Definition : Given two subspaces `U` and `V` of a vector space, their direct sum `U ⊕ V` is defined as the set of all vectors that can be uniquely written as the sum of a vector from `U` and a vector from `V`*
+Given two subspaces $U$ and $V$ of a vector space, their direct sum $U \oplus V$ is defined as the set of all vectors that can be **uniquely** written as the sum of a vector from $U$ and a vector from $V$, that is
 $$
 U \oplus V = \{ u + v \mid u \in U, v \in V \text{ and this representation is unique} \}.
 $$
 
-*Criterion : The direct sum `U ⊕ V` holds if and only if the intersection of `U` and `V` is `{0}`.*
+<br />
+
+**Definition 1.4 - Direct sum of a family subspaces** 
+
+Given a family of subspaces $\{U_i\}$ of a vector space, their direct sum $\oplus_i U_i$ is defined as the set of all vectors that can be **uniquely** written as the sum of vectors from each $\{U_i\}$, that is
+$$
+\bigoplus_i U_i = \left\{ \sum_i u_i \mid u_i \in U_i \text{ and this representation is unique} \right\}.
+$$
+
+> [!Note]
+> Direct-sum is a stronger condition than the ordinary sum of subspaces, as it requires the representation of each vector as a sum of vectors from the subspaces to be **unique**.
+
+<br />
+
+> [!Important] Direct Sum Criterion
+How can we determine if a given family of subspaces forms a direct sum? Do we have to check the uniqueness of the representation for every vector individually? 
+
+<br />
+
+**Proposition 1.1 - Criterion for Direct Sum of a Family of Subspaces:** 
+
+The direct sum of a family of subspaces $\{U_i\}$ holds if and only if the only way to represent the zero vector as a sum of vectors from each $U_i$ is by taking all vectors to be zero.
+
+<details>
+<summary><strong>Proof Logic </strong> (click to expand)</summary>
+
+This is a $\textcolor{red}{iff}$ problem, meaning we need to show both directions:  
+1. **If direction:** Assume the direct sum holds. Show that the only way to represent the zero vector as a sum of vectors from each $U_i$ is by taking all vectors to be zero.  
+2. **Only if direction:** Assume the only way to represent the zero vector as a sum of vectors from each $U_i$ is by taking all vectors to be zero. Show that this implies the representation of any vector as a sum of vectors from each $U_i$ is unique.
+
+Regarding the forward direction, it trivially holds $0 = 0 + ... + 0$ is unique representation of zero vector. 
+
+Regarding the backward direction, suppose $v \in V$ has two representations  
+$$
+v = v_1 + ... + v_n = u_1 + ... + u_n
+$$
+, then we have
+$$
+0 = (v_1 - u_1) + ... + (v_n - u_n)
+$$
+By assumption $0 = 0 + ... + 0$, we have $v_i = u_i$ for all $i$, proving the uniqueness of direct sum.
+
+</details>
+
+<br />
+
+**Proposition 1.2 - Criterion for Direct Sum of Two Subspaces:** 
+
+The direct sum $U \oplus V$ holds if and only if the intersection of sets $U$ and $V$ is $\{0\}$.
 
 $$
 U \cap V = \{0\}.
 $$
 
-Proof : TODO
+<details>
+<summary><strong>Proof Logic </strong> (click to expand)</summary>
+
+This is also a $\textcolor{red}{iff}$ problem, meaning we need to show both directions:  
+1. **If direction:** Assume $U \oplus V$ holds. Show that $U \cap V = \{0\}$.  
+2. **Only if direction:** Assume $U \cap V = \{0\}$. Show that this implies the representation of any vector in $U + V$ as a sum of vectors from $U$ and $V$ is unique.
+
+Regarding the forward direction, by $\textcolor{red}{contradiction}$ we suppose $U \cap V = \{0, x\}$ for some non-zero vector $x$, then element $x$ has at least two representations which is contradict with the uniqueness of the direct sum.
+
+Regarding the backward direction, the proof is similar to that of Proposition 1.1.
+
+</details>
 
 <br />
 
-# Finite-dimensional
+# Ch02 - Finite-Dimensional
 
 ## Span and Linear Independence
 
@@ -226,11 +300,11 @@ Proof : TODO
 
 <br />
 
-## Linear Maps
+# Ch03 - Linear Maps
 
 Linear maps is also a vector space. Specifically, if `V` and `W` are vector spaces over the same field `F`, then the set of all linear maps from `V` to `W`, denoted by `Hom(V, W)`, forms a vector space over `F` with pointwise addition and scalar multiplication. In the following section we will discuss this topic in more detail.
 
-### Vector space of linear maps
+## Vector space of linear maps
 
 **Linear Map and Homomorphism**
 Linear map of vector spaces is a homomorphism from one vector space to another, preserving addition and multiplication by scalars, where both vector spaces are defined over the same field.
@@ -293,7 +367,7 @@ In the following section, let us take a closer look at two special subspace:
 2.  range (or image), of a linear map.
 where null space is usually closed related with injectivity of the linear map, and range is usually closely related with surjectivity of the linear map.
 
-### Null Space and Ranges 
+## Null Space and Ranges 
 
 *Definition : Let $f : V \to W$ be a linear map. The **null space** (or **kernel**) of $f$ is the set of all vectors in $V$ that are mapped to the zero vector in $W$, denoted by $\text{null}(f)$ or $\ker(f)$:*
 $$
@@ -431,15 +505,20 @@ which implies $\dim \text{range}(f) = \dim V - \dim \text{null}(f) \le \dim V = 
 
 <br />
 
-### Matrices
+## Matrices
 
-**Matrix of a linear map**
+### Matrix of a linear map
 
-Given a linear map $f: V \to W$ and bases $\{v_1, \dots, v_n\}$ for $V$ and $\{w_1, \dots, w_m\}$ for $W$, the **matrix of $f$** with respect to these bases is the $m \times n$ matrix $A$ whose $(i,j)$-th entry $a_{ij}$ is defined by
+**Definition :** Given a linear map $T: \mathcal{L}(V, W)$ and bases $\{v_1, \dots, v_n\}$ for $V$ and $\{w_1, \dots, w_m\}$ for $W$, the matrix of $T$ with respect to these bases is a $m \times n$ matrix $A$ whose $(i,j)$-th entry $A_{ij}$ is defined by
 $$
-f(v_j) = \sum_{i=1}^m a_{ij} w_i.
+T(v_j) = \sum_{i=1}^m A_{ij} w_i.
 $$
-where the $j$-th column of $A$ corresponds to the coordinates of $f(v_j)$ in the basis $\{w_1, \dots, w_m\}$ of $W$.
+where the $j$-th column $A_{.,j}$ of $A$ corresponds to the coordinates of $T(v_j)$ with respect to the basis $\{w_1, \dots, w_m\}$ of $W$. Formally, we call the matrix of a specific linear map $T$ with respect to the bases $\{v_1, \dots, v_n\}$ and $\{w_1, \dots, w_m\}$ as $\mathcal{M}(T)$.
+
+<br />
+
+> [!Note]
+> $\mathbb{F}^{m, n}$ means the set of all $m \times n$ matrices with entries from the field $\mathbb{F}$. It also represents the vector space of linear map from $\mathbb{F}^n$ to $\mathbb{F}^m$.
 
 Specially, matrix $A$ maps the standard basis vectors of $\mathbb{F}^n$ to the coordinates of their images under $f$ in the basis $\{w_1, \dots, w_m\}$ of $W$. For example, let $T : \mathbb{F}^2 \to \mathbb{F}^3$ is defined by
 $$
@@ -453,10 +532,6 @@ $$
 7 & 9
 \end{bmatrix}
 $$
-
-<br />
-
-*Definition : $\mathbb{F}^{m, n}$ means the set of all $m \times n$ matrices with entries from the field $\mathbb{F}$. It also represents the vector space of linear map from $\mathbb{F}^n$ to $\mathbb{F}^m$.*
 
 <br />
 
@@ -511,3 +586,166 @@ $$
 \le \text{column rank of } A^t
 = \text{row rank of } A
 $$
+
+<br />
+
+## Invertibility and Isomorphisms
+
+*Definition : A linear map $T \in \mathcal{L}(V, W)$ is called invertible if there exists a linear map $S \in \mathcal{L}(W, V)$ such that $S \circ T = \text{id}_V$ and $T \circ S = \text{id}_W$.*
+
+<br />
+
+**Uniqueness of Inverse of Linear Map**
+
+*Proposition : If a linear map $T \in \mathcal{L}(V, W)$ is invertible, then its inverse $S \in \mathcal{L}(W, V)$ is also unique.*
+
+Proof Logic : This is a $\textcolor{red}{uniqueness}$ argument, the solution to this is to suppose there are two inverses $S_1$ and $S_2$ of $T$, then show that $S_1 = S_2$.
+1. both $S_1$ and $S_2$ are inverses of $T$, i.e.,
+    $$
+        S_1 \circ T = \text{id}_V, \quad T \circ S_1 = \text{id}_W \\
+        S_2 \circ T = \text{id}_V, \quad T \circ S_2 = \text{id}_W
+    $$
+2. introducing multiplication by identity, then apply hypothese in 1)
+    $$
+    S_1 = S_1 \circ \text{id}_W = S_1 \circ (T \circ S_2) = (S_1 \circ T) \circ S_2 = \text{id}_V \circ S_2 = S_2
+    $$
+Hence, the inverse of $T$ is unique.
+
+<br />
+
+**Invertibility of Linear Map $\iff$ Bijective**
+
+*Proposition : A linear map is invertible if and only if it is both injective and surjective.*
+
+Proof Logic : Firstly, it is a $\textcolor{red}{iff}$ (biconditional) argument, so we need to prove both directions:
+1. Forward direction, if a linear map is invertible, then it is both injective and surjective.
+2. Backward direction, if a linear map is both injective and surjective, then it is invertible.
+
+More in-depth, let $T \in \mathcal{L}(V, W)$ be an invertible linear map, regarding the forward direction:
+1. Injectivity. Injectivity of linear map $T$ means  
+    $$
+        T(v_1) = T(v_2) \implies v_1 = v_2 \quad \forall v_1, v_2 \in V.
+    $$
+    Since $T$ is invertible, there exists $S \in \mathcal{L}(W, V)$ such that $S \circ T = \text{id}_V$. Applying $S$ to both sides of $T(v_1) = T(v_2)$ gives 
+    $$
+        S(T(v_1)) = S(T(v_2)) \implies \text{id}_V(v_1) = \text{id}_V(v_2) \implies v_1 = v_2.
+    $$
+    Hence, $T$ is injective.
+2. Surjective. Surjectivity of linear map $T$ means 
+    $$
+        \forall w \in W, \exists v \in V \text{ such that } T(v) = w.
+    $$
+    Since $T$ is invertible, there exists $S \in \mathcal{L}(W, V)$ such that $S \circ T = \text{id}_V$ and $T \circ S = \text{id}_W$. For any $w \in W$, let $v = S(w) \in V$. Then 
+    $$
+        T(v) = T(S(w)) = (T \circ S)(w) = \text{id}_W(w) = w.
+    $$
+    Hence, $T$ is surjective.
+
+Regarding the backward direction : 
+1. Since $T$ is injective, for any $v_1, v_2 \in V$, $T(v_1) = T(v_2) \implies v_1 = v_2$. 
+2. Since $T$ is surjective, for any $w \in W$, there exists $v \in V$ such that $T(v) = w$. 
+3. Define a function (or map) $S : W \to V$ by assigning $S(w) = v$, where $v$ is the unique element in $V$ such that $T(v) = w$. The uniqueness of $v$ is guaranteed by the injectivity of $T$. In order to prove $S$ is the inverse of $T$, we need to show that :
+    - 3.1. $S \circ T = \text{id}_V$
+    - 3.2. $T \circ S = \text{id}_W$
+    - 3.3. $S$ is a well-defined linear map of type $W \to V$, that is :
+       - a. additivity: $S(w_1 + w_2) = S(w_1) + S(w_2) \quad \forall w_1, w_2 \in W$
+       - b. homogeneity: $S(\alpha w) = \alpha S(w) \quad \forall w \in W, \forall \alpha \in \mathbb{F}$
+
+We omit the detailed proof here.
+
+<br />
+
+**Special Case of Invertible Linear Map**
+
+*Proposition : If both $V$ and $W$ are finite-dimensional vector spaces of the same dimension, then a linear map $T \in \mathcal{L}(V, W)$ is invertible if and only if it is either injective or surjective. That is*
+$$
+T \text{ is invertible } \iff T \text{ is injective } \iff T \text{ is surjective }, \text{ when } \dim V = \dim W
+$$
+
+Proof Logic: 
+We have shown that 
+$$
+T \text{ is invertible } \iff T \text{ is both injective and surjective }.
+$$
+so we only need to show that 
+$$
+T \text{ is injective } \iff T \text{ is surjective }
+$$
+
+By the fundamental theorem of linear maps :
+$$
+\dim V = \dim \text{null } T + \dim \text{range } T
+$$
+- For the forward direction (injective implies surjective), assume $T$ is injective. Then $\dim \text{null } T = 0$, so 
+    $$
+        \dim V = 0 + \dim \text{range } T \implies \dim \text{range } T = \dim V.
+    $$
+  Since $\dim V = \dim W$, we have $\dim \text{range } T = \dim W$, which implies $T$ is surjective.
+- For the backward direction (surjective implies injective), assume $T$ is surjective. Then $\dim \text{range } T = \dim W = \dim V$, so 
+    $$
+        \dim V = \dim \text{null } T + \dim \text{range } T = \dim \text{null } T + \dim V \implies \dim \text{null } T = 0.
+    $$
+  Hence, $T$ is injective.
+
+<br />
+
+*Proposition : If $V$ and $W$ are finite-dimensional vector spaces of the same dimension, let $T \in \mathcal{L}(V, W)$, $S \in \mathcal{L}(W, V)$  be two linear maps. Then $S \circ T = \text{id}_V$ if and only if $T \circ S = \text{id}_W$.*
+
+Proof Logic : Intuitively $S \circ T = \text{id}_V$ and $T \circ S = \text{id}_W$ has no direct connection. However, it would be different if $T$ is invertible, because in that case $S = T^{-1}$ and the two conditions are equivalent. So we need to show that $T$ is indeed invertible under the given conditions.
+
+As we have shown that invertibility of linear map is equivalent with being injective or surjective for finite-dimensional vector spaces of the same dimension, it suffices to show that $T$ is either injective or surjective under the given conditions. Let us take the injective, $T$ is injective means $\ker T = \{0\}$.
+
+For any $v \in V$, such that $T(v) = 0$, then
+$$
+v = \text{id}_V (v) = (S \circ T)(v) = S(T(v)) = S(0) = 0.
+$$
+Hence, $\ker T = \{0\}$, which shows that $T$ is injective, further invertible, and the forward direction is established.
+
+Similarly with the backward direction, we omit the detailed proof here.
+
+<br />
+
+### Isomorphic Vector Spaces
+
+*Definition : Two vector spaces $V$ and $W$ are said to be isomorphic, denoted by $V \cong W$, if there exists an invertible linear map $T \in \mathcal{L}(V, W)$.*
+
+**Motivation of Isomorphism**
+
+Isomorphism preserves the vector space structure, meaning that if $V \cong W$, then the operations of vector addition and scalar multiplication in $V$ correspond exactly to those in $W$ under the isomorphism. **The topic of whether two objects have the same structure is central of abtract algebra, and isomorphisms provide a precise way to capture this notion.** But how, if the object is a vector space? Do we need to check every operation and element individually, or is there a more efficient way to determine if two vector spaces are essentially the same?
+
+One efficient way to determine if two vector spaces are essentially the same is to compare their dimensions. 
+
+<br />
+
+*Proposition : Two finite-dimensional vector spaces $V$ and $W$ are isomorphic if and only if $\dim V = \dim W$.*
+
+Proof Logic : This is a $\textcolor{red}{iff}$ problem, so we need to prove both directions.
+
+- Forward direction ($\Rightarrow$): Assume $V \cong W$. Then there exists an invertible linear map $T \in \mathcal{L}(V, W)$. Since $T$ is invertible, it is both injective and surjective. By the rank-nullity theorem, $\dim V = \dim W$.
+- Backward direction ($\Leftarrow$): Assume $\dim V = \dim W$. Since $\text{invertible} \iff \text{bijective}$, so we only need to show that  $T$ is bijective. Let $\{v_1, \dots, v_n\}$ be a basis of $V$ and $\{w_1, \dots, w_n\}$ be a basis of $W$. Define a linear map $T \in \mathcal{L}(V, W)$ by : 
+    $$
+        T (c_1 v_1 + \dots + c_n v_n) = c_1 w_1 + \dots + c_n w_n
+    $$
+    we see that $\text{span}(w_1, \dots, w_n) = W \le \text{range}(T)$. Therefore, $T$ is surjective. Since $\dim V = \dim W$, by the rank-nullity theorem, $T$ is also injective. Hence, $T$ is bijective, and thus invertible. This completes the proof of the backward direction.
+
+<br />
+
+We know that $\mathcal{L}(V, W)$ is a vector space of linear maps from $V$ to $W$, and if $T \in \mathcal{L}(V, W)$, then we have $\mathcal{M}(T) \in \mathbb{F}^{n, m}$, where $\mathcal{M}(T)$ denotes the matrix representation of $T$ with respect to chosen bases of $V$ and $W$.
+
+*Proposition : There is a isomorphism between vector space $\mathcal{L}(V, W)$ and $\mathbb{F}^{n, m}$.* 
+
+Proof Logic : Define a function $\mathcal{M} : \mathcal{L}(V, W) \to \mathbb{F}^{n, m}$ by $\mathcal{M}(T) \in \mathbb{F}^{n, m}$ the matrix representation of linear map $T \in \mathcal{L}(V, W)$ with respect to the chosen bases of $V$ and $W$. We need to show that $\mathcal{M}$ is a linear map and bijective, which would establish the isomorphism.
+- Linearity (additivity and homogeneity): For any $T_1, T_2 \in \mathcal{L}(V, W)$ and scalar $c \in \mathbb{F}$, by the linearity of the matrix representation $\mathbb{F}^{n, m}$, we have
+    $$
+        \mathcal{M}(T_1 + T_2) = \mathcal{M}(T_1) + \mathcal{M}(T_2), \quad \mathcal{M}(c T_1) = c \mathcal{M}(T_1).
+    $$
+    Hence, $\mathcal{M}$ is linear.
+- Bijectivity: 
+    - Injectivity: If $\mathcal{M}(T) = 0$, then $T$ maps all basis vectors of $V$ to $0$ in $W$, which implies $T = 0$. Hence, $\mathcal{M}$ is injective.
+    - Surjectivity: For any matrix $A \in \mathbb{F}^{n, m}$, we can define a linear map $T \in \mathcal{L}(V, W)$ such that $\mathcal{M}(T) = A$. Hence, $\mathcal{M}$ is surjective.
+
+Therefore, $\mathcal{M}$ is a linear bijection, establishing the isomorphism between $\mathcal{L}(V, W)$ and $\mathbb{F}^{n, m}$.
+
+<br />
+
+*Proposition : The dimension of the vector space $\mathcal{L}(V, W)$ is equal to the product of the dimensions of $V$ and $W$, i.e., $\dim \mathcal{L}(V, W) = (\dim V)(\dim W)$.*
