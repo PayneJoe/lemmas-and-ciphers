@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { lemmaAutolinkPlugin } from './lemma-autolink.mts'
 
 export default defineConfig({
   lang: 'en-US',
@@ -9,6 +10,9 @@ export default defineConfig({
   lastUpdated: true,
   markdown: {
     math: true,
+    config: (md) => {
+      md.use(lemmaAutolinkPlugin)
+    },
   },
   head: [
     ['link', { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
