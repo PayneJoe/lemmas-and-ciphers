@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitepress'
-import { lemmaAutolinkPlugin } from './lemma-autolink.mts'
+import { termAutolinkPlugin } from './term-autolink.mts'
 
 export default defineConfig({
   lang: 'en-US',
@@ -11,7 +11,7 @@ export default defineConfig({
   markdown: {
     math: true,
     config: (md) => {
-      md.use(lemmaAutolinkPlugin)
+      md.use(termAutolinkPlugin)
     },
   },
   head: [

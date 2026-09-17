@@ -1,13 +1,13 @@
 import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
 import './custom.css'
-import { setupLemmaTooltips } from './lemma-tooltip'
+import { setupTermTooltips } from './term-tooltip'
 
 export default {
   extends: DefaultTheme,
   enhanceApp() {
     if (typeof window !== 'undefined') {
-      setupLemmaTooltips()
+      setupTermTooltips()
     }
   },
 } satisfies Theme

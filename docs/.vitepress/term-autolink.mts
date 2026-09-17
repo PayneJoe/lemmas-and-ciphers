@@ -1,24 +1,33 @@
 import type MarkdownIt from 'markdown-it'
 
-// Matches prose mentions like "lemma 2.8" or "Lemma 12.3" so they can be
+// Matches prose mentions like "lemma 2.8" or "Definition 1.0" so they can be
 // turned into hoverable cross-reference links without changing how notes
-// are authored.
-const LEMMA_MENTION_RE = /\b([Ll]emma)\s+(\d+)\.(\d+)\b/g
+// are authored. Group 1 is the keyword (used to pick the anchor prefix),
+// groups 2/3 are the major/minor numbers.
+const TERM_MENTION_RE = /\b(Lemma|Definition)\s+(\d+)\.(\d+)\b/gi
+
+const KIND_INFO: Record<string, { prefix: string; refClass: string }> = {
+  lemma: { prefix: 'lemma', refClass: 'lemma-ref' },
+  definition: { prefix: 'definition', refClass: 'definition-ref' },
+}
 
 /**
- * A small markdown-it core rule that finds "Lemma X.Y" mentions in rendered
- * prose and wraps them in `<a href="#lemma-X-Y" class="lemma-ref">`, so a
- * companion client-side script can show the referenced lemma's content in a
- * hover/focus tooltip. Definitions are anchored separately via the
- * `{#lemma-X-Y .lemma-anchor}` attribute syntax already supported by
- * VitePress's bundled `markdown-it-attrs`.
+ * A small markdown-it core rule that finds "Lemma X.Y" / "Definition X.Y"
+ * mentions in rendered prose and wraps them in
+ * `<a href="#lemma-X-Y" class="lemma-ref">` or
+ * `<a href="#definition-X-Y" class="definition-ref">`, so a companion
+ * client-side script can show the referenced lemma/definition's content in
+ * a hover/focus tooltip. Anchors themselves are added separately via the
+ * `{#lemma-X-Y .lemma-anchor}` / `{#definition-X-Y .definition-anchor}`
+ * attribute syntax already supported by VitePress's bundled
+ * `markdown-it-attrs`.
  *
  * Registered last (via `ruler.push`) so it runs after `markdown-it-attrs`
  * has already consumed `{...}` attribute syntax and assigned `id`s to the
  * preceding block tokens.
  */
-export function lemmaAutolinkPlugin(md: MarkdownIt): void {
-  md.core.ruler.push('lemma_autolink', (state) => {
+export function termAutolinkPlugin(md: MarkdownIt): void {
+  md.core.ruler.push('term_autolink', (state) => {
     const { tokens, Token } = state
 
     for (let i = 0; i < tokens.length; i++) {
@@ -27,8 +36,8 @@ export function lemmaAutolinkPlugin(md: MarkdownIt): void {
 
       // The block token immediately preceding an `inline` token is always
       // its own opening tag (e.g. `paragraph_open`). If that block carries
-      // the anchor id for the lemma this text belongs to, skip auto-linking
-      // that exact match so a lemma's own title doesn't link to itself.
+      // the anchor id for the lemma/definition this text belongs to, skip
+      // auto-linking that exact match so a title doesn't link to itself.
       const ownerToken = tokens[i - 1]
       const selfId = ownerToken?.attrGet ? ownerToken.attrGet('id') : null
 
@@ -41,19 +50,20 @@ export function lemmaAutolinkPlugin(md: MarkdownIt): void {
           continue
         }
 
-        LEMMA_MENTION_RE.lastIndex = 0
-        if (!LEMMA_MENTION_RE.test(child.content)) {
+        TERM_MENTION_RE.lastIndex = 0
+        if (!TERM_MENTION_RE.test(child.content)) {
           nextChildren.push(child)
           continue
         }
 
-        LEMMA_MENTION_RE.lastIndex = 0
+        TERM_MENTION_RE.lastIndex = 0
         let lastIndex = 0
         let match: RegExpExecArray | null
 
-        while ((match = LEMMA_MENTION_RE.exec(child.content))) {
-          const [full, , major, minor] = match
-          const id = `lemma-${major}-${minor}`
+        while ((match = TERM_MENTION_RE.exec(child.content))) {
+          const [full, keyword, major, minor] = match
+          const kind = KIND_INFO[keyword.toLowerCase()]
+          const id = `${kind.prefix}-${major}-${minor}`
 
           if (match.index > lastIndex) {
             const textToken = new Token('text', '', 0)
@@ -67,7 +77,7 @@ export function lemmaAutolinkPlugin(md: MarkdownIt): void {
             nextChildren.push(textToken)
           } else {
             const openToken = new Token('html_inline', '', 0)
-            openToken.content = `<a href="#${id}" class="lemma-ref" data-lemma-id="${major}-${minor}">`
+            openToken.content = `<a href="#${id}" class="${kind.refClass}" data-term-id="${id}">`
 
             const textToken = new Token('text', '', 0)
             textToken.content = full

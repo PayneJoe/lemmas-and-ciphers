@@ -250,7 +250,8 @@ html.dark {
 }
 
 /* Lemma cross-reference hover preview */
-.lemma-ref {
+.lemma-ref,
+.definition-ref {
   color: var(--vp-c-brand-2);
   border-bottom: 1px dashed var(--vp-c-brand-3);
   text-decoration: none;
@@ -258,7 +259,9 @@ html.dark {
 }
 
 .lemma-ref:hover,
-.lemma-ref:focus-visible {
+.lemma-ref:focus-visible,
+.definition-ref:hover,
+.definition-ref:focus-visible {
   color: var(--vp-c-brand-1);
   border-bottom-style: solid;
 }
