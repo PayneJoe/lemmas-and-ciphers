@@ -6,4 +6,4 @@ Notes on mathematical concepts, proofs, and examples.
 
 - [Linear algebra](./linear-algebra/ch01-ch03.md)
 
-- [Math of Proof](./math-of-proof)
+- [Math of Proof](./math-of-proof/)

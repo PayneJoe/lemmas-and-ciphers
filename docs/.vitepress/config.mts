@@ -26,7 +26,8 @@ export default defineConfig({
           text: 'Mathematics',
           items: [
             { text: 'Overview', link: '/mathematics/' },
-            { text: 'Vector Spaces', link: '/mathematics/linear-algebra/vector-spaces' },
+            { text: 'Linear Algebra', link: '/mathematics/linear-algebra/ch01-ch03' },
+            { text: 'Math of Proof', link: '/mathematics/math-of-proof/' },
           ],
         },
       ],
