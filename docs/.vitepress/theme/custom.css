@@ -1,40 +1,40 @@
 :root {
-  --vp-c-bg: #f8f5ee;
-  --vp-c-bg-alt: #f0ebe0;
-  --vp-c-bg-elv: #fffdf8;
-  --vp-c-bg-soft: #eee7da;
-  --vp-c-border: #d9d0c0;
-  --vp-c-divider: #d9d0c0;
-  --vp-c-text-1: #292722;
-  --vp-c-text-2: #5e594f;
-  --vp-c-text-3: #80786b;
-  --vp-c-brand-1: #825f25;
-  --vp-c-brand-2: #9d7735;
-  --vp-c-brand-3: #b58e4b;
-  --vp-c-brand-soft: #efe1c8;
-  --vp-font-family-base: Georgia, "Times New Roman", serif;
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-alt: #f5f5f5;
+  --vp-c-bg-elv: #ffffff;
+  --vp-c-bg-soft: #eeeeee;
+  --vp-c-border: #cccccc;
+  --vp-c-divider: #cccccc;
+  --vp-c-text-1: #111111;
+  --vp-c-text-2: #333333;
+  --vp-c-text-3: #666666;
+  --vp-c-brand-1: #b31b1b;
+  --vp-c-brand-2: #8a1414;
+  --vp-c-brand-3: #d9534f;
+  --vp-c-brand-soft: #f7e3e2;
+  --vp-font-family-base: "Times New Roman", Times, serif;
   --vp-font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --vp-nav-height: 68px;
 }
 
 html.dark {
-  --vp-c-bg: #1b1a17;
-  --vp-c-bg-alt: #24211c;
-  --vp-c-bg-elv: #25221d;
-  --vp-c-bg-soft: #302b23;
-  --vp-c-border: #4b4335;
-  --vp-c-divider: #4b4335;
-  --vp-c-text-1: #eee8dc;
-  --vp-c-text-2: #c3b9a9;
-  --vp-c-text-3: #a09585;
-  --vp-c-brand-1: #d6ad63;
-  --vp-c-brand-2: #e0c17e;
-  --vp-c-brand-3: #ecd49e;
-  --vp-c-brand-soft: #3c301d;
+  --vp-c-bg: #121212;
+  --vp-c-bg-alt: #1a1a1a;
+  --vp-c-bg-elv: #1c1c1c;
+  --vp-c-bg-soft: #232323;
+  --vp-c-border: #3a3a3a;
+  --vp-c-divider: #3a3a3a;
+  --vp-c-text-1: #eaeaea;
+  --vp-c-text-2: #c4c4c4;
+  --vp-c-text-3: #949494;
+  --vp-c-brand-1: #e2544f;
+  --vp-c-brand-2: #eb7d79;
+  --vp-c-brand-3: #f3a6a3;
+  --vp-c-brand-soft: #3a1c1a;
 }
 
 .VPNav {
-  border-bottom: 1px solid var(--vp-c-divider);
+  border-bottom: 2px solid var(--vp-c-text-1);
 }
 
 .VPNavBar {
@@ -43,7 +43,7 @@ html.dark {
 }
 
 .VPNavBarTitle .title {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Times New Roman", Times, serif;
   font-size: 1.08rem;
   font-weight: 600;
   letter-spacing: 0.01em;
@@ -69,7 +69,7 @@ html.dark {
 .vp-doc h2,
 .vp-doc h3 {
   color: var(--vp-c-text-1);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Times New Roman", Times, serif;
   font-weight: 500;
   letter-spacing: -0.018em;
 }
@@ -82,7 +82,7 @@ html.dark {
 .vp-doc h2 {
   margin-top: 3.25rem;
   padding-top: 1.25rem;
-  border-top-color: var(--vp-c-divider);
+  border-top: 1px solid var(--vp-c-text-1);
   font-size: 1.8rem;
 }
 
@@ -97,7 +97,8 @@ html.dark {
 
 .vp-doc a {
   font-weight: 600;
-  text-decoration-color: color-mix(in srgb, var(--vp-c-brand-1) 45%, transparent);
+  color: var(--vp-c-brand-1);
+  text-decoration-color: color-mix(in srgb, var(--vp-c-brand-1) 55%, transparent);
   text-underline-offset: 0.18em;
 }
 
@@ -108,18 +109,18 @@ html.dark {
 }
 
 .vp-doc .custom-block {
-  border-radius: 2px;
+  border-radius: 0;
 }
 
 .vp-doc div[class*='language-'] {
   margin: 1.5rem 0;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 4px;
+  border: 1px solid var(--vp-c-text-1);
+  border-radius: 0;
   box-shadow: none;
 }
 
 .vp-doc :not(pre) > code {
-  border-radius: 3px;
+  border-radius: 0;
   color: var(--vp-c-text-1);
   background-color: var(--vp-c-bg-soft);
 }
@@ -164,7 +165,7 @@ html.dark {
 
 .VPSidebarItem.level-0 > .item > .text {
   color: var(--vp-c-text-1);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Times New Roman", Times, serif;
   font-size: 1rem;
   font-weight: 600;
 }
@@ -176,7 +177,7 @@ html.dark {
 }
 
 .VPButton {
-  border-radius: 3px;
+  border-radius: 0;
   font-family: "Avenir Next", "Segoe UI", sans-serif;
   font-size: 0.78rem;
   letter-spacing: 0.05em;
@@ -196,7 +197,7 @@ html.dark {
 
 .VPHomeHero .name,
 .VPHomeHero .text {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Times New Roman", Times, serif;
   font-weight: 500;
   letter-spacing: -0.025em;
 }
@@ -212,14 +213,14 @@ html.dark {
 }
 
 .VPFeature {
-  border: 1px solid var(--vp-c-border);
-  border-radius: 3px;
+  border: 1px solid var(--vp-c-text-1);
+  border-radius: 0;
   background-color: var(--vp-c-bg-elv);
   box-shadow: none;
 }
 
 .VPFeature .title {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Times New Roman", Times, serif;
   font-size: 1.3rem;
   font-weight: 600;
 }
@@ -266,8 +267,8 @@ html.dark {
   position: absolute;
   z-index: 100;
   background: var(--vp-c-bg-elv);
-  border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
+  border: 1px solid var(--vp-c-text-1);
+  border-radius: 0;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   padding: 14px 16px;
   font-size: 0.86rem;
