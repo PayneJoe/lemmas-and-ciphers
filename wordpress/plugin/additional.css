@@ -140,7 +140,7 @@
 .entry-content details.post-toc {
   position: fixed;
   top: 110px;
-  right: 16px;
+  left: 16px;
   width: 240px;
   max-height: calc(100vh - 140px);
   overflow-y: auto;
@@ -183,7 +183,7 @@
   .entry-content details.post-toc {
     position: static;
     top: auto;
-    right: auto;
+    left: auto;
     width: auto;
     max-height: none;
     margin: 0 0 1.5em;

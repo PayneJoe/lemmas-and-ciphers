@@ -92,7 +92,7 @@ covers:
   colored left border, and bold title per kind (note/tip/important/
   warning/caution).
 - Per-post Table of Contents (`.post-toc`) — pinned with `position: fixed`
-  to the right edge of the browser window (>= 900px viewports), mirroring
+  to the left edge of the browser window (>= 900px viewports), mirroring
   the "On this page" outline on the old VitePress site: it stays visible
   the whole time you scroll, no matter which section of the post you're
   reading, so you can jump to any section directly. On narrow/mobile
