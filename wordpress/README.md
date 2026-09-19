@@ -91,11 +91,13 @@ covers:
 - Admonition callout box styling (`.md-alert*`) — tinted background,
   colored left border, and bold title per kind (note/tip/important/
   warning/caution).
-- Per-post floating Table of Contents (`.post-toc`) — floats a note's
-  hand-written `<details><summary>Table of Contents</summary>...</details>`
-  block to the right of the post body and keeps it in view while
-  scrolling, so it's easy to jump to a specific section in long notes.
-  Falls back to a plain non-floating box on narrow screens.
+- Per-post Table of Contents (`.post-toc`) — on wide viewports (>= 1480px)
+  it's pinned with `position: fixed` in the empty page margin outside
+  Twenty Ten's centered 940px content column, so it stays completely
+  still while scrolling. On medium viewports it falls back to floating
+  inside the post body with `position: sticky` (moves with the column
+  but stays in view while scrolling). On narrow/mobile screens it falls
+  back further to a plain non-floating inline box.
 - Sidebar navigation widget styling (`.lemmas-sidebar-nav`, see below).
 
 Whenever `plugin/additional.css` changes, re-paste it (there's no REST API

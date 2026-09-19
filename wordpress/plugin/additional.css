@@ -129,10 +129,12 @@
 /*
  * Applied to the note's hand-written `<details><summary>Table of
  * Contents</summary>...</details>` block (tagged with class "post-toc" by
- * the publish script). Floats it to the right of the post body and keeps
- * it in view while scrolling, so long notes are easier to jump around in.
- * Falls back to a plain non-floating box (original inline behavior) on
- * narrow screens.
+ * the publish script). On wide viewports it's pinned in the empty page
+ * margin outside Twenty Ten's centered 940px content column (position:
+ * fixed, so it never moves at all while scrolling). On medium viewports,
+ * where there isn't enough margin space, it falls back to floating inside
+ * the post body with position: sticky. On narrow/mobile screens it falls
+ * back further to a plain non-floating inline box.
  */
 .entry-content details.post-toc {
   float: right;
@@ -174,6 +176,28 @@
 .entry-content details.post-toc a:hover,
 .entry-content details.post-toc a:focus-visible {
   text-decoration: underline;
+}
+
+/*
+ * Wide viewports: Twenty Ten's #wrapper is a fixed 940px column centered
+ * with `margin: 0 auto`, so its right edge sits at `50% + 470px` from the
+ * left of the viewport. Once the viewport is wide enough to leave a clear
+ * gutter + the TOC's own width free beyond that edge, pin the TOC there
+ * with position: fixed so it stays put in the page margin regardless of
+ * scroll position. (940/2 + 24px gutter + 240px box = 734px on each side
+ * needed beyond the wrapper's half-width, i.e. viewport >= 940 + 2*264.)
+ */
+@media (min-width: 1480px) {
+  .entry-content details.post-toc {
+    position: fixed;
+    float: none;
+    clear: none;
+    top: 100px;
+    left: calc(50% + 494px);
+    width: 240px;
+    max-height: calc(100vh - 140px);
+    margin: 0;
+  }
 }
 
 @media (max-width: 780px) {
