@@ -2,5 +2,9 @@
   "../docs/mathematics/linear-algebra/ch01-ch03.md": {
     "postId": 11,
     "link": "https://lightblue-bison-180681.hostingersite.com/ch01-vector-spaces/"
+  },
+  "../docs/mathematics/math-of-proof/part-1.md": {
+    "postId": 59,
+    "link": "https://lightblue-bison-180681.hostingersite.com/part-1/"
   }
 }
