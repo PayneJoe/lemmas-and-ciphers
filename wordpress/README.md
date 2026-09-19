@@ -21,16 +21,20 @@ VitePress site (`docs/`) so cross-references keep working on WordPress.
   `[!Warning]`, `[!Caution]`) as styled callout boxes, matching how
   VitePress renders this syntax natively (plain markdown-it does not
   support it out of the box).
+- `scripts/heading-anchors.mjs` — assigns GitHub-style `id`s to headings
+  (matching VitePress's auto-generated slugs), so a note's hand-written
+  Table of Contents links (e.g. `[Sum of Subspaces](#sum-of-subspaces)`)
+  actually resolve on WordPress instead of being dead links.
 - `scripts/generate-sidebar-widget.mjs` — generates the HTML for the
   sidebar "quick navigation" Custom HTML widget, grouping published posts
   by category (Mathematics / Cryptography / Formal Verification). Re-run
   and re-paste into the widget whenever notes are added/removed.
-- `plugin/additional.css` — CSS for the admonition callout boxes and the
-  sidebar navigation widget. Paste this into `wp-admin → Appearance →
-  Customize → Additional CSS` (see "Site styling" below) — it is **not**
-  bundled into the plugin zip, since re-uploading the plugin proved
-  unreliable on some managed hosts (Additional CSS applies instantly, no
-  install/cache step involved).
+- `plugin/additional.css` — CSS for the admonition callout boxes, the
+  per-post floating Table of Contents, and the sidebar navigation widget.
+  Paste this into `wp-admin → Appearance → Customize → Additional CSS`
+  (see "Site styling" below) — it is **not** bundled into the plugin zip,
+  since re-uploading the plugin proved unreliable on some managed hosts
+  (Additional CSS applies instantly, no install/cache step involved).
 - `post-mapping.json` — tracks which Markdown file maps to which WordPress
   post ID, so re-running the publish script **updates** existing posts
   instead of creating duplicates. Safe to commit.
@@ -87,6 +91,11 @@ covers:
 - Admonition callout box styling (`.md-alert*`) — tinted background,
   colored left border, and bold title per kind (note/tip/important/
   warning/caution).
+- Per-post floating Table of Contents (`.post-toc`) — floats a note's
+  hand-written `<details><summary>Table of Contents</summary>...</details>`
+  block to the right of the post body and keeps it in view while
+  scrolling, so it's easy to jump to a specific section in long notes.
+  Falls back to a plain non-floating box on narrow screens.
 - Sidebar navigation widget styling (`.lemmas-sidebar-nav`, see below).
 
 Whenever `plugin/additional.css` changes, re-paste it (there's no REST API
@@ -150,19 +159,23 @@ What it does per file:
    "Lemma X.Y"/"Definition X.Y" anchors keep working) and turning prose
    mentions of them into hoverable links — same mechanism as the VitePress
    site.
-3. Renders `> [!Note]` / `> [!Important]` / `> [!Tip]` / `> [!Warning]` /
+3. Assigns GitHub-style `id`s to every heading, and floats a leading
+   hand-written Table of Contents block to the side of the post (see "Site
+   styling" above), so its links actually resolve and long notes are easy
+   to navigate.
+4. Renders `> [!Note]` / `> [!Important]` / `> [!Tip]` / `> [!Warning]` /
    `> [!Caution]` blockquotes as styled callout boxes (same visual intent
    as VitePress's built-in admonition support).
-4. Leaves `$...$` / `$$...$$` math untouched (protected from Markdown's
+5. Leaves `$...$` / `$$...$$` math untouched (protected from Markdown's
    emphasis parsing) so the MathJax/QuickLaTeX plugin renders it client-side.
-5. Uploads any local images (`![alt](./img/foo.png)`) to the WordPress
+6. Uploads any local images (`![alt](./img/foo.png)`) to the WordPress
    media library and rewrites the URL.
-6. Assigns a WordPress category automatically based on the note's folder
+7. Assigns a WordPress category automatically based on the note's folder
    under `docs/` (`docs/mathematics/...` → "Mathematics",
    `docs/cryptography/...` → "Cryptography",
    `docs/formal-verification/...` → "Formal Verification"), creating the
    category via REST if it doesn't exist yet.
-7. Publishes a new post, or **updates** the existing one if this file was
+8. Publishes a new post, or **updates** the existing one if this file was
    published before (tracked in `post-mapping.json`).
 
 Re-run the same command any time you edit the Markdown note — it updates

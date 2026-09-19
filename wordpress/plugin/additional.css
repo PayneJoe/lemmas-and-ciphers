@@ -124,3 +124,64 @@
   color: #999;
   font-style: italic;
 }
+
+/* ---------- 3. Per-post floating Table of Contents ---------- */
+/*
+ * Applied to the note's hand-written `<details><summary>Table of
+ * Contents</summary>...</details>` block (tagged with class "post-toc" by
+ * the publish script). Floats it to the right of the post body and keeps
+ * it in view while scrolling, so long notes are easier to jump around in.
+ * Falls back to a plain non-floating box (original inline behavior) on
+ * narrow screens.
+ */
+.entry-content details.post-toc {
+  float: right;
+  clear: right;
+  width: 260px;
+  max-height: 75vh;
+  overflow-y: auto;
+  margin: 0 0 1.5em 1.5em;
+  padding: 0.85em 1.1em;
+  background: #f6f8fa;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 32px;
+}
+
+.entry-content details.post-toc summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.entry-content details.post-toc ul {
+  margin: 0.5em 0 0;
+  padding-left: 1.1em;
+}
+
+.entry-content details.post-toc li {
+  margin: 0.2em 0;
+}
+
+.entry-content details.post-toc a {
+  color: #9a2b2b;
+  text-decoration: none;
+}
+
+.entry-content details.post-toc a:hover,
+.entry-content details.post-toc a:focus-visible {
+  text-decoration: underline;
+}
+
+@media (max-width: 780px) {
+  .entry-content details.post-toc {
+    float: none;
+    position: static;
+    width: auto;
+    max-height: none;
+    margin: 0 0 1.5em;
+  }
+}

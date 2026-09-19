@@ -36,6 +36,7 @@ import MarkdownIt from 'markdown-it';
 import markdownItAttrs from 'markdown-it-attrs';
 import { termAutolinkPlugin } from './term-autolink.mjs';
 import { admonitionPlugin } from './admonition.mjs';
+import { headingAnchorsPlugin } from './heading-anchors.mjs';
 
 const SCRIPTS_DIR = path.dirname(fileURLToPath(import.meta.url));
 const WORDPRESS_DIR = path.dirname(SCRIPTS_DIR);
@@ -136,12 +137,30 @@ function buildRenderer() {
   md.use(markdownItAttrs);
   md.use(termAutolinkPlugin);
   md.use(admonitionPlugin);
+  md.use(headingAnchorsPlugin);
   return md;
 }
 
 function extractTitle(markdown) {
   const match = markdown.match(/^#\s+(.+)$/m);
   return match ? match[1].trim() : null;
+}
+
+// --- Table of contents styling --------------------------------------------
+//
+// Notes commonly start with a hand-written `<details><summary>Table of
+// Contents</summary>...</details>` block linking to heading anchors. Tag it
+// with a class so it can be floated as a sticky sidebar box (see
+// plugin/additional.css .post-toc rules) instead of sitting inline at the
+// top of the post, which is more convenient to navigate for long notes.
+
+function markTableOfContents(html) {
+  return html.replace(
+    /<details>(\s*<summary>(?:<strong>)?\s*Table of Contents\b[\s\S]*?<\/details>)/i,
+    // `open` so the floating sidebar TOC is visible immediately (still
+    // collapsible by clicking the summary, for readers who want it hidden).
+    (full, rest) => `<details class="post-toc" open>${rest}`
+  );
 }
 
 // --- Image upload --------------------------------------------------------
@@ -303,6 +322,7 @@ async function processFile(filePath, mapping, md) {
   const { protectedText, stash } = protectMath(markdown);
   let html = md.render(protectedText);
   html = restoreMath(html, stash);
+  html = markTableOfContents(html);
 
   const mappingKey = path.relative(process.cwd(), absPath);
   const existingPostId = mapping[mappingKey]?.postId;

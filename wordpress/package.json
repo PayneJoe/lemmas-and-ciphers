@@ -11,6 +11,7 @@
     "publish": "node scripts/publish-to-wordpress.mjs"
   },
   "dependencies": {
+    "github-slugger": "^2.0.0",
     "markdown-it": "^14.1.0",
     "markdown-it-attrs": "^4.2.0"
   }
