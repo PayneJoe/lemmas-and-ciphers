@@ -1,0 +1,55 @@
+name: Publish notes to WordPress
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**/*.md"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: wordpress/package-lock.json
+
+      - name: Install publisher dependencies
+        working-directory: wordpress
+        run: npm ci
+
+      - name: Find changed notes
+        id: changed
+        run: |
+          files=$(git diff --name-only HEAD^ HEAD -- 'docs/**/*.md' | tr '\n' ' ')
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+
+      - name: Publish changed notes
+        if: steps.changed.outputs.files != ''
+        working-directory: wordpress
+        env:
+          WP_URL: ${{ secrets.WP_URL }}
+          WP_USER: ${{ secrets.WP_USER }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+        run: |
+          for f in ${{ steps.changed.outputs.files }}; do
+            node scripts/publish-to-wordpress.mjs "../$f"
+          done
+
+      - name: Refresh section hub pages
+        if: steps.changed.outputs.files != ''
+        working-directory: wordpress
+        env:
+          WP_URL: ${{ secrets.WP_URL }}
+          WP_USER: ${{ secrets.WP_USER }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+        run: node scripts/generate-section-pages.mjs

@@ -46,6 +46,9 @@ VitePress site (`docs/`) so cross-references keep working on WordPress.
   instead of creating duplicates. Safe to commit.
 - `.env.example` — copy to `.env` (gitignored) and fill in your WordPress
   credentials.
+- `../.github/workflows/publish-wordpress.yml` — GitHub Actions workflow
+  that auto-publishes changed notes on push to `main` (see "Automatic
+  publishing" under "Usage" below).
 
 ## 1. Hosting & WordPress setup
 
@@ -251,6 +254,33 @@ submodule folder for the first time, also re-run
 so its link shows up on the section's hub page, and
 `node scripts/generate-sidebar-widget.mjs` and re-paste its output (see
 "Sidebar navigation widget" above) so the sidebar picks it up.
+
+### Automatic publishing (GitHub Actions)
+
+`.github/workflows/publish-wordpress.yml` runs the two steps above for you
+automatically: on every push to `main` that touches a `docs/**/*.md` file,
+it runs `publish-to-wordpress.mjs` on each changed file, then re-runs
+`generate-section-pages.mjs`. So the day-to-day loop is just: **add or
+edit a `.md` file under `docs/`, commit, push** — no manual publish
+command needed.
+
+One-time setup, in the GitHub repo that this branch is pushed to (its
+Settings → Secrets and variables → Actions → **New repository secret**),
+add:
+- `WP_URL` — e.g. `https://lightblue-bison-180681.hostingersite.com`
+- `WP_USER` — the WordPress admin username/email
+- `WP_APP_PASSWORD` — the Application Password (not the login password)
+
+Notes:
+- The sidebar widget and Additional CSS are **not** part of this
+  workflow — those still need a manual re-paste in wp-admin whenever
+  `additional.css` or the sidebar HTML changes (see sections 4–5 above);
+  the workflow only handles publishing post/page content via the REST API.
+- Deleting/renaming a `.md` file is not auto-handled (no post is deleted);
+  remove it manually in wp-admin if needed.
+- You can still run any script manually at any time — the workflow doesn't
+  replace that, it just saves you from remembering to run it after normal
+  edits.
 
 ## 10. Notes / limitations
 
