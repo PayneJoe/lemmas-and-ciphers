@@ -1,0 +1,126 @@
+/*
+ * Additional CSS for the lemmas-and-ciphers WordPress site (Twenty Ten
+ * theme). Paste this whole file into:
+ *   wp-admin -> Appearance -> Customize -> Additional CSS -> Publish
+ *
+ * It is tracked here in the repo for version control, but WordPress has no
+ * REST endpoint for Additional CSS on this host, so it must be pasted in
+ * manually whenever it changes.
+ *
+ * Covers:
+ *   1. GitHub/VitePress-style admonition callout boxes (.md-alert*),
+ *      produced by wordpress/scripts/admonition.mjs.
+ *   2. Sidebar quick-navigation widget (.lemmas-sidebar-nav), pasted as a
+ *      Custom HTML widget in Appearance -> Widgets -> Primary Widget Area.
+ */
+
+/* ---------- 1. Admonition / callout boxes ---------- */
+
+.entry-content blockquote.md-alert {
+  font-style: normal;
+  margin: 1.25em 0;
+  padding: 0.9em 1.1em;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-left: 4px solid #999;
+  border-radius: 6px;
+  background: #f6f8fa;
+}
+
+.entry-content blockquote.md-alert p {
+  margin: 0.35em 0 0;
+  font-style: normal;
+}
+
+.entry-content blockquote.md-alert p:first-child {
+  margin-top: 0;
+}
+
+.md-alert-break {
+  display: block;
+  content: '';
+  margin-bottom: 0.35em;
+}
+
+.entry-content blockquote.md-alert-note {
+  border-left-color: #0969da;
+  background: #ddf4ff;
+}
+.entry-content blockquote.md-alert-note strong {
+  color: #0969da;
+}
+
+.entry-content blockquote.md-alert-tip {
+  border-left-color: #1a7f37;
+  background: #dafbe1;
+}
+.entry-content blockquote.md-alert-tip strong {
+  color: #1a7f37;
+}
+
+.entry-content blockquote.md-alert-important {
+  border-left-color: #8250df;
+  background: #fbefff;
+}
+.entry-content blockquote.md-alert-important strong {
+  color: #8250df;
+}
+
+.entry-content blockquote.md-alert-warning {
+  border-left-color: #9a6700;
+  background: #fff8c5;
+}
+.entry-content blockquote.md-alert-warning strong {
+  color: #9a6700;
+}
+
+.entry-content blockquote.md-alert-caution {
+  border-left-color: #cf222e;
+  background: #ffebe9;
+}
+.entry-content blockquote.md-alert-caution strong {
+  color: #cf222e;
+}
+
+/* ---------- 2. Sidebar quick-navigation widget ---------- */
+
+.lemmas-sidebar-nav {
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.lemmas-sidebar-nav h4 {
+  margin: 0.9em 0 0.3em;
+  font-size: 0.86rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+}
+
+.lemmas-sidebar-nav h4:first-child {
+  margin-top: 0;
+}
+
+.lemmas-sidebar-nav ul {
+  list-style: none;
+  margin: 0 0 0.6em;
+  padding: 0;
+}
+
+.lemmas-sidebar-nav li {
+  margin: 0.25em 0;
+}
+
+.lemmas-sidebar-nav a {
+  color: #9a2b2b;
+  text-decoration: none;
+}
+
+.lemmas-sidebar-nav a:hover,
+.lemmas-sidebar-nav a:focus-visible {
+  text-decoration: underline;
+}
+
+.lemmas-sidebar-nav .lemmas-sidebar-empty {
+  color: #999;
+  font-style: italic;
+}

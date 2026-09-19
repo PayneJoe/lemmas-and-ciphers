@@ -200,14 +200,71 @@ async function resolveAndUploadImages(markdown, markdownFilePath) {
   return result;
 }
 
+// --- Category resolution --------------------------------------------------
+//
+// Maps a note's folder (relative to docs/) to a WordPress category name, so
+// posts show up under "Mathematics" / "Cryptography" / "Formal Verification"
+// in the site's nav menu and archive pages without manual tagging.
+
+const FOLDER_TO_CATEGORY = {
+  mathematics: 'Mathematics',
+  cryptography: 'Cryptography',
+  'formal-verification': 'Formal Verification',
+};
+
+const categoryIdCache = new Map();
+
+function categoryNameForFile(absPath) {
+  const parts = absPath.split(path.sep);
+  const docsIndex = parts.lastIndexOf('docs');
+  if (docsIndex === -1 || docsIndex + 1 >= parts.length) return null;
+  return FOLDER_TO_CATEGORY[parts[docsIndex + 1]] || null;
+}
+
+async function getOrCreateCategoryId(name) {
+  if (categoryIdCache.has(name)) return categoryIdCache.get(name);
+
+  const searchRes = await fetch(
+    `${WP_URL}/wp-json/wp/v2/categories?search=${encodeURIComponent(name)}`,
+    { headers: { Authorization: authHeader() } }
+  );
+  if (searchRes.ok) {
+    const found = await searchRes.json();
+    const exact = found.find((c) => c.name === name);
+    if (exact) {
+      categoryIdCache.set(name, exact.id);
+      return exact.id;
+    }
+  }
+
+  const createRes = await fetch(`${WP_URL}/wp-json/wp/v2/categories`, {
+    method: 'POST',
+    headers: {
+      Authorization: authHeader(),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ name }),
+  });
+  if (!createRes.ok) {
+    const text = await createRes.text();
+    throw new Error(`Category creation failed for "${name}": ${createRes.status} ${text}`);
+  }
+  const created = await createRes.json();
+  categoryIdCache.set(name, created.id);
+  return created.id;
+}
+
 // --- WordPress post publish/update --------------------------------------
 
-async function publishPost({ title, html, existingPostId }) {
+async function publishPost({ title, html, existingPostId, categoryIds }) {
   const body = {
     title,
     content: `<!-- wp:html -->\n${html}\n<!-- /wp:html -->`,
     status: 'publish',
   };
+  if (categoryIds && categoryIds.length) {
+    body.categories = categoryIds;
+  }
 
   const url = existingPostId
     ? `${WP_URL}/wp-json/wp/v2/posts/${existingPostId}`
@@ -250,7 +307,14 @@ async function processFile(filePath, mapping, md) {
   const mappingKey = path.relative(process.cwd(), absPath);
   const existingPostId = mapping[mappingKey]?.postId;
 
-  const result = await publishPost({ title, html, existingPostId });
+  const categoryName = categoryNameForFile(absPath);
+  let categoryIds;
+  if (categoryName) {
+    console.log(`  category: ${categoryName}`);
+    categoryIds = [await getOrCreateCategoryId(categoryName)];
+  }
+
+  const result = await publishPost({ title, html, existingPostId, categoryIds });
   mapping[mappingKey] = { postId: result.id, link: result.link };
 
   console.log(`  ${existingPostId ? 'Updated' : 'Created'} post #${result.id}: ${result.link}`);

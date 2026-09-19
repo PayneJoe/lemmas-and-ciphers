@@ -21,6 +21,16 @@ VitePress site (`docs/`) so cross-references keep working on WordPress.
   `[!Warning]`, `[!Caution]`) as styled callout boxes, matching how
   VitePress renders this syntax natively (plain markdown-it does not
   support it out of the box).
+- `scripts/generate-sidebar-widget.mjs` — generates the HTML for the
+  sidebar "quick navigation" Custom HTML widget, grouping published posts
+  by category (Mathematics / Cryptography / Formal Verification). Re-run
+  and re-paste into the widget whenever notes are added/removed.
+- `plugin/additional.css` — CSS for the admonition callout boxes and the
+  sidebar navigation widget. Paste this into `wp-admin → Appearance →
+  Customize → Additional CSS` (see "Site styling" below) — it is **not**
+  bundled into the plugin zip, since re-uploading the plugin proved
+  unreliable on some managed hosts (Additional CSS applies instantly, no
+  install/cache step involved).
 - `post-mapping.json` — tracks which Markdown file maps to which WordPress
   post ID, so re-running the publish script **updates** existing posts
   instead of creating duplicates. Safe to commit.
@@ -58,8 +68,10 @@ From `wp-admin → Plugins`:
   1. Zip the `plugin/lemmas-hover-tooltip/` folder (or copy it directly)
      into your WordPress install's `wp-content/plugins/` directory.
   2. Activate "Lemmas Hover Tooltip" from `wp-admin → Plugins`.
-  This same plugin also carries the CSS for admonition callout boxes
-  (`.md-alert*`), so re-upload it whenever `assets/tooltip.css` changes.
+  This plugin only carries the JS hover behavior — its styling and the
+  admonition callout box CSS live in `plugin/additional.css` instead (see
+  "Site styling" below), since re-uploading the plugin zip proved
+  unreliable for delivering CSS updates on some managed hosts.
 
 ## 3. Theme
 
@@ -67,7 +79,53 @@ For an arXiv/classic-academic-blog look, install WordPress's official
 **"Twenty Ten"** theme: `wp-admin → Appearance → Themes → Add New Theme` →
 search "Twenty Ten" → **Install** → **Activate**.
 
-## 4. Configure the publish script
+## 4. Site styling (Additional CSS)
+
+Paste the full contents of `plugin/additional.css` into `wp-admin →
+Appearance → Customize → Additional CSS`, then click **Publish**. This
+covers:
+- Admonition callout box styling (`.md-alert*`) — tinted background,
+  colored left border, and bold title per kind (note/tip/important/
+  warning/caution).
+- Sidebar navigation widget styling (`.lemmas-sidebar-nav`, see below).
+
+Whenever `plugin/additional.css` changes, re-paste it (there's no REST API
+for Additional CSS on managed hosts, so this step stays manual).
+
+## 5. Sidebar navigation widget
+
+Twenty Ten ships a right-hand sidebar ("Primary Widget Area"). To add a
+quick-navigation list grouped by Mathematics / Cryptography / Formal
+Verification:
+
+```sh
+cd wordpress
+node scripts/generate-sidebar-widget.mjs
+```
+
+Copy the printed HTML, then go to `wp-admin → Appearance → Widgets →
+Primary Widget Area → add a "Custom HTML" widget` and paste it in as the
+widget's content. Re-run the script and re-paste whenever notes are
+added/removed so the sidebar stays current.
+
+## 6. Top navigation menu
+
+Add "About" and the three category archives to the site's nav menu
+(`wp-admin → Appearance → Menus`):
+1. If no menu exists yet, create one and assign it to the "Primary
+   Navigation Menu" (or "Header Menu") location.
+2. Under **Pages** in the left column, check **About** → **Add to Menu**.
+3. Under **Categories**, check **Mathematics**, **Cryptography**, and
+   **Formal Verification** → **Add to Menu**.
+4. Drag the items into this order: Home, Mathematics, Cryptography, Formal
+   Verification, About.
+5. Click **Save Menu**.
+
+(The Menus REST API is blocked on this host even with an Application
+Password, so this step can't be automated from the publish script — it's a
+one-time setup, not something you'll repeat per note.)
+
+## 7. Configure the publish script
 
 ```sh
 cd wordpress
@@ -76,7 +134,7 @@ cp .env.example .env
 # edit .env: set WP_URL, WP_USER, WP_APP_PASSWORD
 ```
 
-## 5. Usage
+## 8. Usage
 
 Publish (or update) one or more notes:
 
@@ -99,13 +157,21 @@ What it does per file:
    emphasis parsing) so the MathJax/QuickLaTeX plugin renders it client-side.
 5. Uploads any local images (`![alt](./img/foo.png)`) to the WordPress
    media library and rewrites the URL.
-6. Publishes a new post, or **updates** the existing one if this file was
+6. Assigns a WordPress category automatically based on the note's folder
+   under `docs/` (`docs/mathematics/...` → "Mathematics",
+   `docs/cryptography/...` → "Cryptography",
+   `docs/formal-verification/...` → "Formal Verification"), creating the
+   category via REST if it doesn't exist yet.
+7. Publishes a new post, or **updates** the existing one if this file was
    published before (tracked in `post-mapping.json`).
 
 Re-run the same command any time you edit the Markdown note — it updates
-the same WordPress post in place.
+the same WordPress post in place. After publishing a note in a new
+category for the first time, re-run
+`node scripts/generate-sidebar-widget.mjs` and re-paste its output (see
+"Sidebar navigation widget" above) so the sidebar picks it up.
 
-## 6. Notes / limitations
+## 9. Notes / limitations
 
 - The hover-tooltip only resolves cross-references to anchors on the
   **same** WordPress post/page — identical to the current VitePress site's
