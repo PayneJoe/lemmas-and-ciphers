@@ -103,7 +103,9 @@ covers:
   the whole time you scroll, no matter which section of the post you're
   reading, so you can jump to any section directly. On narrow/mobile
   screens (< 900px) it falls back to a plain non-floating inline box so
-  it doesn't cover the article text.
+  it doesn't cover the article text. Hidden everywhere except a post's own
+  page (home page, category archives, and other listings only show the
+  teaser excerpt, not the TOC).
 - Sidebar navigation widget styling (`.lemmas-sidebar-nav`, see below).
 - Section hub page styling (`.lemmas-section-links`, see "Section hub
   pages" below) — the submodule link list on the Mathematics /

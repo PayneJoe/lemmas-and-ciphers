@@ -136,7 +136,16 @@
  * narrow for a floating panel (< 900px, e.g. phones/tablets) it falls
  * back to a plain non-floating inline box instead, so it doesn't cover
  * the article text.
+ *
+ * The TOC block sits before the <!--more--> cut, so it would otherwise
+ * also show up in the teaser on the home page and category/archive
+ * listings. Twenty Ten tags the <body> with "single-post" only on an
+ * individual post's own page, so hide the TOC everywhere else.
  */
+body:not(.single-post) .entry-content details.post-toc {
+  display: none;
+}
+
 .entry-content details.post-toc {
   position: fixed;
   top: 110px;
