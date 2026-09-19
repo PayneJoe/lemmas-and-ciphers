@@ -91,13 +91,13 @@ covers:
 - Admonition callout box styling (`.md-alert*`) — tinted background,
   colored left border, and bold title per kind (note/tip/important/
   warning/caution).
-- Per-post Table of Contents (`.post-toc`) — on wide viewports (>= 1480px)
-  it's pinned with `position: fixed` in the empty page margin outside
-  Twenty Ten's centered 940px content column, so it stays completely
-  still while scrolling. On medium viewports it falls back to floating
-  inside the post body with `position: sticky` (moves with the column
-  but stays in view while scrolling). On narrow/mobile screens it falls
-  back further to a plain non-floating inline box.
+- Per-post Table of Contents (`.post-toc`) — pinned with `position: fixed`
+  to the right edge of the browser window (>= 900px viewports), mirroring
+  the "On this page" outline on the old VitePress site: it stays visible
+  the whole time you scroll, no matter which section of the post you're
+  reading, so you can jump to any section directly. On narrow/mobile
+  screens (< 900px) it falls back to a plain non-floating inline box so
+  it doesn't cover the article text.
 - Sidebar navigation widget styling (`.lemmas-sidebar-nav`, see below).
 
 Whenever `plugin/additional.css` changes, re-paste it (there's no REST API

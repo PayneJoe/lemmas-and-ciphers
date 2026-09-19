@@ -129,29 +129,30 @@
 /*
  * Applied to the note's hand-written `<details><summary>Table of
  * Contents</summary>...</details>` block (tagged with class "post-toc" by
- * the publish script). On wide viewports it's pinned in the empty page
- * margin outside Twenty Ten's centered 940px content column (position:
- * fixed, so it never moves at all while scrolling). On medium viewports,
- * where there isn't enough margin space, it falls back to floating inside
- * the post body with position: sticky. On narrow/mobile screens it falls
- * back further to a plain non-floating inline box.
+ * the publish script). Mirrors the "On this page" outline on the old
+ * VitePress site: always pinned to the viewport (position: fixed), so no
+ * matter which section of the article you're reading, the TOC stays put
+ * on screen and you can jump straight to any section. On screens too
+ * narrow for a floating panel (< 900px, e.g. phones/tablets) it falls
+ * back to a plain non-floating inline box instead, so it doesn't cover
+ * the article text.
  */
 .entry-content details.post-toc {
-  float: right;
-  clear: right;
-  width: 260px;
-  max-height: 75vh;
+  position: fixed;
+  top: 110px;
+  right: 16px;
+  width: 240px;
+  max-height: calc(100vh - 140px);
   overflow-y: auto;
-  margin: 0 0 1.5em 1.5em;
+  margin: 0;
   padding: 0.85em 1.1em;
-  background: #f6f8fa;
+  background: rgba(246, 248, 250, 0.97);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 6px;
   font-size: 0.86rem;
   line-height: 1.5;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 32px;
+  z-index: 90;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .entry-content details.post-toc summary {
@@ -178,34 +179,15 @@
   text-decoration: underline;
 }
 
-/*
- * Wide viewports: Twenty Ten's #wrapper is a fixed 940px column centered
- * with `margin: 0 auto`, so its right edge sits at `50% + 470px` from the
- * left of the viewport. Once the viewport is wide enough to leave a clear
- * gutter + the TOC's own width free beyond that edge, pin the TOC there
- * with position: fixed so it stays put in the page margin regardless of
- * scroll position. (940/2 + 24px gutter + 240px box = 734px on each side
- * needed beyond the wrapper's half-width, i.e. viewport >= 940 + 2*264.)
- */
-@media (min-width: 1480px) {
+@media (max-width: 900px) {
   .entry-content details.post-toc {
-    position: fixed;
-    float: none;
-    clear: none;
-    top: 100px;
-    left: calc(50% + 494px);
-    width: 240px;
-    max-height: calc(100vh - 140px);
-    margin: 0;
-  }
-}
-
-@media (max-width: 780px) {
-  .entry-content details.post-toc {
-    float: none;
     position: static;
+    top: auto;
+    right: auto;
     width: auto;
     max-height: none;
     margin: 0 0 1.5em;
+    box-shadow: none;
+    background: #f6f8fa;
   }
 }
