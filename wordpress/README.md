@@ -172,6 +172,24 @@ one-time setup, not something you'll repeat per note. Re-running
 `generate-section-pages.mjs` updates the same Pages in place, so the menu
 links don't need to change again.)
 
+### Dropdown submenu for submodules
+
+Once a section (e.g. Mathematics) has more than one submodule, you can add
+a hover dropdown listing them under that section's nav entry — Twenty
+Ten's built-in menu CSS already supports nested/hover submenus, no extra
+CSS needed:
+1. In the same **Appearance → Menus** screen, under **Categories**, check
+   the submodule categories (e.g. **Linear Algebra**, **Math of Proof**)
+   → **Add to Menu**.
+2. Drag each new item slightly to the right, directly under the matching
+   section entry (e.g. under **Mathematics**), until it indents as a
+   **sub item**.
+3. Click **Save Menu**.
+
+Hovering the parent entry (e.g. "Mathematics") now pops up its submodules;
+clicking one opens `/category/<section>/<submodule>/`, which lists that
+submodule's posts as title + excerpt links.
+
 ## 8. Configure the publish script
 
 ```sh
