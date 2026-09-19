@@ -163,6 +163,58 @@ function markTableOfContents(html) {
   );
 }
 
+// --- Home-page teaser (<!--more--> + manual excerpt) ----------------------
+//
+// Twenty Ten's home-page loop calls the_content() (full post body), while
+// its category/archive loop calls the_excerpt(). Without a manual excerpt
+// or a `<!--more-->` marker, the home page therefore shows every post in
+// full, and the auto-generated excerpt is just the first 55 words of raw
+// HTML (which today means garbled Table-of-Contents text). Fix both by
+// finding the same "teaser" cut point - the 2nd paragraph-level block
+// (<p>/<ul>/<ol>/<blockquote>) after the TOC - and (a) inserting a
+// `<!--more-->` marker there so the_content() truncates with a "Continue
+// reading" link on the home page (full content still shows on the single
+// post page - this is standard, built-in WordPress behavior), and (b)
+// deriving a plain-text excerpt from that same window for the_excerpt().
+
+const TEASER_BLOCK_RE = /<\/(p|ul|ol|blockquote)>/gi;
+
+function findTeaserCutIndex(html, blockCount = 2) {
+  const tocEnd = html.search(/<\/details>/i);
+  const searchStart = tocEnd === -1 ? 0 : tocEnd + '</details>'.length;
+  TEASER_BLOCK_RE.lastIndex = searchStart;
+  let count = 0;
+  let match;
+  while ((match = TEASER_BLOCK_RE.exec(html))) {
+    count += 1;
+    if (count >= blockCount) {
+      return match.index + match[0].length;
+    }
+  }
+  return -1; // post is too short to need truncation
+}
+
+function insertReadMoreMarker(html) {
+  const cutIndex = findTeaserCutIndex(html);
+  if (cutIndex === -1) return html;
+  return `${html.slice(0, cutIndex)}\n<!--more-->\n${html.slice(cutIndex)}`;
+}
+
+function excerptFromHtml(html, maxWords = 50) {
+  const cutIndex = findTeaserCutIndex(html);
+  const teaserHtml = cutIndex === -1 ? html : html.slice(0, cutIndex);
+  const tocStripped = teaserHtml.replace(/<details[^>]*>[\s\S]*?<\/details>/i, ' ');
+  const text = tocStripped
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&hellip;/g, '...')
+    .replace(/&[a-z#0-9]+;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const words = text.split(' ');
+  if (words.length <= maxWords) return text;
+  return `${words.slice(0, maxWords).join(' ')}\u2026`;
+}
+
 // --- Image upload --------------------------------------------------------
 
 async function uploadImage(localPath) {
@@ -221,9 +273,15 @@ async function resolveAndUploadImages(markdown, markdownFilePath) {
 
 // --- Category resolution --------------------------------------------------
 //
-// Maps a note's folder (relative to docs/) to a WordPress category name, so
-// posts show up under "Mathematics" / "Cryptography" / "Formal Verification"
-// in the site's nav menu and archive pages without manual tagging.
+// Maps a note's folder (relative to docs/) to a two-level WordPress
+// category: a parent category ("Mathematics" / "Cryptography" / "Formal
+// Verification") and, when the note lives in a submodule subfolder
+// (docs/<category>/<submodule>/...), a child category for that submodule
+// (e.g. "Linear Algebra", "Math of Proof"). Posts are tagged with the
+// child category when one exists, so each submodule's archive page
+// naturally lists just its own posts. Deeper folders (e.g. chapter
+// subfolders under a submodule) are ignored for categorization - they're
+// just organizational, not their own category.
 
 const FOLDER_TO_CATEGORY = {
   mathematics: 'Mathematics',
@@ -231,17 +289,39 @@ const FOLDER_TO_CATEGORY = {
   'formal-verification': 'Formal Verification',
 };
 
-const categoryIdCache = new Map();
+// Small words stay lowercase when title-casing a folder name, matching
+// natural section titles like "Math of Proof" / "Mathlib in Lean".
+const TITLE_CASE_LOWERCASE_WORDS = new Set(['of', 'in', 'and', 'the', 'a', 'on', 'to', 'for', 'vs', 'is']);
 
-function categoryNameForFile(absPath) {
+function humanizeFolderName(folder) {
+  return folder
+    .split('-')
+    .map((word, i) => {
+      const lower = word.toLowerCase();
+      if (i > 0 && TITLE_CASE_LOWERCASE_WORDS.has(lower)) return lower;
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join(' ');
+}
+
+function resolveCategoryPathForFile(absPath) {
   const parts = absPath.split(path.sep);
   const docsIndex = parts.lastIndexOf('docs');
   if (docsIndex === -1 || docsIndex + 1 >= parts.length) return null;
-  return FOLDER_TO_CATEGORY[parts[docsIndex + 1]] || null;
+  const parentName = FOLDER_TO_CATEGORY[parts[docsIndex + 1]];
+  if (!parentName) return null;
+  // docs/<category>/<submodule>/.../file.md needs at least 3 segments
+  // after "docs" (category, submodule, file) for a submodule to exist.
+  const hasSubmodule = parts.length - docsIndex >= 4;
+  const childName = hasSubmodule ? humanizeFolderName(parts[docsIndex + 2]) : null;
+  return { parentName, childName };
 }
 
-async function getOrCreateCategoryId(name) {
-  if (categoryIdCache.has(name)) return categoryIdCache.get(name);
+const categoryIdCache = new Map();
+
+async function getOrCreateCategoryId(name, parentId) {
+  const cacheKey = `${parentId || 0}:${name}`;
+  if (categoryIdCache.has(cacheKey)) return categoryIdCache.get(cacheKey);
 
   const searchRes = await fetch(
     `${WP_URL}/wp-json/wp/v2/categories?search=${encodeURIComponent(name)}`,
@@ -249,12 +329,15 @@ async function getOrCreateCategoryId(name) {
   );
   if (searchRes.ok) {
     const found = await searchRes.json();
-    const exact = found.find((c) => c.name === name);
+    const exact = found.find((c) => c.name === name && (!parentId || c.parent === parentId));
     if (exact) {
-      categoryIdCache.set(name, exact.id);
+      categoryIdCache.set(cacheKey, exact.id);
       return exact.id;
     }
   }
+
+  const createBody = { name };
+  if (parentId) createBody.parent = parentId;
 
   const createRes = await fetch(`${WP_URL}/wp-json/wp/v2/categories`, {
     method: 'POST',
@@ -262,20 +345,20 @@ async function getOrCreateCategoryId(name) {
       Authorization: authHeader(),
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name }),
+    body: JSON.stringify(createBody),
   });
   if (!createRes.ok) {
     const text = await createRes.text();
     throw new Error(`Category creation failed for "${name}": ${createRes.status} ${text}`);
   }
   const created = await createRes.json();
-  categoryIdCache.set(name, created.id);
+  categoryIdCache.set(cacheKey, created.id);
   return created.id;
 }
 
 // --- WordPress post publish/update --------------------------------------
 
-async function publishPost({ title, html, existingPostId, categoryIds }) {
+async function publishPost({ title, html, existingPostId, categoryIds, excerpt }) {
   const body = {
     title,
     content: `<!-- wp:html -->\n${html}\n<!-- /wp:html -->`,
@@ -283,6 +366,9 @@ async function publishPost({ title, html, existingPostId, categoryIds }) {
   };
   if (categoryIds && categoryIds.length) {
     body.categories = categoryIds;
+  }
+  if (excerpt) {
+    body.excerpt = excerpt;
   }
 
   const url = existingPostId
@@ -323,18 +409,27 @@ async function processFile(filePath, mapping, md) {
   let html = md.render(protectedText);
   html = restoreMath(html, stash);
   html = markTableOfContents(html);
+  const excerpt = excerptFromHtml(html);
+  html = insertReadMoreMarker(html);
 
   const mappingKey = path.relative(process.cwd(), absPath);
   const existingPostId = mapping[mappingKey]?.postId;
 
-  const categoryName = categoryNameForFile(absPath);
+  const categoryPath = resolveCategoryPathForFile(absPath);
   let categoryIds;
-  if (categoryName) {
-    console.log(`  category: ${categoryName}`);
-    categoryIds = [await getOrCreateCategoryId(categoryName)];
+  if (categoryPath) {
+    const parentId = await getOrCreateCategoryId(categoryPath.parentName);
+    if (categoryPath.childName) {
+      const childId = await getOrCreateCategoryId(categoryPath.childName, parentId);
+      console.log(`  category: ${categoryPath.parentName} > ${categoryPath.childName}`);
+      categoryIds = [childId];
+    } else {
+      console.log(`  category: ${categoryPath.parentName}`);
+      categoryIds = [parentId];
+    }
   }
 
-  const result = await publishPost({ title, html, existingPostId, categoryIds });
+  const result = await publishPost({ title, html, existingPostId, categoryIds, excerpt });
   mapping[mappingKey] = { postId: result.id, link: result.link };
 
   console.log(`  ${existingPostId ? 'Updated' : 'Created'} post #${result.id}: ${result.link}`);

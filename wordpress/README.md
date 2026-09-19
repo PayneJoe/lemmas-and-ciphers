@@ -29,8 +29,14 @@ VitePress site (`docs/`) so cross-references keep working on WordPress.
   sidebar "quick navigation" Custom HTML widget, grouping published posts
   by category (Mathematics / Cryptography / Formal Verification). Re-run
   and re-paste into the widget whenever notes are added/removed.
+- `scripts/generate-section-pages.mjs` — creates/updates the
+  "Mathematics" / "Cryptography" / "Formal Verification" WordPress Pages,
+  each listing only links to that section's submodule categories (e.g.
+  "Linear Algebra", "Math of Proof") instead of post content. Re-run
+  whenever a submodule folder is published for the first time.
 - `plugin/additional.css` — CSS for the admonition callout boxes, the
-  per-post floating Table of Contents, and the sidebar navigation widget.
+  per-post floating Table of Contents, the sidebar navigation widget, and
+  the section hub pages' submodule link lists.
   Paste this into `wp-admin → Appearance → Customize → Additional CSS`
   (see "Site styling" below) — it is **not** bundled into the plugin zip,
   since re-uploading the plugin proved unreliable on some managed hosts
@@ -99,6 +105,9 @@ covers:
   screens (< 900px) it falls back to a plain non-floating inline box so
   it doesn't cover the article text.
 - Sidebar navigation widget styling (`.lemmas-sidebar-nav`, see below).
+- Section hub page styling (`.lemmas-section-links`, see "Section hub
+  pages" below) — the submodule link list on the Mathematics /
+  Cryptography / Formal Verification Pages.
 
 Whenever `plugin/additional.css` changes, re-paste it (there's no REST API
 for Additional CSS on managed hosts, so this step stays manual).
@@ -119,24 +128,49 @@ Primary Widget Area → add a "Custom HTML" widget` and paste it in as the
 widget's content. Re-run the script and re-paste whenever notes are
 added/removed so the sidebar stays current.
 
-## 6. Top navigation menu
+## 6. Section hub pages
 
-Add "About" and the three category archives to the site's nav menu
+Each note is auto-assigned a two-level category: a parent ("Mathematics" /
+"Cryptography" / "Formal Verification") and, when it lives in a submodule
+subfolder (`docs/<category>/<submodule>/...`), a child category for that
+submodule (e.g. "Linear Algebra", "Math of Proof"). Rather than the top
+nav pointing straight at a category archive (which would list every post
+under it), it should point at a small "hub" Page that just links to the
+submodules:
+
+```sh
+cd wordpress
+node scripts/generate-section-pages.mjs
+```
+
+This creates/updates the "Mathematics", "Cryptography", and "Formal
+Verification" Pages, each listing links to that section's submodule
+categories (or a "More notes coming soon." placeholder if it has none
+yet, e.g. Cryptography before any submodule folder exists). Re-run it
+whenever a new submodule folder is published for the first time.
+
+## 7. Top navigation menu
+
+Add the section hub Pages and "About" to the site's nav menu
 (`wp-admin → Appearance → Menus`):
 1. If no menu exists yet, create one and assign it to the "Primary
    Navigation Menu" (or "Header Menu") location.
-2. Under **Pages** in the left column, check **About** → **Add to Menu**.
-3. Under **Categories**, check **Mathematics**, **Cryptography**, and
-   **Formal Verification** → **Add to Menu**.
-4. Drag the items into this order: Home, Mathematics, Cryptography, Formal
+2. Under **Pages** in the left column, check **Mathematics**,
+   **Cryptography**, **Formal Verification**, and **About** → **Add to
+   Menu**. (These are the hub Pages from `generate-section-pages.mjs`,
+   not the raw category archives — do not add the same-named entries
+   from the **Categories** box.)
+3. Drag the items into this order: Home, Mathematics, Cryptography, Formal
    Verification, About.
-5. Click **Save Menu**.
+4. Click **Save Menu**.
 
 (The Menus REST API is blocked on this host even with an Application
 Password, so this step can't be automated from the publish script — it's a
-one-time setup, not something you'll repeat per note.)
+one-time setup, not something you'll repeat per note. Re-running
+`generate-section-pages.mjs` updates the same Pages in place, so the menu
+links don't need to change again.)
 
-## 7. Configure the publish script
+## 8. Configure the publish script
 
 ```sh
 cd wordpress
@@ -145,7 +179,7 @@ cp .env.example .env
 # edit .env: set WP_URL, WP_USER, WP_APP_PASSWORD
 ```
 
-## 8. Usage
+## 9. Usage
 
 Publish (or update) one or more notes:
 
@@ -172,21 +206,33 @@ What it does per file:
    emphasis parsing) so the MathJax/QuickLaTeX plugin renders it client-side.
 6. Uploads any local images (`![alt](./img/foo.png)`) to the WordPress
    media library and rewrites the URL.
-7. Assigns a WordPress category automatically based on the note's folder
-   under `docs/` (`docs/mathematics/...` → "Mathematics",
-   `docs/cryptography/...` → "Cryptography",
-   `docs/formal-verification/...` → "Formal Verification"), creating the
-   category via REST if it doesn't exist yet.
-8. Publishes a new post, or **updates** the existing one if this file was
+7. Assigns a two-level WordPress category automatically based on the
+   note's folder under `docs/`: a parent
+   (`docs/mathematics/...` → "Mathematics", `docs/cryptography/...` →
+   "Cryptography", `docs/formal-verification/...` → "Formal
+   Verification") and, if the note lives in a submodule subfolder
+   (`docs/<category>/<submodule>/...`), a child category for that
+   submodule (e.g. `docs/mathematics/linear-algebra/...` → "Linear
+   Algebra"), creating either via REST if they don't exist yet. Posts are
+   tagged with the child category when one exists, so its category
+   archive page lists just that submodule's posts.
+8. Cuts a short teaser after the note's first couple of paragraphs (via a
+   `<!--more-->` marker in the content, plus a matching plain-text
+   `excerpt` field) — the home page and category archives show only this
+   teaser with a "Continue reading →" link, while the single post page
+   still shows the full note.
+9. Publishes a new post, or **updates** the existing one if this file was
    published before (tracked in `post-mapping.json`).
 
 Re-run the same command any time you edit the Markdown note — it updates
-the same WordPress post in place. After publishing a note in a new
-category for the first time, re-run
+the same WordPress post in place. After publishing a note in a **new**
+submodule folder for the first time, also re-run
+`node scripts/generate-section-pages.mjs` (see "Section hub pages" above)
+so its link shows up on the section's hub page, and
 `node scripts/generate-sidebar-widget.mjs` and re-paste its output (see
 "Sidebar navigation widget" above) so the sidebar picks it up.
 
-## 9. Notes / limitations
+## 10. Notes / limitations
 
 - The hover-tooltip only resolves cross-references to anchors on the
   **same** WordPress post/page — identical to the current VitePress site's
