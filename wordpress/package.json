@@ -1,0 +1,17 @@
+{
+  "name": "lemmas-and-ciphers-wordpress-publisher",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Markdown -> WordPress publishing pipeline for Lemmas & Ciphers notes",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "publish": "node scripts/publish-to-wordpress.mjs"
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.0",
+    "markdown-it-attrs": "^4.2.0"
+  }
+}

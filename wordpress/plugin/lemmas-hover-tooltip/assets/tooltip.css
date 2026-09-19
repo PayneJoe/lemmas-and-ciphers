@@ -1,0 +1,77 @@
+/*
+ * Tooltip styling for Lemma/Definition hover cross-references, ported from
+ * the lemmas-and-ciphers VitePress site's custom.css. Uses plain colors
+ * instead of VitePress CSS variables so it works standalone in any
+ * WordPress theme; adjust the colors below to match your theme if needed.
+ */
+
+.lemma-ref,
+.definition-ref {
+  color: #9a2b2b;
+  border-bottom: 1px dashed #c98787;
+  text-decoration: none;
+  cursor: help;
+}
+
+.lemma-ref:hover,
+.lemma-ref:focus-visible,
+.definition-ref:hover,
+.definition-ref:focus-visible {
+  color: #6e1c1c;
+  border-bottom-style: solid;
+}
+
+.lemma-tooltip {
+  position: absolute;
+  z-index: 9999;
+  background: #fffdf8;
+  border: 1px solid #222;
+  border-radius: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  padding: 14px 16px;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: #222;
+}
+
+.lemma-tooltip :is(p) {
+  margin: 0 0 8px;
+}
+
+.lemma-tooltip :is(p):last-of-type {
+  margin-bottom: 0;
+}
+
+.lemma-tooltip strong {
+  color: #6e1c1c;
+}
+
+.lemma-tooltip details {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: #555;
+}
+
+.lemma-tooltip summary {
+  cursor: pointer;
+  color: #555;
+}
+
+.lemma-tooltip-jump {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: #9a2b2b;
+  text-decoration: none;
+}
+
+.lemma-tooltip-jump:hover {
+  color: #6e1c1c;
+  text-decoration: underline;
+}
+
+.lemma-tooltip-fallback {
+  margin: 0;
+  color: #777;
+  font-style: italic;
+}

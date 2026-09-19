@@ -6,3 +6,6 @@
 node_modules/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+
+# WordPress publishing pipeline: local credentials only
+wordpress/.env
