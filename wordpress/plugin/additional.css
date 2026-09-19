@@ -12,6 +12,9 @@
  *      produced by wordpress/scripts/admonition.mjs.
  *   2. Sidebar quick-navigation widget (.lemmas-sidebar-nav), pasted as a
  *      Custom HTML widget in Appearance -> Widgets -> Primary Widget Area.
+ *   3. Per-post floating Table of Contents (.post-toc).
+ *   4. Section hub pages (submodule link lists) (.lemmas-section-links).
+ *   5. Fixed reading font size for the post body (.entry-content).
  */
 
 /* ---------- 1. Admonition / callout boxes ---------- */
@@ -235,4 +238,40 @@ body:not(.single-post) .entry-content details.post-toc {
 .entry-content .lemmas-section-empty {
   color: #999;
   font-style: italic;
+}
+
+/* ---------- 5. Post body reading font size ---------- */
+/*
+ * Pins the article's font size to a fixed, comfortable value instead of
+ * inheriting the active theme's default (which can vary a lot between
+ * themes, e.g. much larger under block themes than under Twenty Ten).
+ * Using px (not rem/em) so it stays correct even if the theme sets an
+ * unusual root font-size.
+ */
+.entry-content {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.entry-content p,
+.entry-content li,
+.entry-content td,
+.entry-content th {
+  font-size: 16px;
+}
+
+.entry-content h1 {
+  font-size: 28px;
+}
+
+.entry-content h2 {
+  font-size: 24px;
+}
+
+.entry-content h3 {
+  font-size: 20px;
+}
+
+.entry-content h4 {
+  font-size: 18px;
 }
