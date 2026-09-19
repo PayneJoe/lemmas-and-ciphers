@@ -269,7 +269,7 @@ command needed.
 One-time setup, in the GitHub repo that this branch is pushed to (its
 Settings → Secrets and variables → Actions → **New repository secret**),
 add:
-- `WP_URL` — e.g. `https://lightblue-bison-180681.hostingersite.com`
+- `WP_URL` — e.g. `https://paynejoe.com`
 - `WP_USER` — the WordPress admin username/email
 - `WP_APP_PASSWORD` — the Application Password (not the login password)
 
