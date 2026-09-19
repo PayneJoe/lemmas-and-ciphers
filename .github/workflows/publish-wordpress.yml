@@ -7,6 +7,9 @@ on:
       - "docs/**/*.md"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -53,3 +56,20 @@ jobs:
           WP_USER: ${{ secrets.WP_USER }}
           WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
         run: node scripts/generate-section-pages.mjs
+
+      # publish-to-wordpress.mjs tracks file->post-ID mappings in
+      # post-mapping.json so re-publishing a note updates it in place
+      # instead of creating a duplicate post. Commit that file back so the
+      # mapping survives between workflow runs (each run starts from a
+      # fresh checkout, so without this the mapping created above would be
+      # thrown away and the next run would never know posts already exist).
+      - name: Commit updated post-mapping.json
+        if: steps.changed.outputs.files != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet -- wordpress/post-mapping.json; then
+            git add wordpress/post-mapping.json
+            git commit -m "Update post-mapping.json [skip ci]"
+            git push
+          fi

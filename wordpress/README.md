@@ -212,8 +212,10 @@ node scripts/publish-to-wordpress.mjs ../docs/mathematics/linear-algebra/ch01-ch
 ```
 
 What it does per file:
-1. Uses the first `# H1` heading as the WordPress post title (and strips it
-   from the body, since WordPress renders the title separately).
+1. Uses the file name as the WordPress post title (e.g. `ch04-ch06.md` →
+   "Ch04 Ch06"), and strips any leading `# H1` heading from the body since
+   it's no longer used as the title source (WordPress renders the title
+   separately from the content anyway).
 2. Converts Markdown → HTML, preserving `{#id .class}` anchors (so
    "Lemma X.Y"/"Definition X.Y" anchors keep working) and turning prose
    mentions of them into hoverable links — same mechanism as the VitePress

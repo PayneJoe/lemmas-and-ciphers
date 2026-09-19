@@ -8,7 +8,7 @@
 // .env.example): WP_URL, WP_USER, WP_APP_PASSWORD.
 //
 // For each Markdown file:
-//   1. Extracts a title (first H1) and body.
+//   1. Derives a title from the file name and strips the leading H1 (if any).
 //   2. Protects `$...$` / `$$...$$` math spans from Markdown's emphasis
 //      parsing (so `$u_1$` doesn't get mangled into `$u<em>1$</em>`),
 //      restoring the raw LaTeX after rendering so a client-side MathJax/
@@ -139,11 +139,6 @@ function buildRenderer() {
   md.use(admonitionPlugin);
   md.use(headingAnchorsPlugin);
   return md;
-}
-
-function extractTitle(markdown) {
-  const match = markdown.match(/^#\s+(.+)$/m);
-  return match ? match[1].trim() : null;
 }
 
 // --- Table of contents styling --------------------------------------------
@@ -399,8 +394,12 @@ async function processFile(filePath, mapping, md) {
   const absPath = path.resolve(filePath);
   let markdown = await readFile(absPath, 'utf8');
 
-  const title = extractTitle(markdown) || path.basename(filePath, '.md');
-  // Drop the leading H1 since WordPress renders the post title separately.
+  // Title comes from the file name (e.g. "ch04-ch06.md" -> "Ch04 Ch06"),
+  // not the note's first heading/words, so titles stay short and stable
+  // even if the opening heading is long or changes.
+  const title = humanizeFolderName(path.basename(filePath, '.md'));
+  // Drop the leading H1 (if any) since WordPress renders the post title
+  // separately and we no longer use it as the title source.
   markdown = markdown.replace(/^#\s+.+\n?/m, '');
 
   markdown = await resolveAndUploadImages(markdown, absPath);
