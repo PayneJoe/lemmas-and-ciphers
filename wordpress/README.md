@@ -16,6 +16,11 @@ VitePress site (`docs/`) so cross-references keep working on WordPress.
 - `scripts/term-autolink.mjs` — shared logic (ported from
   `docs/.vitepress/term-autolink.mts`) that turns "Lemma X.Y" / "Definition
   X.Y" prose mentions into hoverable cross-reference links.
+- `scripts/admonition.mjs` — renders GitHub/VitePress-style admonition
+  blockquotes (`> [!Note] ...`, `> [!Important] ...`, `[!Tip]`,
+  `[!Warning]`, `[!Caution]`) as styled callout boxes, matching how
+  VitePress renders this syntax natively (plain markdown-it does not
+  support it out of the box).
 - `post-mapping.json` — tracks which Markdown file maps to which WordPress
   post ID, so re-running the publish script **updates** existing posts
   instead of creating duplicates. Safe to commit.
@@ -53,8 +58,16 @@ From `wp-admin → Plugins`:
   1. Zip the `plugin/lemmas-hover-tooltip/` folder (or copy it directly)
      into your WordPress install's `wp-content/plugins/` directory.
   2. Activate "Lemmas Hover Tooltip" from `wp-admin → Plugins`.
+  This same plugin also carries the CSS for admonition callout boxes
+  (`.md-alert*`), so re-upload it whenever `assets/tooltip.css` changes.
 
-## 3. Configure the publish script
+## 3. Theme
+
+For an arXiv/classic-academic-blog look, install WordPress's official
+**"Twenty Ten"** theme: `wp-admin → Appearance → Themes → Add New Theme` →
+search "Twenty Ten" → **Install** → **Activate**.
+
+## 4. Configure the publish script
 
 ```sh
 cd wordpress
@@ -63,7 +76,7 @@ cp .env.example .env
 # edit .env: set WP_URL, WP_USER, WP_APP_PASSWORD
 ```
 
-## 4. Usage
+## 5. Usage
 
 Publish (or update) one or more notes:
 
@@ -79,17 +92,20 @@ What it does per file:
    "Lemma X.Y"/"Definition X.Y" anchors keep working) and turning prose
    mentions of them into hoverable links — same mechanism as the VitePress
    site.
-3. Leaves `$...$` / `$$...$$` math untouched (protected from Markdown's
+3. Renders `> [!Note]` / `> [!Important]` / `> [!Tip]` / `> [!Warning]` /
+   `> [!Caution]` blockquotes as styled callout boxes (same visual intent
+   as VitePress's built-in admonition support).
+4. Leaves `$...$` / `$$...$$` math untouched (protected from Markdown's
    emphasis parsing) so the MathJax/QuickLaTeX plugin renders it client-side.
-4. Uploads any local images (`![alt](./img/foo.png)`) to the WordPress
+5. Uploads any local images (`![alt](./img/foo.png)`) to the WordPress
    media library and rewrites the URL.
-5. Publishes a new post, or **updates** the existing one if this file was
+6. Publishes a new post, or **updates** the existing one if this file was
    published before (tracked in `post-mapping.json`).
 
 Re-run the same command any time you edit the Markdown note — it updates
 the same WordPress post in place.
 
-## 5. Notes / limitations
+## 6. Notes / limitations
 
 - The hover-tooltip only resolves cross-references to anchors on the
   **same** WordPress post/page — identical to the current VitePress site's

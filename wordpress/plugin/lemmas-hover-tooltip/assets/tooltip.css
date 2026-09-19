@@ -75,3 +75,66 @@
   color: #777;
   font-style: italic;
 }
+
+/*
+ * GitHub/VitePress-style admonition callouts, produced by the
+ * wordpress/scripts/admonition.mjs markdown-it rule from
+ * "> [!Note] ..." / "> [!Important] ..." blockquotes. Colors follow
+ * GitHub's alert palette so they stay recognizable across any WordPress
+ * theme.
+ */
+.md-alert {
+  margin: 1.25em 0;
+  padding: 0.75em 1em;
+  border-left: 4px solid #999;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.md-alert p {
+  margin: 0.35em 0 0;
+}
+
+.md-alert p:first-child {
+  margin-top: 0;
+}
+
+.md-alert-break {
+  display: block;
+  content: '';
+  margin-bottom: 0.35em;
+}
+
+.md-alert-note {
+  border-left-color: #0969da;
+}
+.md-alert-note strong {
+  color: #0969da;
+}
+
+.md-alert-tip {
+  border-left-color: #1a7f37;
+}
+.md-alert-tip strong {
+  color: #1a7f37;
+}
+
+.md-alert-important {
+  border-left-color: #8250df;
+}
+.md-alert-important strong {
+  color: #8250df;
+}
+
+.md-alert-warning {
+  border-left-color: #9a6700;
+}
+.md-alert-warning strong {
+  color: #9a6700;
+}
+
+.md-alert-caution {
+  border-left-color: #cf222e;
+}
+.md-alert-caution strong {
+  color: #cf222e;
+}

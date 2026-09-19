@@ -35,6 +35,7 @@ import process from 'node:process';
 import MarkdownIt from 'markdown-it';
 import markdownItAttrs from 'markdown-it-attrs';
 import { termAutolinkPlugin } from './term-autolink.mjs';
+import { admonitionPlugin } from './admonition.mjs';
 
 const SCRIPTS_DIR = path.dirname(fileURLToPath(import.meta.url));
 const WORDPRESS_DIR = path.dirname(SCRIPTS_DIR);
@@ -134,6 +135,7 @@ function buildRenderer() {
   const md = new MarkdownIt({ html: true, linkify: true });
   md.use(markdownItAttrs);
   md.use(termAutolinkPlugin);
+  md.use(admonitionPlugin);
   return md;
 }
 
