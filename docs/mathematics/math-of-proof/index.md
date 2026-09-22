@@ -4,4 +4,4 @@ Notes on the basic language, strategies, and recurring patterns used in proofs.
 
 ## Parts
 
-- [Fundamentals](./part-1)
+- [summary-math-of-proof](./summary.md)
