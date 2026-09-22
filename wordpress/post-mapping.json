@@ -22,5 +22,21 @@
   "../docs/mathematics/linear-algebra/summary.md": {
     "postId": 114,
     "link": "https://paynejoe.com/summary/"
+  },
+  "../docs/mathematics/commutative-algebra/ring.md": {
+    "postId": 115,
+    "link": "https://paynejoe.com/ring/"
+  },
+  "../docs/mathematics/linear-algebra/index.md": {
+    "postId": 117,
+    "link": "https://paynejoe.com/index-2/"
+  },
+  "../docs/mathematics/math-of-proof/index.md": {
+    "postId": 118,
+    "link": "https://paynejoe.com/index-3/"
+  },
+  "../docs/mathematics/math-of-proof/summary.md": {
+    "postId": 119,
+    "link": "https://paynejoe.com/summary-2/"
   }
 }
