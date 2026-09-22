@@ -10,5 +10,17 @@
   "../docs/mathematics/linear-algebra/ch04-ch06.md": {
     "postId": 68,
     "link": "https://paynejoe.com/ch04-ch06/"
+  },
+  "../docs/mathematics/index.md": {
+    "postId": 111,
+    "link": "https://paynejoe.com/index/"
+  },
+  "../docs/mathematics/linear-algebra/ch05-ch09.md": {
+    "postId": 112,
+    "link": "https://paynejoe.com/ch05-ch09/"
+  },
+  "../docs/mathematics/linear-algebra/summary.md": {
+    "postId": 114,
+    "link": "https://paynejoe.com/summary/"
   }
 }
