@@ -3,6 +3,6 @@
 
 ## Parts
 
-- [fundamentals-in-linear-algebra](./ch01-ch03.md)
-- [structures-in-linear-algebra](./ch05-ch09.md)
+- [fundamentals-in-linear-algebra](./fundamentals.md)
+- [structures-in-linear-algebra](./structures.md)
 - [summary](./summary.md)
