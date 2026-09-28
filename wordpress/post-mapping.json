@@ -38,5 +38,9 @@
   "../docs/mathematics/math-of-proof/summary.md": {
     "postId": 119,
     "link": "https://paynejoe.com/summary-2/"
+  },
+  "../docs/formal-verification/practical_tips.md": {
+    "postId": 122,
+    "link": "https://paynejoe.com/practical_tips/"
   }
 }
