@@ -7,6 +7,7 @@
     - [Eigenvalues](#eigenvalues)
     - [Polynomials Applies to Operators](#polynomials-applies-to-operators)
   - [The Minimal Polynomial](#the-minimal-polynomial)
+    - [Eigenvalues on Odd-Dimensional Real Vector Spaces](#eigenvalues-on-odd-dimensional-real-vector-spaces)
   - [Upper-Triangular Matrices](#upper-triangular-matrices)
   - [Diagonalizable Operators](#diagonalizable-operators)
   - [Commuting Operators](#commuting-operators)
@@ -182,7 +183,80 @@ $$
 
 <br />
 
+> [!Warning] Polynomial Operators and Eigenvalues
+> What is the relationship between polynomial operators and eigenvalues?
+
 ## The Minimal Polynomial
+
+**Lemma 5.6 - Existence of Eigenvalues**{#lemma-5-6 .lemma anchor}
+
+Every operator on a finite-dimensional vector space over an **algebraically closed field** has at least one eigenvalue.
+
+<details>
+<summary>Proof</summary>
+
+We will show the proof on the perspective of the characteristic polynomial of the operator. Since the field is algebraically closed, *the characteristic polynomial has at least one root, which corresponds to an eigenvalue of the operator*.
+
+Suppose $V$ is a finite-dimensional complex vector space of dimension $n$, and let $T$ be a linear operator on $V$. Choose a non-zero vector $v \in V$. Then
+$$
+v, T v, T^2 v, \dots, T^{n} v,
+$$
+is a list of dependent vectors in $V$ since $V$ has dimension $n$. Thus, there exist scalars $a_0, a_1, \dots, a_n$, not all zero, such that  
+$$
+a_0 v + a_1 T v + a_2 T^2 v + \dots + a_n T^n v = p(T)(v) = 0.
+$$
+where $p(x)$ is a non-constant polynomial of **smallest degree** such that $p(T)(v) = 0$. "algebraically closed" ensures the characteristic polynomial has at least one root in the field $\lambda \in \mathbb{F}$ such that $p(x) = (x - \lambda) q(x) = 0$, "Smallest degee" ensures that the quotient polynomial $q(\lambda) \ne 0$, and therefore we have: 
+$$
+p(T) (v) = ((T - \lambda I) q(T))(v) = (T - \lambda I)(q(T)(v)) = 0.
+$$
+concequently, $T - \lambda I = 0$ which implies that $v$ is an eigenvector of $T$ corresponding to the eigenvalue $\lambda$.
+
+</details>
+<br />
+
+**Definition 5.4 - Minimal Polynomial**{#definition-5-4 .definition anchor}
+
+The minimal polynomial of a linear operator $T$ on a finite-dimensional vector space $V$ is the unique monic polynomial $p \in \mathcal{P}(\mathbb{F})$ of smallest degree such that $p(T) = 0$. Furthermore, $\deg p \le \dim V$.
+
+<br />
+
+> [!Warning] Algebraically Closed Fields
+> What is the relationship between minimal polynomial and eigenvalues? Given a linear operator $T$, the minimal polynomial of it always exists and be unique. But by lemma 5.6, the existence of eigenvalues still depends on the field being algebraically closed. By comparison, $\mathbb{R}$ is not algebraically closed, while $\mathbb{C}$ is.
+
+<br />
+
+**Lemma 5.7 - Relationship Between Minimal Polynomial and Eigenvalues**{#lemma-5-7 .lemma anchor}
+
+Suppose $V$ is finite-dimensional and $T \in \mathcal{L}(V)$. 
+
+- (a) If the field $\mathbb{F}$ which vector space is defined over is not algebraically closed, for example $\mathbb{R}$, then the zeros of the minimal polynomial of $T$ are the eigenvalues of $T$ in $\mathbb{F}$, if any exist.
+- (b) If the field $\mathbb{F}$ is algebraically closed, for example $\mathbb{C}$, then there are at least one zero of the minimal polynomial of $T$ in $\mathbb{F}$, which corresponds to an eigenvalue of $T$.
+
+This lemma also implies that the number of distinct eigenvalues of $T$ in $\mathbb{F}$ is at most the degree of the minimal polynomial of $T$, which in turn is at most $\dim V$. For now, we have two ways to show that the number of distinct eigenvalues is bounded by the dimension of the vector space. One is using the minimal polynomial, and the other is using eigenvectors directly.
+
+![bound-for-eigenvalues](./img/eigenvalues.png)
+
+<br />
+
+**Lemma 5.8 - Invertible of Linear Operators**{#lemma-5-8 .lemma anchor}
+
+Suppose $V$ is finite-dimensional and $T \in \mathcal{L}(V)$. Then $T$ is invertible if and only if $0$ is not an eigenvalue of $T$, which is equivalent to the minimal polynomial of $T$ not having $0$ as a root.
+
+<details>
+<summary>Proof</summary>
+
+$T$ is not invertible, implying not injective, which means 
+$$
+\exist u, v \in V, T(u) = T(v) \to u \ne v
+$$
+Thus $T(u) - T(v) = T(u - v) = 0 = 0 \cdot (u - v)$, which shows that $0$ is an eigenvalue of $T$ with eigenvector $u - v \ne 0$. By lemma 5.7, $0$ is a root of the minimal polynomial of $T$, implying that the constant term of the minimal polynomial is $0$.
+
+</details>
+<br />
+
+### Eigenvalues on Odd-Dimensional Real Vector Spaces
+
+By lemma 5.7, we have concluded that not every linear operator on a real vector space has eigenvalues. But in some special circumstances, such as when the vector space is odd-dimensional, we can guarantee the existence of eigenvalues.
 
 <br />
 
