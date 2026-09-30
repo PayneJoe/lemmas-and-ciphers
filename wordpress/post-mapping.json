@@ -42,5 +42,9 @@
   "../docs/formal-verification/practical_tips.md": {
     "postId": 122,
     "link": "https://paynejoe.com/practical_tips/"
+  },
+  "../docs/mathematics/linear-algebra/structures.md": {
+    "postId": 124,
+    "link": "https://paynejoe.com/structures/"
   }
 }
