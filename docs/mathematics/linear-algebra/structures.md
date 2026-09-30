@@ -471,7 +471,39 @@ Suppose $T \in \mathcal{L}(V)$ is a diagonalizable linear operator on an $n$-dim
 
 <br />
 
+> [!Important]
+> In this section, we have learned that a linear operator is diagonalizable only when using some special basis consisting of its eigenvectors. The choice of such a basis is crucial for representing the operator in a diagonal form.
+
 ## Commuting Operators
+
+If two operators are commuting, i.e., $AB = BA$, then they are said to commute with each other.
+
+**Lemma 5.18 - Commuting Operators and Commuting Matrices**
+
+Suppose $S$ and $T$ are two linear operators on a finite-dimensional vector space $V$, and $v_1, ..., v_n$ is a basis of $V$. Then $S$ and $T$ commute if and only if $\mathcal{M}(S, \{v_1, ..., v_n\})$ and $\mathcal{M}(T, \{v_1, ..., v_n\})$ commute.
+
+<br />
+
+**Lemma 5.19 - Eigenspace is invariant under commuting operator**
+
+Suppose $S, T \in \mathcal{L}(V)$ are two commuting linear operators on a finite-dimensional vector space $V$ and $\lambda \in \mathbb{F}$. Then $E(\lambda, S)$, the eigenspace of $S$ corresponding to $\lambda$, is invariant under $T$.
+
+<details>
+<summary>Proof</summary>
+
+To show the invariance of $E(\lambda, S)$ under $T$, it is sufficient to show :
+$$
+\forall v \in E(\lambda, S) \to T(v) \in E(\lambda, S) \iff S(T(v)) = \lambda \cdot T(v)
+$$
+
+Since $S, T$ commute, $S T = T S$, so we have $S(T(v)) = T(S(v)) = T(\lambda v) = \lambda T(v)$, which shows that $T(v) \in E(\lambda, S)$.
+
+</details>
+<br />
+
+**Lemma 5.20 - Simultaneous Diagonalizability of Commuting Operators**
+
+Two diagonalizable linear operators on a finite-dimensional vector space $V$ commute if and only if they are simultaneously diagonalizable, i.e., there exists a basis of $V$ consisting of eigenvectors common to both operators.
 
 <br />
 
