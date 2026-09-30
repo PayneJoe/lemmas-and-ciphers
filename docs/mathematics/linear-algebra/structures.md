@@ -262,9 +262,212 @@ By lemma 5.7, we have concluded that not every linear operator on a real vector 
 
 ## Upper-Triangular Matrices
 
+For example, 
+$$
+\begin{pmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} \\
+0 & a_{22} & \cdots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & a_{nn}
+\end{pmatrix}
+$$
+is an upper-triangular matrix.
+
+<br />
+
+Diagonal matrix is a special case of an upper-triangular matrix where all the entries above and below the main diagonal are zero.
+
+Before we dive into diagonal matrix of linear operator, we first need to understand upper-triangular matrices, as they provide a stepping stone towards diagonalization.
+
+<br />
+
+**Lemma 5.9 - Conditions for Upper-Triangular Matrix**
+
+Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$. Then the following conditions are equivalent:
+- (a) The matrix of $T$ with respect to some basis $v_1, ..., v_n$ of $V$ is upper-triangular.
+- (b) $\text{span}(v_1, ..., v_k)$ is invariant under $T$ for each $k = 1, ..., n$.
+
+<details>
+<summary>Proof</summary>
+
+Since $\mathcal{M}(T)$ is an upper-triangular matrix with respect to the basis $v_1, ..., v_n$, by the definition of linear map matrix, we have $T(v_j) \in \text{span}(v_1, ..., v_j) \subseteq \text{span}(v_1, ..., v_k)$ for each $j = 1, ..., k$, so 
+$$
+T(c_1 v_1 + \cdots + c_k v_k) = c_1 T(v_1) + \cdots + c_k T(v_k) \in \text{span}(v_1, ..., v_k)
+$$
+. Completing the proof of the equivalence between (a) and (b).
+
+</details>
+<br />
+
+**Lemma 5.10 - Linear Operator Equation**
+
+Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$, and it has an upper-triangular matrix with diagonal entries $\lambda_1, ..., \lambda_n$. Then  
+$$
+(T - \lambda_1 I)(T - \lambda_2 I) \cdots (T - \lambda_n I) = 0
+$$
+
+<br />
+
+**Lemma 5.11 - Determination of Eigenvalues from Upper-Triangular Matrix**
+
+Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$, and it has an upper-triangular matrix with diagonal entries $\lambda_1, ..., \lambda_n$. Then the eigenvalues of $T$ are precisely $\lambda_1, ..., \lambda_n$.
+
+<br />
+
+Not every linear operator has an upper-triangular matrix representation with respect to some basis. Those that do are called triangularizable operators.
+
+**Lemma 5.12 - Condition for Having Upper-Triangular Matrix**
+
+Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$. Then $T$ has an upper-triangular matrix with respect to some basis of $V$ if and only if the minimal polynomial of $T$ equals  
+$$
+(x - \lambda_1) \cdots (x - \lambda_m)
+$$
+for some scalars $\lambda_1, ..., \lambda_m$, where $m \le n$. More specially, if the field $\mathbb{F}$ is algebraically closed, then every linear operator on a finite-dimensional vector space over $\mathbb{F}$ has an upper-triangular matrix with respect to some basis.
+
 <br />
 
 ## Diagonalizable Operators
+
+**Definition 5.5 - Eigenspace**
+
+Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$, and $\lambda$ is an eigenvalue of $T$. The eigenspace corresponding to $\lambda$ is defined as
+$$
+E(\lambda, T) = \text{null}(T - \lambda I) = \{v \in V : T(v) = \lambda v\}.
+$$
+
+We see that each eigenspace is a subspace of $V$, meaning it is closed under vector addition and scalar multiplication, i.e.,
+$$
+v_1, v_2 \in E(\lambda, T), \alpha, \beta \in \mathbb{F} \implies \alpha v_1 + \beta v_2 \in E(\lambda, T).
+$$
+
+> [!Warning]
+> Each eigenvalue corresponds to a eigenspace, so what is the relationship between these eigenspaces?
+
+<br />
+
+**Lemma 5.13 - Sum of Eigenspaces**
+
+Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$, and $\lambda_1, ..., \lambda_m$ are distinct eigenvalues of $T$. Then the sum of the corresponding eigenspaces is direct, i.e.,
+$$
+E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T) \subseteq V.
+$$
+Furthermore, if $V$ is finite-dimensional, then the sum of the eigenspaces equals $V$, i.e.,
+$$
+\dim E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T) \le \dim V.
+$$
+
+<details>
+<summary>Proof</summary>
+
+(a) In order to show the direct-sum, it is suffices to show that : the only way to write the zero vector as a sum of vectors from each eigenspace is by taking each vector to be zero, i.e.,
+$$
+0 = v_1 + \cdots + v_m,
+$$
+where $v_i \in E(\lambda_i, T)$ for each $i = 1, ..., m$. We need to show that each $v_i = 0$.
+
+Because each eigenvector $v_i$ corresponds to a distinct eigenvalue $\lambda_i$, they are linearly independent. Therefore, $v_i = 0$ for each $i = 1, ..., m$.
+
+(b) Since the sum of the eigenspaces is direct, then we have 
+$$
+\dim (E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T)) = \dim E(\lambda_1, T) + \cdots + \dim E(\lambda_m, T).
+$$
+and $E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T) \subseteq V$ implies 
+$$
+\dim (E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T)) \le \dim V.
+$$
+Completing the proof.
+
+</details>
+<br />
+
+**Lemma 5.14 - Euqivalent Conditions for Diagonalizability**
+
+Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$. Let $\lambda_1, ..., \lambda_m$ be the distinct eigenvalues of $T$. Then the following are equivalent:
+
+1. $T$ is diagonalizable.
+
+2. $V$ has a basis consisting of eigenvectors of $T$.
+
+3. The sum of the eigenspaces corresponding to $\lambda_1, ..., \lambda_m$ equals $V$, i.e.,
+   $$
+   E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T) = V.
+   $$
+
+4. $\dim E(\lambda_1, T) + \cdots + \dim E(\lambda_m, T) = \dim V.$
+
+<br />
+
+<details>
+<summary>Proof</summary>
+
+Suppose the diagonal matrix of linear operator $T$ with respect to some basis $\{v_1, ..., v_n\}$ of $V$ is 
+$$
+\text{diag}(\lambda_1, ..., \lambda_n),
+$$
+where $\lambda_j$ are the eigenvalues corresponding to the basis vectors $v_j$. Note that $m \le n$ implies that it is possible multiple eigenvectors share the same eigenvalue.
+
+<br />
+
+For $(1) \iff (2)$, recalling the upper-triangular matrix of linear operator, $T v_j \in \text{span}(v_1, ..., v_j)$ for each $j \le n$, where $\{v_1, ..., v_n\}$ is a basis of $V$. Diagonal matrix is more strict than upper-triangular matrix, as it only has diagonal entries. By the definition of linear map matrix, we have $T v_j = \lambda_j v_j$ for each $j$, which shows that each basis vector $v_j$ is an eigenvector corresponding to eigenvalue $\lambda_j$. Hence, $(1) \iff (2)$.
+
+For $(2) \iff (3)$, $E(\lambda_j, T)$ is a subspace of $V$ for each $j = 1, ..., m$, thus $E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T)$ is also a subspace of $V$. So in order to show $V = E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T)$, it suffices to show that $V \subseteq E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T)$. 
+
+Since eigenvectors $v_1, ..., v_n$ form a basis of $V$, then 
+$$
+v = c_1 v_1 + \cdots + c_n v_n,
+$$
+Since $v_j \in E(\lambda_j, T)$ for each $j$, we have 
+$$
+v = c_1 v_1 + \cdots + c_n v_n \in E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T),
+$$
+which shows that the sum of the eigenspaces equals $V$. Hence, $(2) \iff (3)$.
+
+For $(3) \iff (4)$, 
+$$
+\dim (E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T)) = \dim E(\lambda_1, T) + \cdots + \dim E(\lambda_m, T).
+$$
+and $E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T) = V$ implies 
+$$
+\dim (E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T)) = \dim V.
+$$
+
+</details>
+<br />
+
+**Lemma 5.15 - Enough Eigenvalues for Diagonalizability**
+
+Suppose $T \in \mathcal{L}(V)$ is a linear operator on an $n$-dimensional vector space $V$, and it has $\dim V$ distinct eigenvalues. Then $T$ is diagonalizable.
+
+<br />
+
+<details>
+<summary>Proof</summary>
+
+By lemma 5.14, we observe that : $n$ distinct eigenvectors forming a basis of $V$ does not guarantee that they come from $n$ distinct eigenvalues, implying that some eigenvalues has mutiplicity than one. 
+
+This lemma is a special case of lemma 5.14, where the number of distinct eigenvalues equals the dimension of the vector space. We just omit the proof here.
+
+</details>
+<br />
+
+**Lemma 5.16 - Sufficient and Necessary Conditions for Diagonalizability**
+
+Suppose $T \in \mathcal{L}(V)$ is a linear operator on an $n$-dimensional vector space $V$. Then $T$ is diagonalizable if and only if the minimal polynomial of $T$ equals  
+$$
+\prod_{i=1}^m (x - \lambda_i),
+$$
+where $\lambda_1, ..., \lambda_m$ are the distinct eigenvalues of $T$.
+
+> [!Important] Criterias for Diagonalizability
+> For now, we have four criterias for diagonalizability of a linear operator, where three of them come from lemma 5.14 and the fourth one comes from lemma 5.15. The difference is that :
+> 1. lemma 5.15 is a **sufficient condition** for diagonalizability, but not **necessary condition**, which means there are other ways to achieve diagonalizability without having $\dim V$ distinct eigenvalues, for example the three conditions (2), (3), and (4) in lemma 5.14.
+> 2. lemma 5.16 provides a **necessary and sufficient condition** for diagonalizability, which means it characterizes all diagonalizable operators through their minimal polynomials.
+
+<br />
+
+**Lemma 5.17 - Restriction of Diagonalizable Operators**
+
+Suppose $T \in \mathcal{L}(V)$ is a diagonalizable linear operator on an $n$-dimensional vector space $V$, and $W$ is a $T$-invariant subspace of $V$. Then the restriction of $T$ to $W$, denoted by $T|_W$, is also diagonalizable.
 
 <br />
 

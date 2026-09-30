@@ -84,3 +84,39 @@ Note that quotient space is an essential step forward to decomposition of vector
 ### Duality
 
 Duality on a vector space called dual space, duality on a linear map is called duality dual map. While dual space is the vector space of linear maps mapping a vector to the field underlying the vector space. Dual map is a much more complex linear map, mapping a dual space to another dual space, typically induced by the original linear map between the corresponding vector spaces.
+
+<br />
+
+# Eigenvalues and Eigenvectors
+
+1. Eigenvalues and eigenvectors are fundamental concepts in linear algebra that describe the behavior of linear operators on vector spaces.
+
+    Eigenvalues are scalars associated with a linear operator on a vector space that **indicate how the operator stretches or compresses vectors along certain directions**. More formally, if $T$ is a linear operator on a vector space $V$, a scalar $\lambda$ is an eigenvalue of $T$ if there exists a non-zero vector $v \in V$ such that
+    $$
+    T v = \lambda v.
+    $$
+    The vector $v$ is called an eigenvector corresponding to the eigenvalue $\lambda$.
+
+    Not every linear operator has an eigenvalue in the given field, especially if the field is not algebraically closed.
+
+    <br />
+
+2. The minimal polynomial of a linear operator $T$ on a vector space $V$ is the monic polynomial of least degree such that
+    $$
+    m_T(T) = 0.
+    $$
+    The minimal polynomial **provides important information about the structure of the linear operator, including its eigenvalues and the sizes of its Jordan blocks**.
+
+    <br />
+
+3. The upper-triangular matrices of linear operators **provide a convenient representation that reveals the eigenvalues on the diagonal and simplifies the analysis of the operator's action on the vector space**.
+
+    But not every linear operator can be represented by an upper-triangular matrix over the given field, especially if some eigenvalues lie outside the field (field is not algebraically closed).
+
+    The criterion for a linear operator to be representable by an upper-triangular matrix over the given field is that the minimal polynomial of the operator **splits completely over the field**, meaning it can be factored into linear factors with coefficients in the field.
+
+    That means if the field is $\mathbb{C}$, then there must exists a upper-triangular matrix for every linear operator on a finite-dimensional vector space over $\mathbb{C}$. This also shows that at least one eigenvalue exists for every linear operator on such a vector space.
+
+    <br />
+
+4.  
