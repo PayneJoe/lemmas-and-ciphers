@@ -701,6 +701,78 @@ $$
 
 <br />
 
+**Definition 6.7 - Orthogonal Complement**
+
+Given $U$ is a subset of $V$, the orthogonal complement of $U$, denoted by $U^\perp$, is defined as
+$$
+U^\perp = \{v \in V \mid \langle v, u \rangle = 0 \text{ for all } u \in U\}.
+$$
+
+Orthogonal complement has the following properties:
+1. $U^\perp$ is a subspace of $V$.
+2. $\{0\}^\perp = V$
+3. $V^\perp = \{0\}$.
+4. $U \cap U^\perp = \{0\}$.
+5. if $G \subseteq H$, then $H^\perp \subseteq G^\perp$.
+
+<br />
+
+> [!Warning]
+> We did not specify that $U$ is a subspace in the definition of orthogonal complement. Therefore, $U^\perp$ is always a subspace of $V$ regardless of whether $U$ itself is a subspace.
+
+**Lemma 6.11 - Direct-sum Decomposition with Orthogonal Complement**
+
+Suppose $U$ is a subspace of a finite-dimensional inner product space $V$. Then
+$$
+V = U \oplus U^\perp.
+$$
+
+In this case, we have :
+$$
+\begin{aligned}
+&\text{(a) } \dim V = \dim U + \dim U^\perp \\
+&\text{(b) } U = (U^\perp)^\perp \\
+
+\end{aligned}
+$$
+
+<br />
+
+**Definition 6.8 - Orthogonal Projection**
+
+Suppose $U$ is a finite-dimensional subspace of a finite-dimensional inner product space $V$. The orthogonal projection of $V$ onto $U$ is the linear operator $P_U \in \mathcal{L}(V)$ defined as follows : For each $v \in V$, write $v = u + w$, where $u \in U$ and $w \in U^\perp$. Then
+$$
+P_U(v) = u.
+$$
+
+> [!Note]
+> We know that, given a vector $v \in V$, there are many ways to decompose it $v = u + w$, where $u, w \in V$. However there is only one way to decompose it such that $u \in U$ and $w \in U^\perp$. This ensures that the orthogonal projection $P_U(v)$ is well-defined. The linear operator is also used to extract the component of $v$ that lies in $U$.
+
+The properties of orthogonal projection include:
+1. $P_U \in \mathcal{L}(V)$.
+2. $P_U u = u$ for all $u \in U$.
+3. $P_U w = 0$ for all $w \in U^\perp$.
+4. $\text{range}(P_U) = U$.
+5. $\text{null}(P_U) = U^\perp$.
+6. $v - P_U(v) \in U^\perp$ for all $v \in V$.
+7. $P_U^2 = P_U$ (idempotent property).
+8. $\|P_U(v)\| \leq \|v\|$ for all $v \in V$.
+9. if $e_1, ..., e_m$ is an orthonormal basis of $U$, then for all $v \in V$,
+$$
+P_U(v) = \sum_{i=1}^m \langle v, e_i \rangle e_i.
+$$
+
+<br />
+
+**Lemma 6.12 - Minimizing Distance to a Subspace**
+
+Suppose $U$ is a finite-dimensional subspace of a finite-dimensional inner product space $V$. For any $v \in V$, the distance from $v$ to $U$ is minimized by the orthogonal projection of $v$ onto $U$. In other words,
+$$
+\|v - P_U(v)\| = \min_{u \in U} \|v - u\|.
+$$
+
+<br />
+
 # Operators on Inner Product Spaces
 
 # Multilinear Algebra and Determinants
