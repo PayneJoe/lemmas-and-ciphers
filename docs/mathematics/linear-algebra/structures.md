@@ -12,6 +12,8 @@
   - [Diagonalizable Operators](#diagonalizable-operators)
   - [Commuting Operators](#commuting-operators)
 - [Inner Product Spaces](#inner-product-spaces)
+  - [Inner Products and Norms](#inner-products-and-norms)
+  - [Orthonormal Bases](#orthonormal-bases)
 - [Operators on Inner Product Spaces](#operators-on-inner-product-spaces)
 - [Multilinear Algebra and Determinants](#multilinear-algebra-and-determinants)
 
@@ -322,7 +324,7 @@ Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vect
 $$
 (x - \lambda_1) \cdots (x - \lambda_m)
 $$
-for some scalars $\lambda_1, ..., \lambda_m$, where $m \le n$. More specially, if the field $\mathbb{F}$ is algebraically closed, then every linear operator on a finite-dimensional vector space over $\mathbb{F}$ has an upper-triangular matrix with respect to some basis.
+for some scalars $\lambda_1, ..., \lambda_m \in \mathbb{F}$, where $m \le n$. More specially, if the field $\mathbb{F}$ is algebraically closed, then every linear operator on a finite-dimensional vector space over $\mathbb{F}$ has an upper-triangular matrix with respect to some basis.
 
 <br />
 
@@ -508,6 +510,196 @@ Two diagonalizable linear operators on a finite-dimensional vector space $V$ com
 <br />
 
 # Inner Product Spaces
+
+So far, we have discussed 
+- linear structure of vector spaces, 
+- linear maps (operators) on them,
+- and properties of these operators. 
+
+Actually, there are also some geometric features (for example, lengths and angles) for vector spaces, which can be captured using the concept of an inner product. Similarly, we will then discuss linear operators on inner product spaces and their properties.
+
+## Inner Products and Norms
+
+**Definition 6.1 - Euclidean (Inner Product) Space**
+
+An inner product on a vector space $V$ over the field $\mathbb{F}$ (where $\mathbb{F}$ is typically $\mathbb{R}$ or $\mathbb{C}$) is a function $\langle \cdot, \cdot \rangle : V \times V \to \mathbb{F}$ that satisfies the following properties for all $u, v, w \in V$ and all $\alpha \in \mathbb{F}$:
+
+1. **Conjugate Symmetry**: $\langle u, v \rangle = \overline{\langle v, u \rangle}$
+2. **Linearity in the First Argument**: $\langle \alpha u + v, w \rangle = \alpha \langle u, w \rangle + \langle v, w \rangle$
+3. **Positive-Definiteness**: $\langle v, v \rangle \geq 0$ with equality if and only if $v = 0$
+
+A vector space $V$ equipped with an inner product $\langle \cdot, \cdot \rangle$ is called an **inner product space** or **Euclidean space**.
+
+<br />
+
+**Definition 6.2 - Norm Induced by Inner Product**
+
+For a vector $v \in V$, the norm induced by the inner product is defined as
+$$
+\|v\| = \sqrt{\langle v, v \rangle}.
+$$
+This norm satisfies the usual properties of a norm, including positivity, homogeneity, and the triangle inequality, that is,
+$$
+\|v\| \geq 0, \quad \|v\| = 0 \iff v = 0, \\
+\quad \|\alpha v\| = |\alpha| \cdot \|v\|, \\
+\quad \|u + v\| \leq \|u\| + \|v\|.
+$$
+
+<br />
+
+**Definition 6.3 - Orthogonality**
+
+Two vectors $u, v \in V$ are said to be **orthogonal** if their inner product is zero, i.e.,
+$$
+\langle u, v \rangle = 0.
+$$
+
+<br />
+
+**Lemma 6.1 - Pythagorean Theorem for Inner Product Spaces**
+
+If $u, v \in V$ are orthogonal, then
+$$
+\|u + v\|^2 = \|u\|^2 + \|v\|^2.
+$$
+
+<details>
+<summary>Proof</summary>
+
+If $u$ and $v$ are orthogonal, then $\langle u, v \rangle = \overline{\langle v, u \rangle} = 0$ implies $\langle v, u \rangle = 0$, thus 
+$$
+\|u + v\|^2 = \langle u + v, u + v \rangle = \langle u, u \rangle + \langle u, v \rangle + \langle v, u \rangle + \langle v, v \rangle = \|u\|^2 + \|v\|^2.
+$$
+
+</details >
+<br />
+
+**Lemma 6.4 - Cauchy-Schwarz Inequality**
+
+For all vectors $u, v \in V$, the Cauchy-Schwarz inequality states that
+$$
+|\langle u, v \rangle| \leq \|u\| \cdot \|v\|.
+$$
+Equality holds if and only if $u$ and $v$ are linearly dependent.
+
+<br />
+
+**Lemma 6.5 - Triangle Inequality**
+
+For all vectors $u, v \in V$, the triangle inequality states that
+$$
+\|u + v\| \leq \|u\| + \|v\|.
+$$
+Equality holds if and only if $u$ and $v$ are linearly dependent.
+
+<br />
+
+**Lemma 6.6 - Parallelogram Law**
+
+For all vectors $u, v \in V$, the parallelogram law states that
+$$
+\|u + v\|^2 + \|u - v\|^2 = 2\|u\|^2 + 2\|v\|^2.
+$$
+
+<br />
+
+## Orthonormal Bases
+
+**Definition 6.4 - Orthonormal**
+
+An orthonormal set of vectors in an inner product space $V$ is a set of vectors that are all unit vectors (norm equal to 1) and mutually orthogonal. Formally, a set $\{e_1, e_2, \dots, e_n\} \subseteq V$ is orthonormal if
+$$
+\langle e_i, e_j \rangle = \delta_{ij}, \quad \text{for all } i, j = 1, 2, \dots, n,
+$$
+where $\delta_{ij}$ is the Kronecker delta, which is 1 if $i = j$ and 0 otherwise.
+
+<br />
+
+We have two properties about orthonormal list of vectors :
+1. $\|a_1 e_1 + ... + a_n e_n\|^2 = |a_1|^2 + ... + |a_n|^2$ for any scalars $a_1, \dots, a_n$.
+2. Every orthonormal list of vectors is linearly independent.
+
+<br />
+
+**Lemma 6.7 - Bessel's Inequality**
+
+Let $\{e_1, e_2, \dots, e_n\}$ be an orthonormal set of vectors in an inner product space $V$. For any vector $v \in V$, Bessel's inequality states that
+$$
+\sum_{i=1}^n |\langle v, e_i \rangle|^2 \leq \|v\|^2.
+$$
+
+> [!Note]
+> $\langle v, e_i \rangle$ represents the inner product of the vector $v$ with the orthonormal basis vector $e_i$, which can be directly interpreted as the scalar projection (or coefficient) of $v$ onto $e_i$.
+
+<br />
+
+**Definition 6.5 - Orthonormal Basis**
+
+An orthonormal basis of an inner product space $V$ is an orthonormal set of vectors that spans the entire space $V$. Formally, a set $\{e_1, e_2, \dots, e_n\} \subseteq V$ is an orthonormal basis if it is orthonormal and every vector $v \in V$ can be expressed as a linear combination of the basis vectors:
+$$
+v = \sum_{i=1}^n \langle v, e_i \rangle e_i.
+$$
+
+> [!Note]
+> Orthonormal basis is a special kind of basis where all the basis vectors are orthonormal, meaning they are all unit vectors and mutually orthogonal. But how to find such a basis in practice? One common method is the Gram-Schmidt process, which takes a linearly independent set of vectors and constructs an orthonormal basis from them.
+
+<br />
+
+**Definition 6.6 - Orthogonal Decomposition**
+
+Suppose $u, v \in V$, with $v \ne 0$. Set 
+$$
+w = \frac{\langle u, v \rangle}{\|v\|^2} v,
+$$
+then $u$ can be decomposed as
+$$
+u = w + (u - w),
+$$
+where $w$ is parallel to $v$ and $u - w$ is orthogonal to $v$.
+
+> [!Note]
+> It implies that any vector $u$ can be decomposed into a component parallel to another vector $v$ and a component orthogonal to $v$.
+
+<br />
+
+**Lemma 6.8 - Gram-Schmidt Procedure**
+
+Suppose $v_1, ..., v_m$ is a linearly independent set of vectors in an inner product space $V$. The Gram-Schmidt procedure constructs an orthonormal set of vectors $e_1, ..., e_m$ as follows:
+1. Let $f_1 = v_1$
+2. For $k = 2, ..., m$ inductively define
+   $$
+   f_k = v_k - \sum_{i=1}^{k-1} \frac{\langle v_k, f_i \rangle}{\|f_i\|^2} f_i,
+   $$
+3. For each $k = 1, ..., m$, let
+   $$
+   e_k = \frac{f_k}{\|f_k\|}.
+   $$
+   Then $e_1, ..., e_m$ is an orthonormal set of vectors that spans the same subspace as $\{v_1, ..., v_m\}$, i.e., 
+   $$
+   \text{span}\{e_1, ..., e_m\} = \text{span}\{v_1, ..., v_m\}.
+   $$
+
+> [!Note]
+> The general ideal is that, firstly by definition 6.6, we construct a set of orthonormal vectors $f_1, ..., f_m$ from the original linearly independent set $v_1, ..., v_m$. Secondly, normalize them to obtain the orthonormal set $e_1, ..., e_m$.
+
+<br />
+
+**Lemma 6.9 - Orthonormal List to Orthonormal Basis**
+
+The length of any orthonormal list is not guarrenteed to be $\dim V$, but it can always be extended to form an orthonormal basis of $V$ by applying the Gram-Schmidt procedure to additional linearly independent vectors until the basis is complete.
+
+<br />
+
+**Lemma 6.10 - Upper-triangular Matrix with Respect to Orthonormal Basis**
+
+By lemma 5.12, every linear operator on a finite-dimensional inner product space has an upper-triangular matrix with respect to **some** basis. It does not specify which basis, but in fact, it can be chosen to be an orthonormal basis.
+
+Suppose $T \in \mathcal{L}(V)$, where $V$ is a finite-dimensional inner product space. Then $T$ has an upper-triangular matrix with respect to some orthonormal basis of $V$ if and only if the minimal polynomial of $T$ splits into linear factors over the field $\mathbb{F}$. That is,
+$$
+\text{minimal polynomial of } T = \prod_{i=1}^{m} (x - \lambda_i), \quad \lambda_i \in \mathbb{F}.
+$$
+
+<br />
 
 # Operators on Inner Product Spaces
 
