@@ -944,11 +944,6 @@ Let $A$ be a ring, and let $I, I_1, I_2 \subset A$ be proper ideals. Then, $I$ i
 3. **primary**, if $ab \in I$ implies $a \in I$ or $b \in \sqrt{I}$;
 
     Note the difference between primary ideal and prime ideal, a prime ideal is always primary, but a primary ideal need not be prime. This is reflected by the fact that $I \subseteq \sqrt{I}$, and the inclusion can be strict.
-    $$
-      c = a \cdot b \in I
-    $$
-    - if $a \in I$, then $c \in I$ trivially no matter what $b$ is;
-    - if $a \notin I$, as $c^n = a^n \cdot b^n \in I$, we must have $b^n \in I$ for some $n \ge 1$.
 
 4. **irreducible**, if $I = I_1 \cap I_2$ implies $I = I_1$ or $I = I_2$.
 
@@ -980,11 +975,61 @@ Let $I$ be a proper ideal of $A$. Then we have the following facts:
     </details>
     <br />
 
-2. If $\sqrt{I} = \mathfrak{m}$ is a maximal ideal, then $I$ is primary.
+2. If $I$ is a maximal ideal, then $A/I$ is a field. 
+    <details>
+    <summary>Proof</summary>
+    
+    By the definition of field, it is suffices to show :
+    $$
+      \forall x + I \in A/I, x \notin I \implies \exists m + I \in A/I, (x + I)(m + I) = 1
+    $$
+
+    ----
+
+    If $x \notin I$, $I$ is maximal, then we must have :
+    $$
+    I \subseteq \langle x \rangle + I = A
+    $$
+    otherwise, $\langle x \rangle  + I$ would be the maximal ideal containing $I$, not $I$ itself.
+
+    ---
+
+    So any element $a \in A$ can be represented as $a = mx + i$ for $i \in I$, we take $a = 1$. Then modulo $I$ on both sides, we get
+    $$
+    1 + I = mx + I = (m + I)(x + I)
+    $$
+    Completing the proof.
+
+    
+    </details>
+    <br />
+
+3. If $\sqrt{I} = \mathfrak{m}$ is a maximal ideal, then $I$ is primary.
 
     <details>
     <summary>Proof</summary>
-  
-    By the definition of radical, we have $\sqrt{I} = \mathfrak{m}$. Suppose $ab \in I$ and $a \notin I$. Then $b^n \in I$ for some $n \ge 1$. Since $\mathfrak{m}$ is maximal, $b \in \mathfrak{m} = \sqrt{I}$. Hence $I$ is primary.
-  
+
+    By the definition of primary ideal, it is suffices to show that for any $ab \in I$ when $a \notin I$, we must have $b \in \sqrt{I}$. By contradiction, we assume $b \notin \sqrt{I}$.
+    
+    ----
+
+    Since $\sqrt{I}$ is maximal, by fact (2) above, we know that the quotient ring $A/\sqrt{I}$ is a field, which implies every nonzero element in $A/\sqrt{I}$ is invertible. More specially,
+    $$
+      b + \sqrt{I} \in A/\sqrt{I}, b \notin \sqrt{I}, \exists c + \sqrt{I} \in A/\sqrt{I}, (b + \sqrt{I})(c + \sqrt{I}) = 1
+    $$
+    Thus we have :
+    $$
+     (b + \sqrt{I})(c + \sqrt{I}) = b c + \sqrt{I} = 1 + \sqrt{I} 
+     \implies bc - 1 \in \sqrt{I} \iff \exists n \in \mathbb{N}, (b c - 1)^n \in I \\
+     \iff \exists n \in \mathbb{N}, a (bc - 1)^n \in I
+    $$
+
+    ---
+
+    After expanding :
+    $$
+    a (bc - 1)^n = (-1)^n a + \sum_{k=1}^{n} \binom{n}{k} a (bc)^k (-1)^{n-k} \in I
+    $$
+    We have assumed that $a b \in I$, thus $\sum_{k=1}^{n} \binom{n}{k} a (bc)^k (-1)^{n-k} \in I$ as well, which implies $(-1)^n a \in I$, and hence $a \in I$. Contradiction happens, which completes the proof.
+
     </details>
