@@ -49,7 +49,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
 
     By definition (3), choose the **least** $n \in \mathbb{N}$ such that $y^n = 0$. Since $y^0 = 1 \ne 0$, we have $n \ge 1$, so $0 = y^n = y \cdot y^{n - 1}$. By minimality of $n$, $y^{n - 1} \ne 0$. By definition (2), use $b = y^{n - 1}$, we have $y \cdot b = 0$ with $b \ne 0$, hence $y \in \mathcal{D}(A)$.
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /-- `a` is a zero divisor if `a * b = 0` for some nonzero `b`. -/
@@ -79,6 +80,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
 
     </details>
 
+    </details>
+
     <br />
 
 2. If $A \ne 0$, then $A^* \cap \mathcal{D}(A) = \emptyset$, i.e., no unit is a zero divisor.
@@ -100,7 +103,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
     This is a contradiction since the right-hand side is $z \ne 0$. Hence no unit can be a zero divisor.
     
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 2: no unit is a zero divisor. -/
@@ -115,6 +119,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
 
     example {x z : A} (hx : IsUnit x) : x * z = 0 ↔ z = 0 := hx.mul_right_eq_zero
     ```
+
+    </details>
 
     </details>
     
@@ -141,7 +147,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
     Therefore, every element $x \in A$ is either a unit or a zero divisor, i.e., $x \in A^* \cup \mathcal{D}(A)$.
     
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 3: every element of a finite ring is a unit or a zero divisor. -/
@@ -158,6 +165,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
         obtain ⟨y₁, y₂, h, hne⟩ := hinj
         exact ⟨y₁ - y₂, sub_ne_zero.mpr hne, by rw [mul_sub, h, sub_self]⟩
     ```
+
+    </details>
 
     </details>
     <br />
@@ -177,7 +186,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
 
     By **pigeonhole principle**, *finite* implies that every injective function from the domain to itself is also surjective, which ensures that every non-zero element has a multiplicative inverse, hence the domain is a field.
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 3: a finite integral domain is a field. -/
@@ -191,6 +201,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
 
     example [IsDomain A] [Finite A] : IsField A := Finite.isField_of_domain A
     ```
+
+    </details>
 
     </details>
 
@@ -250,7 +262,8 @@ Ideal is a subset of a ring such that
     By definition of ideal, $\forall b \in A, a \cdot b \in I$, therefore, $1 \notin I$.
 
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 1: an ideal is proper iff it contains no unit. -/
@@ -269,6 +282,8 @@ Ideal is a subset of a ring such that
     example (I : Ideal A) {a : A} (ha : a ∈ I) (hu : IsUnit a) : I = ⊤ :=
       Ideal.eq_top_of_isUnit_mem I ha hu
     ```
+
+    </details>
 
     </details>
 
@@ -294,7 +309,8 @@ Ideal is a subset of a ring such that
 
     Completing the proof.
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 2: a field has only the ideals `⟨0⟩` and `⟨1⟩`. -/
@@ -309,6 +325,8 @@ Ideal is a subset of a ring such that
 
     example {K : Type*} [Field K] (I : Ideal K) : I = ⊥ ∨ I = ⊤ := Ideal.eq_bot_or_top I
     ```
+
+    </details>
 
     </details>
 
@@ -372,7 +390,8 @@ $$
 $$
 Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\langle a \rangle$ is a proper ideal of $A$. By (2), there exists a maximal ideal $\mathfrak{m}$ such that $\langle a \rangle \subseteq \mathfrak{m}$.
 
-**Lean 4**
+<details>
+<summary>Lean 4 proof</summary>
 
 ```lean
 /- Fact 2: every proper ideal is contained in a maximal ideal (Zorn's lemma). -/
@@ -416,6 +435,8 @@ theorem exists_maximal_of_not_isUnit {a : A} (ha : ¬ IsUnit a) :
 example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈ M :=
   exists_max_ideal_of_mem_nonunits ha
 ```
+
+</details>
 
 </details>
 <br />
@@ -480,7 +501,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
    - for any $a, b \in \bigcap_{h \in H} I_h$, we have $a + b \in I_h$ for all $h \in H$. That implies that $a + b \in \bigcap_{h \in H} I_h$.
    - for any $a \in A$ and $x \in \bigcap_{h \in H} I_h$, we have $x \in I_h$ for all $h \in H$. Since each $I_h$ is an ideal, $a \cdot x \in I_h$ for all $h \in H$. That implies that $a \cdot x \in \bigcap_{h \in H} I_h$.
 
-   **Lean 4**
+   <details>
+   <summary>Lean 4 proof</summary>
 
    ```lean
    /- Fact 1: the intersection of a family of ideals is an ideal. -/
@@ -502,6 +524,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
    ```
 
    </details>
+
+   </details>
    <br />
 
 2. Quotient is also an ideal.
@@ -520,7 +544,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
 
     - if $r \ne 0$. Since $a \cdot J \subseteq I \iff \forall x \in J, a \cdot x \in I$, then $\forall x \in J, (r \cdot a) \cdot x = r \cdot (a \cdot x) \in I$ always holds, which implies that $r \cdot a \in I : J$.
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 2: the quotient `I : J = {a | a * J ⊆ I}` is an ideal. -/
@@ -544,6 +569,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
       rw [Submodule.mem_colon]
       rfl
     ```
+
+    </details>
 
     </details>
     <br />
@@ -573,7 +600,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
     - $\exists n \in \mathbb{N}, a^n \in I$
     Consider $(r \cdot a)^n = r^n \cdot a^n$. Since $a^n \in I$ and $I$ is an ideal, $r^n \cdot a^n \in I$, which implies that $(r \cdot a)^n \in I$. Therefore, $r \cdot a \in \sqrt{I}$.
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 3: the radical `√I = {a | ∃ n, a ^ n ∈ I}` is an ideal. -/
@@ -610,13 +638,16 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
     ```
 
     </details>
+
+    </details>
     <br />
 
 4. The set of nipotent elements $\mathcal{N}(A)$ is also an ideal.
 
     In particular, set of nilpotent elements is a special case of radical : $\mathcal{N}(A) = \sqrt{\langle 0 \rangle}$. So it is an ideal.
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 4: the nilpotent elements form the ideal `√⟨0⟩`. -/
@@ -626,6 +657,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
 
     example (a : A) : a ∈ nilradical A ↔ IsNilpotent a := mem_nilradical
     ```
+
+    </details>
 
 
 5. The set of zero-divisors $\mathcal{D}(A)$ is not an ideal in general.
@@ -641,7 +674,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
 
     However, $a + b = 5$ and $5 \cdot 5 = 25 = 1$, so $a + b$ is a unit. By fact (2) on special elements, no unit is a zero divisor, so $a + b \notin \mathcal{D}(A)$.
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 5: the zero divisors need not form an ideal.
@@ -654,6 +688,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
       have h5 : IsUnit (2 + 3 : ZMod 6) := IsUnit.of_mul_eq_one 5 (by decide)
       exact not_isZeroDivisor_of_isUnit h5 ((hI _).mp (I.add_mem h2 h3))
     ```
+
+    </details>
 
     </details>
     <br />
@@ -669,7 +705,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
     $$
     Since $a \in I$, so we have $a \cdot b \in I$. Similarly, since $b \in J$, we have $a \cdot b \in J$. Therefore, $a \cdot b \in I \cap J$. Completing the proof.
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 6: `I J ⊆ I ∩ J`. -/
@@ -681,6 +718,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
 
     example (I J : Ideal A) : I * J ≤ I ⊓ J := Ideal.mul_le_inf
     ```
+
+    </details>
 
     </details>
     <br />
@@ -700,7 +739,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
     $$
     which proves $\forall x \in I \cap J, x \in I J$. Therefore, $I \cap J \subseteq I J$. Completing the proof.
 
-    **Lean 4**
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 7: if `I + J = ⟨1⟩`, then `I ∩ J = I J`. -/
@@ -722,6 +762,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
 
     example (I J : Ideal A) (h : I ⊔ J = ⊤) : I * J = I ⊓ J := Ideal.mul_eq_inf_of_coprime h
     ```
+
+    </details>
 
     </details>
     <br />
