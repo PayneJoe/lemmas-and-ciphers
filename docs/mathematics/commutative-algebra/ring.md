@@ -22,13 +22,15 @@
 
 Note that all rings considered here are commutative and have a multiplicative identity.
 
+Lean 4 proofs are given under each proof below. They are collected and compiled (against Mathlib, inside the [mathematics_in_lean](https://github.com/PayneJoe/mathematics_in_lean) project) in [`mathlib-in-lean/commutative-algebra/Ring.lean`](https://github.com/PayneJoe/lemmas-and-ciphers/blob/main/mathlib-in-lean/commutative-algebra/Ring.lean). All snippets assume `variable {A : Type*} [CommRing A]`.
+
 # Rings and Ideals
 
 ## Special Elements of Ring
 
 1. A **set of units**, $A^* = \{a \in A \mid \exists b \in A, a \cdot b = 1\}$
 
-2. A **set of zero divisors**, $\mathcal{D}(A) = \{a \in A | \exists b \in A, a \cdot b = 0\}$
+2. A **set of zero divisors**, $\mathcal{D}(A) = \{a \in A \mid \exists b \in A \setminus \{0\}, a \cdot b = 0\}$
 
 3. A **set of nilpotent elements**, $\mathcal{N}(A) = \{a \in A \mid \exists n \in \mathbb{N}, a^n = 0\}$
 
@@ -38,14 +40,42 @@ Note that all rings considered here are commutative and have a multiplicative id
 
 ### Facts on Special Elements of Ring
 
-1. $\mathcal{N}(A) \subseteq \mathcal{D}(A)$, i.e., every nilpotent element is a zero divisor.
+1. If $A \ne 0$, then $\mathcal{N}(A) \subseteq \mathcal{D}(A)$, i.e., every nilpotent element is a zero divisor.
 
     <details>
     <summary>Proof</summary>
 
     It is suffice to show that $\forall y \in \mathcal{N}(A) \to y \in \mathcal{D}(A)$.
 
-    By definition (3), there exists $n \in \mathbb{N}$ such that $0 = y^n = y \cdot y^{n - 1}$. By definition (2), use $b = y^{n - 1}$, we have $y \cdot b = 0$, hence $y \in \mathcal{D}(A)$.
+    By definition (3), choose the **least** $n \in \mathbb{N}$ such that $y^n = 0$. Since $y^0 = 1 \ne 0$, we have $n \ge 1$, so $0 = y^n = y \cdot y^{n - 1}$. By minimality of $n$, $y^{n - 1} \ne 0$. By definition (2), use $b = y^{n - 1}$, we have $y \cdot b = 0$ with $b \ne 0$, hence $y \in \mathcal{D}(A)$.
+
+    **Lean 4**
+
+    ```lean
+    /-- `a` is a zero divisor if `a * b = 0` for some nonzero `b`. -/
+    def IsZeroDivisor (a : A) : Prop := ∃ b : A, b ≠ 0 ∧ a * b = 0
+
+    /- Fact 1: in a nonzero ring, every nilpotent element is a zero divisor. -/
+    theorem isZeroDivisor_of_isNilpotent [Nontrivial A] {y : A} (hy : IsNilpotent y) :
+        IsZeroDivisor y := by
+      classical
+      -- choose the least `n` with `y ^ n = 0`
+      set n := Nat.find hy with hn_def
+      have hn : y ^ n = 0 := Nat.find_spec hy
+      -- `n ≠ 0`, since `y ^ 0 = 1 ≠ 0`
+      have hn0 : n ≠ 0 := by
+        intro h
+        rw [h, pow_zero] at hn
+        exact one_ne_zero hn
+      obtain ⟨m, hm⟩ := Nat.exists_eq_succ_of_ne_zero hn0
+      -- take `b = y ^ (n - 1)`, which is nonzero by minimality of `n`
+      refine ⟨y ^ m, fun h => ?_, ?_⟩
+      · have : n ≤ m := Nat.find_min' hy h
+        omega
+      · calc y * y ^ m = y ^ (m + 1) := (pow_succ' y m).symm
+          _ = y ^ n := by rw [hm]
+          _ = 0 := hn
+    ```
 
     </details>
 
@@ -69,6 +99,23 @@ Note that all rings considered here are commutative and have a multiplicative id
     
     This is a contradiction since the right-hand side is $z \ne 0$. Hence no unit can be a zero divisor.
     
+
+    **Lean 4**
+
+    ```lean
+    /- Fact 2: no unit is a zero divisor. -/
+    theorem not_isZeroDivisor_of_isUnit {x : A} (hx : IsUnit x) : ¬ IsZeroDivisor x := by
+      rintro ⟨z, hz, hxz⟩
+      obtain ⟨y, hy⟩ := hx.exists_right_inv
+      -- `z = (x * y) * z = y * (x * z) = y * 0 = 0`, contradicting `z ≠ 0`
+      apply hz
+      calc z = (x * y) * z := by rw [hy, one_mul]
+        _ = y * (x * z) := by ring
+        _ = 0 := by rw [hxz, mul_zero]
+
+    example {x z : A} (hx : IsUnit x) : x * z = 0 ↔ z = 0 := hx.mul_right_eq_zero
+    ```
+
     </details>
     
     <br />
@@ -78,7 +125,7 @@ Note that all rings considered here are commutative and have a multiplicative id
     <details>
     <summary>Proof</summary>
 
-    Firstly, considering $A = \{0\}$, then $A^* = \emptyset$ and $\mathcal{D}(A) = \{0\}$. Hence, $A = A^* \cup \mathcal{D}(A)$ in this case.
+    Firstly, considering $A = \{0\}$, then $0 \cdot 0 = 0 = 1$, so $A^* = \{0\}$ and $\mathcal{D}(A) = \emptyset$. Hence, $A = A^* \cup \mathcal{D}(A)$ in this case.
 
     Secondly, if $A \ne \{0\}$. By (b), we have $A^* \cap \mathcal{D}(A) = \emptyset$. Since $A^* \subseteq A$ and $\mathcal{D}(A) \subseteq A$, we have $A^* \cup \mathcal{D}(A) \subseteq A$. So it is suffice to show that $A \subseteq A^* \cup \mathcal{D}(A)$, which implies that 
     $$
@@ -93,6 +140,25 @@ Note that all rings considered here are commutative and have a multiplicative id
 
     Therefore, every element $x \in A$ is either a unit or a zero divisor, i.e., $x \in A^* \cup \mathcal{D}(A)$.
     
+
+    **Lean 4**
+
+    ```lean
+    /- Fact 3: every element of a finite ring is a unit or a zero divisor. -/
+    theorem isUnit_or_isZeroDivisor [Finite A] (x : A) : IsUnit x ∨ IsZeroDivisor x := by
+      -- consider `f : A → A`, `f y = x * y`
+      by_cases hinj : Function.Injective (fun y : A => x * y)
+      · -- injective ⇒ surjective (pigeonhole), so `x * y = 1` for some `y`
+        left
+        obtain ⟨y, hy⟩ := Finite.injective_iff_surjective.mp hinj 1
+        exact IsUnit.of_mul_eq_one y hy
+      · -- not injective ⇒ `x * (y₁ - y₂) = 0` with `y₁ ≠ y₂`
+        right
+        simp only [Function.Injective, not_forall] at hinj
+        obtain ⟨y₁, y₂, h, hne⟩ := hinj
+        exact ⟨y₁ - y₂, sub_ne_zero.mpr hne, by rw [mul_sub, h, sub_self]⟩
+    ```
+
     </details>
     <br />
 
@@ -110,6 +176,21 @@ Note that all rings considered here are commutative and have a multiplicative id
     By the proof of fact (3), $\mathcal{D}(A) = 0$ implies function $f$ is injective for every non-zero $x \in A$.
 
     By **pigeonhole principle**, *finite* implies that every injective function from the domain to itself is also surjective, which ensures that every non-zero element has a multiplicative inverse, hence the domain is a field.
+
+    **Lean 4**
+
+    ```lean
+    /- Fact 3: a finite integral domain is a field. -/
+    theorem isField_of_finite_domain [IsDomain A] [Finite A] : IsField A := by
+      refine ⟨exists_pair_ne A, mul_comm, ?_⟩
+      intro x hx
+      -- no zero divisors ⇒ `y ↦ x * y` is injective, hence surjective
+      have hinj : Function.Injective (fun y : A => x * y) :=
+        fun y₁ y₂ h => mul_left_cancel₀ hx h
+      exact Finite.injective_iff_surjective.mp hinj 1
+
+    example [IsDomain A] [Finite A] : IsField A := Finite.isField_of_domain A
+    ```
 
     </details>
 
@@ -169,6 +250,26 @@ Ideal is a subset of a ring such that
     By definition of ideal, $\forall b \in A, a \cdot b \in I$, therefore, $1 \notin I$.
 
 
+    **Lean 4**
+
+    ```lean
+    /- Fact 1: an ideal is proper iff it contains no unit. -/
+    theorem one_not_mem_iff (I : Ideal A) : (1 : A) ∉ I ↔ ∀ a ∈ I, ¬ IsUnit a := by
+      constructor
+      · -- if a unit `a` with `a * b = 1` lies in `I`, then `1 = a * b ∈ I`
+        intro h1 a ha hu
+        obtain ⟨b, hb⟩ := hu.exists_right_inv
+        apply h1
+        rw [← hb]
+        exact I.mul_mem_right b ha
+      · -- `1` is itself a unit
+        intro h h1
+        exact h 1 h1 isUnit_one
+
+    example (I : Ideal A) {a : A} (ha : a ∈ I) (hu : IsUnit a) : I = ⊤ :=
+      Ideal.eq_top_of_isUnit_mem I ha hu
+    ```
+
     </details>
 
 <br />
@@ -192,6 +293,22 @@ Ideal is a subset of a ring such that
     Putting these two hypotheses together, we obtain $a \cdot b = 1 \in I$. Since $1 \in I$, thus $I = \langle 1 \rangle = A$.
 
     Completing the proof.
+
+    **Lean 4**
+
+    ```lean
+    /- Fact 2: a field has only the ideals `⟨0⟩` and `⟨1⟩`. -/
+    theorem eq_bot_or_top_of_field {K : Type*} [Field K] (I : Ideal K) : I = ⊥ ∨ I = ⊤ := by
+      by_cases h : I = ⊥
+      · exact Or.inl h
+      · -- take a nonzero `a ∈ I`; then `1 = a⁻¹ * a ∈ I`
+        right
+        obtain ⟨a, ha, ha0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h
+        rw [Ideal.eq_top_iff_one, ← inv_mul_cancel₀ ha0]
+        exact I.mul_mem_left a⁻¹ ha
+
+    example {K : Type*} [Field K] (I : Ideal K) : I = ⊥ ∨ I = ⊤ := Ideal.eq_bot_or_top I
+    ```
 
     </details>
 
@@ -254,6 +371,51 @@ $$
 \urcorner (\exists b \in A, a \cdot b = 1) \iff \forall b \in A, a \cdot b \neq 1
 $$
 Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\langle a \rangle$ is a proper ideal of $A$. By (2), there exists a maximal ideal $\mathfrak{m}$ such that $\langle a \rangle \subseteq \mathfrak{m}$.
+
+**Lean 4**
+
+```lean
+/- Fact 2: every proper ideal is contained in a maximal ideal (Zorn's lemma). -/
+theorem exists_le_maximal' (I : Ideal A) (hI : I ≠ ⊤) :
+    ∃ M : Ideal A, M.IsMaximal ∧ I ≤ M := by
+  -- every nonempty chain of proper ideals has a proper upper bound: its union
+  have ih : ∀ c ⊆ {J : Ideal A | J ≠ ⊤}, IsChain (· ≤ ·) c →
+      ∀ J ∈ c, ∃ ub ∈ {J : Ideal A | J ≠ ⊤}, ∀ K ∈ c, K ≤ ub := by
+    intro c hcs hchain J hJ
+    refine ⟨sSup c, ?_, fun K hK => le_sSup hK⟩
+    -- `1 ∉ ⋃ c`, since `1` would lie in some proper ideal of the chain
+    show sSup c ≠ ⊤
+    rw [Ne, Ideal.eq_top_iff_one]
+    intro h1
+    obtain ⟨K, hKc, h1K⟩ := (Submodule.mem_sSup_of_directed ⟨J, hJ⟩ hchain.directedOn).mp h1
+    exact hcs hKc ((Ideal.eq_top_iff_one K).mpr h1K)
+  obtain ⟨M, hIM, hM⟩ := zorn_le_nonempty₀ {J : Ideal A | J ≠ ⊤} ih I hI
+  -- a maximal element of the proper ideals is a maximal ideal
+  refine ⟨M, ⟨⟨hM.prop, fun J hMJ => ?_⟩⟩, hIM⟩
+  by_contra hJ
+  exact hMJ.ne' (le_antisymm (hM.2 hJ hMJ.le) hMJ.le)
+
+example (I : Ideal A) (hI : I ≠ ⊤) : ∃ M : Ideal A, M.IsMaximal ∧ I ≤ M :=
+  Ideal.exists_le_maximal I hI
+
+/- Fact 1: a nonzero ring has at least one maximal ideal. -/
+theorem exists_maximal' [Nontrivial A] : ∃ M : Ideal A, M.IsMaximal := by
+  obtain ⟨M, hM, -⟩ := exists_le_maximal' (⊥ : Ideal A) bot_ne_top
+  exact ⟨M, hM⟩
+
+example [Nontrivial A] : ∃ M : Ideal A, M.IsMaximal := Ideal.exists_maximal A
+
+/- Fact 3: every non-invertible element lies in some maximal ideal. -/
+theorem exists_maximal_of_not_isUnit {a : A} (ha : ¬ IsUnit a) :
+    ∃ M : Ideal A, M.IsMaximal ∧ a ∈ M := by
+  -- `⟨a⟩` is proper, so apply Fact 2
+  have hprop : Ideal.span {a} ≠ ⊤ := fun h => ha (Ideal.span_singleton_eq_top.mp h)
+  obtain ⟨M, hM, haM⟩ := exists_le_maximal' _ hprop
+  exact ⟨M, hM, haM (Ideal.mem_span_singleton_self a)⟩
+
+example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈ M :=
+  exists_max_ideal_of_mem_nonunits ha
+```
 
 </details>
 <br />
@@ -318,6 +480,27 @@ Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\
    - for any $a, b \in \bigcap_{h \in H} I_h$, we have $a + b \in I_h$ for all $h \in H$. That implies that $a + b \in \bigcap_{h \in H} I_h$.
    - for any $a \in A$ and $x \in \bigcap_{h \in H} I_h$, we have $x \in I_h$ for all $h \in H$. Since each $I_h$ is an ideal, $a \cdot x \in I_h$ for all $h \in H$. That implies that $a \cdot x \in \bigcap_{h \in H} I_h$.
 
+   **Lean 4**
+
+   ```lean
+   /- Fact 1: the intersection of a family of ideals is an ideal. -/
+   def iInter {ι : Type*} (I : ι → Ideal A) : Ideal A where
+     carrier := {x | ∀ h, x ∈ I h}
+     zero_mem' := by
+       intro h
+       exact (I h).zero_mem
+     add_mem' := by
+       intro a b ha hb h
+       exact (I h).add_mem (ha h) (hb h)
+     smul_mem' := by
+       intro a x hx h
+       exact (I h).mul_mem_left a (hx h)
+
+   example {ι : Type*} (I : ι → Ideal A) : iInter I = ⨅ h, I h := by
+     ext x
+     exact (Submodule.mem_iInf I).symm
+   ```
+
    </details>
    <br />
 
@@ -336,6 +519,31 @@ Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\
     - if $r = 0$, it trivially holds that $r \cdot a = 0 \in I : J$.
 
     - if $r \ne 0$. Since $a \cdot J \subseteq I \iff \forall x \in J, a \cdot x \in I$, then $\forall x \in J, (r \cdot a) \cdot x = r \cdot (a \cdot x) \in I$ always holds, which implies that $r \cdot a \in I : J$.
+
+    **Lean 4**
+
+    ```lean
+    /- Fact 2: the quotient `I : J = {a | a * J ⊆ I}` is an ideal. -/
+    def colon (I J : Ideal A) : Ideal A where
+      carrier := {a | ∀ x ∈ J, a * x ∈ I}
+      zero_mem' := by
+        intro x _
+        rw [zero_mul]
+        exact I.zero_mem
+      add_mem' := by
+        intro a b ha hb x hx
+        rw [add_mul]
+        exact I.add_mem (ha x hx) (hb x hx)
+      smul_mem' := by
+        -- `(r * a) * x = r * (a * x) ∈ I`
+        intro r a ha x hx
+        rw [smul_eq_mul, mul_assoc]
+        exact I.mul_mem_left r (ha x hx)
+
+    example (I J : Ideal A) (a : A) : a ∈ colon I J ↔ a ∈ I.colon J := by
+      rw [Submodule.mem_colon]
+      rfl
+    ```
 
     </details>
     <br />
@@ -365,6 +573,42 @@ Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\
     - $\exists n \in \mathbb{N}, a^n \in I$
     Consider $(r \cdot a)^n = r^n \cdot a^n$. Since $a^n \in I$ and $I$ is an ideal, $r^n \cdot a^n \in I$, which implies that $(r \cdot a)^n \in I$. Therefore, $r \cdot a \in \sqrt{I}$.
 
+    **Lean 4**
+
+    ```lean
+    /- Fact 3: the radical `√I = {a | ∃ n, a ^ n ∈ I}` is an ideal. -/
+    def radical (I : Ideal A) : Ideal A where
+      carrier := {a | ∃ n : ℕ, a ^ n ∈ I}
+      zero_mem' := by
+        refine ⟨1, ?_⟩
+        rw [pow_one]
+        exact I.zero_mem
+      add_mem' := by
+        -- binomial theorem: each term of `(a + b) ^ (m + n)` has `a ^ k` with `k ≥ m`
+        -- or `b ^ (m + n - k)` with `m + n - k ≥ n`
+        rintro a b ⟨m, hm⟩ ⟨n, hn⟩
+        refine ⟨m + n, ?_⟩
+        rw [add_pow]
+        refine I.sum_mem fun k _ => ?_
+        by_cases h : m ≤ k
+        · have e : a ^ k = a ^ m * a ^ (k - m) := by rw [← pow_add, Nat.add_sub_cancel' h]
+          rw [e]
+          exact I.mul_mem_right _ (I.mul_mem_right _ (I.mul_mem_right _ hm))
+        · have hk : n ≤ m + n - k := by omega
+          have e : b ^ (m + n - k) = b ^ n * b ^ (m + n - k - n) := by
+            rw [← pow_add, Nat.add_sub_cancel' hk]
+          rw [e]
+          exact I.mul_mem_right _ (I.mul_mem_left _ (I.mul_mem_right _ hn))
+      smul_mem' := by
+        -- `(r * a) ^ n = r ^ n * a ^ n ∈ I`
+        rintro r a ⟨n, hn⟩
+        refine ⟨n, ?_⟩
+        rw [smul_eq_mul, mul_pow]
+        exact I.mul_mem_left _ hn
+
+    example (I : Ideal A) (a : A) : a ∈ radical I ↔ a ∈ I.radical := Iff.rfl
+    ```
+
     </details>
     <br />
 
@@ -372,7 +616,19 @@ Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\
 
     In particular, set of nilpotent elements is a special case of radical : $\mathcal{N}(A) = \sqrt{\langle 0 \rangle}$. So it is an ideal.
 
-5. The set of zero-divisors $\mathcal{D}(A)$ is not an ideal.
+    **Lean 4**
+
+    ```lean
+    /- Fact 4: the nilpotent elements form the ideal `√⟨0⟩`. -/
+    theorem isNilpotent_iff_mem_radical_bot (a : A) : IsNilpotent a ↔ a ∈ radical ⊥ := by
+      show (∃ n : ℕ, a ^ n = 0) ↔ ∃ n : ℕ, a ^ n ∈ (⊥ : Ideal A)
+      simp only [Ideal.mem_bot]
+
+    example (a : A) : a ∈ nilradical A ↔ IsNilpotent a := mem_nilradical
+    ```
+
+
+5. The set of zero-divisors $\mathcal{D}(A)$ is not an ideal in general.
 
     <details>
     <summary>Proof</summary>
@@ -381,11 +637,23 @@ Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\
     $$
     \exists a, b \in \mathcal{D}(A) \text{ such that } a + b \notin \mathcal{D}(A).
     $$
-    Since both $a$ and $b$ are zero-divisors, then 
-    - $a \in \mathcal{D}(A) \iff \exists x \in A \setminus \{0\}, a \cdot x = 0$
-    - $b \in \mathcal{D}(A) \iff \exists y \in A \setminus \{0\}, b \cdot y = 0$
+    Take $A = \mathbb{Z}/(6)$, $a = 2$ and $b = 3$. Since $2 \cdot 3 = 0$ with $3 \ne 0$ and $2 \ne 0$, both $a$ and $b$ are zero-divisors.
 
-    use $b = x$, then $y = a$. In this case, $(a - b) \cdot z = 0$ holds only when $z = x y = 0$. So $a - b \notin \mathcal{D}(A)$.
+    However, $a + b = 5$ and $5 \cdot 5 = 25 = 1$, so $a + b$ is a unit. By fact (2) on special elements, no unit is a zero divisor, so $a + b \notin \mathcal{D}(A)$.
+
+    **Lean 4**
+
+    ```lean
+    /- Fact 5: the zero divisors need not form an ideal.
+    In `ℤ/6ℤ`, `2` and `3` are zero divisors (`2 * 3 = 0`), but `2 + 3 = 5` is a unit. -/
+    theorem zeroDivisors_not_ideal :
+        ¬ ∃ I : Ideal (ZMod 6), ∀ a, a ∈ I ↔ IsZeroDivisor a := by
+      rintro ⟨I, hI⟩
+      have h2 : (2 : ZMod 6) ∈ I := (hI 2).mpr ⟨3, by decide, by decide⟩
+      have h3 : (3 : ZMod 6) ∈ I := (hI 3).mpr ⟨2, by decide, by decide⟩
+      have h5 : IsUnit (2 + 3 : ZMod 6) := IsUnit.of_mul_eq_one 5 (by decide)
+      exact not_isZeroDivisor_of_isUnit h5 ((hI _).mp (I.add_mem h2 h3))
+    ```
 
     </details>
     <br />
@@ -400,6 +668,19 @@ Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\
         I J \subseteq I \cap J \iff \forall x \in IJ, x \in I \cap J \iff \forall a \in I, \forall b \in J, a \cdot b \in I \cap J
     $$
     Since $a \in I$, so we have $a \cdot b \in I$. Similarly, since $b \in J$, we have $a \cdot b \in J$. Therefore, $a \cdot b \in I \cap J$. Completing the proof.
+
+    **Lean 4**
+
+    ```lean
+    /- Fact 6: `I J ⊆ I ∩ J`. -/
+    theorem mul_le_inf' (I J : Ideal A) : I * J ≤ I ⊓ J := by
+      -- it suffices to check the generators `a * b` with `a ∈ I`, `b ∈ J`
+      rw [Ideal.mul_le]
+      intro a ha b hb
+      exact Submodule.mem_inf.mpr ⟨I.mul_mem_right b ha, J.mul_mem_left a hb⟩
+
+    example (I J : Ideal A) : I * J ≤ I ⊓ J := Ideal.mul_le_inf
+    ```
 
     </details>
     <br />
@@ -418,6 +699,29 @@ Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\
         x = x \cdot (y + z) = x \cdot y + x \cdot z \in I J
     $$
     which proves $\forall x \in I \cap J, x \in I J$. Therefore, $I \cap J \subseteq I J$. Completing the proof.
+
+    **Lean 4**
+
+    ```lean
+    /- Fact 7: if `I + J = ⟨1⟩`, then `I ∩ J = I J`. -/
+    theorem inf_eq_mul_of_sup_eq_top (I J : Ideal A) (h : I ⊔ J = ⊤) : I ⊓ J = I * J := by
+      refine le_antisymm ?_ (mul_le_inf' I J)
+      intro x hx
+      obtain ⟨hxI, hxJ⟩ := Submodule.mem_inf.mp hx
+      -- write `1 = y + z` with `y ∈ I`, `z ∈ J`
+      have h1 : (1 : A) ∈ I ⊔ J := by
+        rw [h]
+        exact Submodule.mem_top
+      obtain ⟨y, hy, z, hz, hyz⟩ := Submodule.mem_sup.mp h1
+      -- `x = x * (y + z) = y * x + x * z ∈ I J`
+      have e : x = y * x + x * z := by
+        calc x = x * (y + z) := by rw [hyz, mul_one]
+          _ = y * x + x * z := by ring
+      rw [e]
+      exact Ideal.add_mem _ (Ideal.mul_mem_mul hy hxJ) (Ideal.mul_mem_mul hxI hz)
+
+    example (I J : Ideal A) (h : I ⊔ J = ⊤) : I * J = I ⊓ J := Ideal.mul_eq_inf_of_coprime h
+    ```
 
     </details>
     <br />
