@@ -9,12 +9,14 @@
     - [Definitions of Some Ideals](#definitions-of-some-ideals)
     - [Special Ring](#special-ring)
     - [Facts on Ideals](#facts-on-ideals)
+  - [Ideal Operations](#ideal-operations)
+    - [Facts on Ideal Operations](#facts-on-ideal-operations)
+    - [Properties of the Radical](#properties-of-the-radical)
   - [Maximal Ideal](#maximal-ideal)
     - [Zorn's Lemma](#zorns-lemma)
     - [Facts on Maximal Ideal](#facts-on-maximal-ideal)
-  - [Ideal Operations](#ideal-operations)
-    - [Facts on Ideal Operations](#facts-on-ideal-operations)
-  - [Properties of the Radical](#properties-of-the-radical)
+  - [Other Special Ideals](#other-special-ideals)
+    - [Facts on Special Ideals](#facts-on-special-ideals)
 
 </details>
 
@@ -330,115 +332,6 @@ Ideal is a subset of a ring such that
 
     </details>
 
-<br />
-
-## Maximal Ideal
-
-As we know, maximal ideal is derived from the concept of proper ideal. A few important facts upon maximal ideal are derived from Zorn's Lemma.
-
-### Zorn's Lemma
-
-Poset Definition : A *poset* $(\Sigma, \leq)$ is a set $\Sigma$ equipped with a partial order $\leq$ which is 
-reflexive, antisymmetric, and transitive. Every chain in a poset is a totally ordered subset of $\Sigma$.
-
-<br />
-
-Zorn's Lemma : Let $(\Sigma, \leq)$ be a partially ordered set in which every chain has an upper bound in $\Sigma$. Then $\Sigma$ contains maximal elements with respect to the partial order $\le$.
-
-### Facts on Maximal Ideal
-
-Let $A$ be a non-zero ring. Then
-
-1. $A$ has at least one *maximal ideal* $\mathfrak{m}$.
-
-2. For any proper *ideal* $I$ of $A$, there exists a maximal ideal $\mathfrak{m}$ such that $I \subseteq \mathfrak{m}$.
-
-3. Every non-invertible element of $A$ is contained in some maximal ideal of $A$.
-
-<details>
-<summary>Proof</summary>
-
-Regarding (1), we can treat $A$ as a poset whose elements are the proper ideals of $A$, ordered by inclusion $\subseteq$. 
-$$
-\Sigma = \{ I \subsetneq A \mid I \text{ is a ideal of } A\}
-$$
-For example, $\langle a \rangle \subseteq \langle a, b \rangle \subseteq \langle a, b, c \rangle \subseteq \cdots$.
-
-By Zorn's Lemma, in order to show $A$ contains maximal ideals with respect to order relation $\subseteq$, it suffices to show that for any chain of proper ideals $\mathcal{C} = \{I_h : h \in H\}$ in $A$, there exists an upper bound in $A$.
-
-For any chain of proper ideals $\mathcal{C} = \{I_h : h \in H\}$ in $A$, the upper bound of this chain is the minimal set containing all the proper ideals, it can defined by  
-$$
-I = \bigcup_{h \in H} I_h.
-$$
-Then we need to show that :
-1. $I$ is an ideal of $A$.
-    - Addition closure, i.e. for any $x, y \in I$, we have $x + y \in I$.
-    - Multiplication closure, i.e. for any $a \in A$ and $x \in I$, we have $a \cdot x \in I$.
-3. $I$ is a proper ideal of $A$, i.e. $I \subsetneq A$.
-    - $1 \notin I$
-proof details are ignored here.
-
-<br />
-
-Regarding (2), it is trivially holds for any chain of proper ideals in $A$.
-
-<br />
-
-Regarding (3), if $a \in A$ is not invertible, implying that 
-$$ 
-\urcorner (\exists b \in A, a \cdot b = 1) \iff \forall b \in A, a \cdot b \neq 1
-$$
-Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\langle a \rangle$ is a proper ideal of $A$. By (2), there exists a maximal ideal $\mathfrak{m}$ such that $\langle a \rangle \subseteq \mathfrak{m}$.
-
-<details>
-<summary>Lean 4 proof</summary>
-
-```lean
-/- Fact 2: every proper ideal is contained in a maximal ideal (Zorn's lemma). -/
-theorem exists_le_maximal' (I : Ideal A) (hI : I ≠ ⊤) :
-    ∃ M : Ideal A, M.IsMaximal ∧ I ≤ M := by
-  -- every nonempty chain of proper ideals has a proper upper bound: its union
-  have ih : ∀ c ⊆ {J : Ideal A | J ≠ ⊤}, IsChain (· ≤ ·) c →
-      ∀ J ∈ c, ∃ ub ∈ {J : Ideal A | J ≠ ⊤}, ∀ K ∈ c, K ≤ ub := by
-    intro c hcs hchain J hJ
-    refine ⟨sSup c, ?_, fun K hK => le_sSup hK⟩
-    -- `1 ∉ ⋃ c`, since `1` would lie in some proper ideal of the chain
-    show sSup c ≠ ⊤
-    rw [Ne, Ideal.eq_top_iff_one]
-    intro h1
-    obtain ⟨K, hKc, h1K⟩ := (Submodule.mem_sSup_of_directed ⟨J, hJ⟩ hchain.directedOn).mp h1
-    exact hcs hKc ((Ideal.eq_top_iff_one K).mpr h1K)
-  obtain ⟨M, hIM, hM⟩ := zorn_le_nonempty₀ {J : Ideal A | J ≠ ⊤} ih I hI
-  -- a maximal element of the proper ideals is a maximal ideal
-  refine ⟨M, ⟨⟨hM.prop, fun J hMJ => ?_⟩⟩, hIM⟩
-  by_contra hJ
-  exact hMJ.ne' (le_antisymm (hM.2 hJ hMJ.le) hMJ.le)
-
-example (I : Ideal A) (hI : I ≠ ⊤) : ∃ M : Ideal A, M.IsMaximal ∧ I ≤ M :=
-  Ideal.exists_le_maximal I hI
-
-/- Fact 1: a nonzero ring has at least one maximal ideal. -/
-theorem exists_maximal' [Nontrivial A] : ∃ M : Ideal A, M.IsMaximal := by
-  obtain ⟨M, hM, -⟩ := exists_le_maximal' (⊥ : Ideal A) bot_ne_top
-  exact ⟨M, hM⟩
-
-example [Nontrivial A] : ∃ M : Ideal A, M.IsMaximal := Ideal.exists_maximal A
-
-/- Fact 3: every non-invertible element lies in some maximal ideal. -/
-theorem exists_maximal_of_not_isUnit {a : A} (ha : ¬ IsUnit a) :
-    ∃ M : Ideal A, M.IsMaximal ∧ a ∈ M := by
-  -- `⟨a⟩` is proper, so apply Fact 2
-  have hprop : Ideal.span {a} ≠ ⊤ := fun h => ha (Ideal.span_singleton_eq_top.mp h)
-  obtain ⟨M, hM, haM⟩ := exists_le_maximal' _ hprop
-  exact ⟨M, hM, haM (Ideal.mem_span_singleton_self a)⟩
-
-example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈ M :=
-  exists_max_ideal_of_mem_nonunits ha
-```
-
-</details>
-
-</details>
 <br />
 
 ## Ideal Operations
@@ -790,7 +683,7 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
 
 <br />
 
-## Properties of the Radical
+### Properties of the Radical
 
 Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then : 
 
@@ -925,3 +818,173 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
     </details>
     <br />
+
+
+## Maximal Ideal
+
+As we know, maximal ideal is derived from the concept of proper ideal. A few important facts upon maximal ideal are derived from Zorn's Lemma.
+
+### Zorn's Lemma
+
+Poset Definition : A *poset* $(\Sigma, \leq)$ is a set $\Sigma$ equipped with a partial order $\leq$ which is 
+reflexive, antisymmetric, and transitive. Every chain in a poset is a totally ordered subset of $\Sigma$.
+
+<br />
+
+Zorn's Lemma : Let $(\Sigma, \leq)$ be a partially ordered set in which every chain has an upper bound in $\Sigma$. Then $\Sigma$ contains maximal elements with respect to the partial order $\le$.
+
+### Facts on Maximal Ideal
+
+Let $A$ be a non-zero ring. Then
+
+1. $A$ has at least one *maximal ideal* $\mathfrak{m}$.
+
+2. For any proper *ideal* $I$ of $A$, there exists a maximal ideal $\mathfrak{m}$ such that $I \subseteq \mathfrak{m}$.
+
+3. Every non-invertible element of $A$ is contained in some maximal ideal of $A$.
+
+<details>
+<summary>Proof</summary>
+
+Regarding (1), we can treat $A$ as a poset whose elements are the proper ideals of $A$, ordered by inclusion $\subseteq$. 
+$$
+\Sigma = \{ I \subsetneq A \mid I \text{ is a ideal of } A\}
+$$
+For example, $\langle a \rangle \subseteq \langle a, b \rangle \subseteq \langle a, b, c \rangle \subseteq \cdots$.
+
+By Zorn's Lemma, in order to show $A$ contains maximal ideals with respect to order relation $\subseteq$, it suffices to show that for any chain of proper ideals $\mathcal{C} = \{I_h : h \in H\}$ in $A$, there exists an upper bound in $A$.
+
+For any chain of proper ideals $\mathcal{C} = \{I_h : h \in H\}$ in $A$, the upper bound of this chain is the minimal set containing all the proper ideals, it can defined by  
+$$
+I = \bigcup_{h \in H} I_h.
+$$
+Then we need to show that :
+1. $I$ is an ideal of $A$.
+    - Addition closure, i.e. for any $x, y \in I$, we have $x + y \in I$.
+    - Multiplication closure, i.e. for any $a \in A$ and $x \in I$, we have $a \cdot x \in I$.
+3. $I$ is a proper ideal of $A$, i.e. $I \subsetneq A$.
+    - $1 \notin I$
+proof details are ignored here.
+
+<br />
+
+Regarding (2), it is trivially holds for any chain of proper ideals in $A$.
+
+<br />
+
+Regarding (3), if $a \in A$ is not invertible, implying that 
+$$ 
+\urcorner (\exists b \in A, a \cdot b = 1) \iff \forall b \in A, a \cdot b \neq 1
+$$
+Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\langle a \rangle$ is a proper ideal of $A$. By (2), there exists a maximal ideal $\mathfrak{m}$ such that $\langle a \rangle \subseteq \mathfrak{m}$.
+
+<details>
+<summary>Lean 4 proof</summary>
+
+```lean
+/- Fact 2: every proper ideal is contained in a maximal ideal (Zorn's lemma). -/
+theorem exists_le_maximal' (I : Ideal A) (hI : I ≠ ⊤) :
+    ∃ M : Ideal A, M.IsMaximal ∧ I ≤ M := by
+  -- every nonempty chain of proper ideals has a proper upper bound: its union
+  have ih : ∀ c ⊆ {J : Ideal A | J ≠ ⊤}, IsChain (· ≤ ·) c →
+      ∀ J ∈ c, ∃ ub ∈ {J : Ideal A | J ≠ ⊤}, ∀ K ∈ c, K ≤ ub := by
+    intro c hcs hchain J hJ
+    refine ⟨sSup c, ?_, fun K hK => le_sSup hK⟩
+    -- `1 ∉ ⋃ c`, since `1` would lie in some proper ideal of the chain
+    show sSup c ≠ ⊤
+    rw [Ne, Ideal.eq_top_iff_one]
+    intro h1
+    obtain ⟨K, hKc, h1K⟩ := (Submodule.mem_sSup_of_directed ⟨J, hJ⟩ hchain.directedOn).mp h1
+    exact hcs hKc ((Ideal.eq_top_iff_one K).mpr h1K)
+  obtain ⟨M, hIM, hM⟩ := zorn_le_nonempty₀ {J : Ideal A | J ≠ ⊤} ih I hI
+  -- a maximal element of the proper ideals is a maximal ideal
+  refine ⟨M, ⟨⟨hM.prop, fun J hMJ => ?_⟩⟩, hIM⟩
+  by_contra hJ
+  exact hMJ.ne' (le_antisymm (hM.2 hJ hMJ.le) hMJ.le)
+
+example (I : Ideal A) (hI : I ≠ ⊤) : ∃ M : Ideal A, M.IsMaximal ∧ I ≤ M :=
+  Ideal.exists_le_maximal I hI
+
+/- Fact 1: a nonzero ring has at least one maximal ideal. -/
+theorem exists_maximal' [Nontrivial A] : ∃ M : Ideal A, M.IsMaximal := by
+  obtain ⟨M, hM, -⟩ := exists_le_maximal' (⊥ : Ideal A) bot_ne_top
+  exact ⟨M, hM⟩
+
+example [Nontrivial A] : ∃ M : Ideal A, M.IsMaximal := Ideal.exists_maximal A
+
+/- Fact 3: every non-invertible element lies in some maximal ideal. -/
+theorem exists_maximal_of_not_isUnit {a : A} (ha : ¬ IsUnit a) :
+    ∃ M : Ideal A, M.IsMaximal ∧ a ∈ M := by
+  -- `⟨a⟩` is proper, so apply Fact 2
+  have hprop : Ideal.span {a} ≠ ⊤ := fun h => ha (Ideal.span_singleton_eq_top.mp h)
+  obtain ⟨M, hM, haM⟩ := exists_le_maximal' _ hprop
+  exact ⟨M, hM, haM (Ideal.mem_span_singleton_self a)⟩
+
+example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈ M :=
+  exists_max_ideal_of_mem_nonunits ha
+```
+
+</details>
+
+</details>
+<br />
+
+## Other Special Ideals
+
+Let $A$ be a ring, and let $I, I_1, I_2 \subset A$ be proper ideals. Then, $I$ is :
+
+1. **prime**, if $ab \in I$ implies $a \in I$ or $b \in I$ for all $a, b \in A$;
+
+    Prime ideal means any element of the ideal can be decomposed into a product of elements, at least one of which lies in the ideal.
+
+2. **radical**, if $I = \sqrt{I}$;
+
+    Note the difference between *radical of an ideal* and *radical ideal*, by the property (2) of radical, $I \subseteq \sqrt{I}$, we see that radical ideal is a special case where the ideal coincides with its radical.
+
+3. **primary**, if $ab \in I$ implies $a \in I$ or $b \in \sqrt{I}$;
+
+    Note the difference between primary ideal and prime ideal, a prime ideal is always primary, but a primary ideal need not be prime. This is reflected by the fact that $I \subseteq \sqrt{I}$, and the inclusion can be strict.
+    $$
+      c = a \cdot b \in I
+    $$
+    - if $a \in I$, then $c \in I$ trivially no matter what $b$ is;
+    - if $a \notin I$, as $c^n = a^n \cdot b^n \in I$, we must have $b^n \in I$ for some $n \ge 1$.
+
+4. **irreducible**, if $I = I_1 \cap I_2$ implies $I = I_1$ or $I = I_2$.
+
+    Irreducible ideal only exists when $I_1 \subseteq I_2$ or $I_2 \subseteq I_1$.
+
+<br />
+
+### Facts on Special Ideals
+
+Let $I$ be a proper ideal of $A$. Then we have the following facts:
+
+1. If $I$ is primary, then $\sqrt{I}$ is prime.
+
+    This fact is a direct consequence of the inclusion relationship between prime ideal and primary ideal,  
+    $$
+      \text{prime ideal} \subseteq \text{primary ideal}
+    $$
+
+    <details>
+    <summary>Proof</summary>
+    
+    By the definition of primary ideal, we have
+    $$
+    a b \in I \implies a \in I \text{ or } b \in \sqrt{I}
+    $$
+    - Suppose $a \in I$, then choose left side of the implication in definition of prime ideal $a \in I$, thus $a b \in I$ is satisfied trivially.
+    - Suppose $a \notin I, b \in \sqrt{I}$, then choose the right side of the implication in definition of prime ideal $b \in \sqrt{I}$, thus $a b \in \sqrt{I}$ is satisfied trivially.
+    
+    </details>
+    <br />
+
+2. If $\sqrt{I} = \mathfrak{m}$ is a maximal ideal, then $I$ is primary.
+
+    <details>
+    <summary>Proof</summary>
+  
+    By the definition of radical, we have $\sqrt{I} = \mathfrak{m}$. Suppose $ab \in I$ and $a \notin I$. Then $b^n \in I$ for some $n \ge 1$. Since $\mathfrak{m}$ is maximal, $b \in \mathfrak{m} = \sqrt{I}$. Hence $I$ is primary.
+  
+    </details>
