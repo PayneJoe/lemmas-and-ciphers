@@ -22,7 +22,7 @@
 
 Note that all rings considered here are commutative and have a multiplicative identity.
 
-Lean 4 proofs are given under each proof below. They are collected and compiled (against Mathlib, inside the [mathematics_in_lean](https://github.com/PayneJoe/mathematics_in_lean) project) in [`mathlib-in-lean/commutative-algebra/Ring.lean`](https://github.com/PayneJoe/lemmas-and-ciphers/blob/main/mathlib-in-lean/commutative-algebra/Ring.lean). All snippets assume `variable {A : Type*} [CommRing A]`.
+Lean 4 proofs are given under each proof below. They are collected and compiled in [`mathlib-in-lean/commutative-algebra/Ring.lean`](https://github.com/PayneJoe/lemmas-and-ciphers/blob/main/mathlib-in-lean/commutative-algebra/Ring.lean). All snippets assume `variable {A : Type*} [CommRing A]`.
 
 # Rings and Ideals
 
@@ -795,3 +795,133 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
 Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then : 
 
 1. if $I \subseteq J$, then $\sqrt{I} \subseteq \sqrt{J}$.
+
+    <details>
+    <summary>Proof</summary>
+
+    In order to show $\sqrt{I} \subseteq \sqrt{J}$, it is suffices to show :
+    $$
+      \forall x \in \sqrt{I} \implies x \in \sqrt{J} \iff \forall x \in \sqrt{I}, \exists n \in \mathbb{N}, x^n \in I \implies \exists m \in \mathbb{N}, x^m \in J
+    $$
+
+    Since $x^n \in I \subseteq J$, use $m = n$, we have $x^m \in J$. Completing the proof.
+
+    </details>
+    <br />
+
+2. $I \subseteq \sqrt{I}$ and $\sqrt{\sqrt{I}} = \sqrt{I}$
+
+    <details>
+    <summary>Proof</summary>
+
+    For any $x \in I$, we have $x^1 = x \in I$, hence $x \in \sqrt{I}$. This shows $I \subseteq \sqrt{I}$.
+
+    In order to show $\sqrt{\sqrt{I}} = \sqrt{I}$, since $\sqrt{I} \subseteq \sqrt{\sqrt{I}}$ follows from the fact that $I \subseteq \sqrt{I}$, it suffices to show the forward inclusion is true, i.e., $\sqrt{\sqrt{I}} \subseteq \sqrt{I}$. That is, 
+    $$
+      \sqrt{\sqrt{I}} \subseteq \sqrt{I} \iff \forall x \in \sqrt{\sqrt{I}} \implies x \in \sqrt{I} \\
+      \iff  \forall x \in \sqrt{\sqrt{I}}, \exists n \in \mathbb{N}, x^n \in \sqrt{I} \implies \exists m \in \mathbb{N}, x^m \in I
+    $$
+
+    Since $x^n \in \sqrt{I}$ for some $n \in \mathbb{N}$, by definition of $\sqrt{I}$, there exists $p \in \mathbb{N}$ such that $(x^n)^p = x^{np} \in I$. So use $m = np$, we have $x^m \in I$. Completing the proof.
+
+    </details>
+    <br />
+
+3. $\sqrt{I J} = \sqrt{I \cap J} = \sqrt{I} \cap \sqrt{J}$
+
+    <details>
+    <summary>Proof</summary>
+
+    (a) First, we show $\sqrt{I J} = \sqrt{I \cap J}$. Since $I J \subseteq I \cap J$, by property (1) above, we have $\sqrt{I J} \subseteq \sqrt{I \cap J}$. So it suffices to show the backward direction inclusion $\sqrt{I \cap J} \subseteq \sqrt{I J}$. That is, 
+    $$
+      \sqrt{I \cap J} \subseteq \sqrt{I J} \iff \forall x \in \sqrt{I \cap J} \implies x \in \sqrt{I J} \\
+      \iff \forall x \in \sqrt{I \cap J}, \exists n \in \mathbb{N}, x^n \in I \cap J \implies \exists m \in \mathbb{N}, x^m \in I J
+    $$
+    $x^n \in I \cap J$ for some $n \in \mathbb{N}$ implies $x^n \in I$ and $x^n \in J$, hence by definition we have $x^{2n} = (x^n)^2 \in I J$. So use $m = 2n$, we have $x^m \in I J$. Completing the proof of (a).
+
+    <br />
+
+    (b) Next, in order to show the equality $\sqrt{I \cap J} = \sqrt{I} \cap \sqrt{J}$, we first show the forward inclusion direction $\sqrt{I \cap J} \subseteq \sqrt{I} \cap \sqrt{J}$. That is,
+    $$
+      \sqrt{I \cap J} \subseteq \sqrt{I} \cap \sqrt{J} \iff \forall x \in \sqrt{I \cap J} \implies x \in \sqrt{I} \cap \sqrt{J} \\
+      \iff \forall x \in \sqrt{I \cap J}, \exists n \in \mathbb{N}, x^n \in I \cap J \implies \exists m_1, m_2 \in \mathbb{N}, x^{m_1} \in I \text{ and } x^{m_2} \in J
+    $$
+    $x^n \in I \cap J$ for some $n \in \mathbb{N}$ implies $x^n \in I$ and $x^n \in J$, hence use $m_1 = n, m_2 = n$, we have $x^{m_1} \in I$ and $x^{m_2} \in J$. Completing the proof of the forward inclusion.
+
+    <br />
+
+    Then we show the backward inclusion direction $\sqrt{I} \cap \sqrt{J} \subseteq \sqrt{I \cap J}$. That is,  
+    $$
+        \sqrt{I} \cap \sqrt{J} \subseteq \sqrt{I \cap J} \iff \forall x \in \sqrt{I} \cap \sqrt{J} \implies x \in \sqrt{I \cap J} \\
+        \iff \forall x \in \sqrt{I} \cap \sqrt{J}, \exists m_1, m_2 \in \mathbb{N}, x^{m_1} \in I \text{ and } x^{m_2} \in J \implies \exists n \in \mathbb{N}, x^n \in I \cap J \\
+    $$
+
+    Since $x^{m_1} \in I, x^{m_2} \in J$, by definition, we have $x^{m_1} \cdot x^{m_2} = x^{m_1 + m_2} \in I J$. Hence, using $n = m_1 + m_2$, we have $x^n \in IJ$. Again by $I J \subseteq I \cap J$, we have $x^n \in I \cap J$. Completing the proof of the backward inclusion.
+
+  </details>
+  <br />
+
+4. $\sqrt{I^n} = \sqrt{I}$ for any $n \in \mathbb{N}$
+
+    <details>
+    <summary>Proof</summary>
+
+    This is a special case of $\sqrt{IJ} = \sqrt{I \cap J}$ in property (3) above, where we take $J = I^{n-1}$. We just omit the detailed proof here. 
+  
+    </details>
+    <br />
+
+5. $\sqrt{I} = \langle 1 \rangle$ if and only if $I = \langle 1 \rangle$.
+
+6. $\sqrt{I + J} = \sqrt{\sqrt{I} + \sqrt{J}}$
+
+    <details>
+    <summary>Proof</summary>
+
+      In order to show the equality $\sqrt{I + J} = \sqrt{\sqrt{I} + \sqrt{J}}$, we first show the forward inclusion directions. That is,
+      $$
+        \sqrt{I + J} \subseteq \sqrt{\sqrt{I} + \sqrt{J}} \iff \forall x \in \sqrt{I + J} \implies x \in \sqrt{\sqrt{I} + \sqrt{J}} \\
+        \iff \forall x \in \sqrt{I + J}, \exists n \in \mathbb{N}, x^n \in I + J \implies \exists m \in \mathbb{N}, x^m \in \sqrt{I} + \sqrt{J} \\
+      $$
+      As $x^n \in I + J$ implies $\exists x_1 \in I, x_2 \in J$ such that $x^n = x_1 + x_2$. We use $m = n$, then by the property (2) above, we have $x_1 \in \sqrt{I}, x_2 \in \sqrt{J}$, thus $x^m = x_1 + x_2 \in \sqrt{I} + \sqrt{J}$. Completing the proof of the forward inclusion.
+
+      <br />
+
+      Next, we show the backward inclusion direction $\sqrt{\sqrt{I} + \sqrt{J}} \subseteq \sqrt{I + J}$. That is,
+      $$
+        \sqrt{\sqrt{I} + \sqrt{J}} \subseteq \sqrt{I + J} \iff \forall x \in \sqrt{\sqrt{I} + \sqrt{J}} \implies x \in \sqrt{I + J} \\
+        \iff \forall x \in \sqrt{\sqrt{I} + \sqrt{J}}, \exists m \in \mathbb{N}, x^m \in \sqrt{I} + \sqrt{J} \implies \exists n \in \mathbb{N}, x^n \in I + J \\
+      $$
+
+      Since $x^m \in \sqrt{I} + \sqrt{J}$, we have $\exists x_1 \in \sqrt{I}, x_2 \in \sqrt{J}$ such that $x^m = x_1 + x_2$. By definition, there exist $k_1, k_2 \in \mathbb{N}$ such that $x_1^{k_1} \in I$ and $x_2^{k_2} \in J$. Let $n = m \cdot k_1 \cdot k_2$, then $x^n = (x^m)^{k_1 k_2} = (x_1 + x_2)^{k_1 k_2} \in I + J$. Completing the proof of the backward inclusion.
+
+    </details>
+    <br />
+  
+7. $\sqrt{I + JH} = \sqrt{I + J} \cap \sqrt{I + H}$
+
+    <details>
+    <summary>Proof</summary>
+
+    In order to prove the equality $\sqrt{I + JH} = \sqrt{I + J} \cap \sqrt{I + H}$, we need to show both inclusions.
+
+    **Forward inclusion**: $\sqrt{I + JH} \subseteq \sqrt{I + J} \cap \sqrt{I + H}$, that is,
+    $$
+        \sqrt{I + JH} \subseteq \sqrt{I + J} \cap \sqrt{I + H} \iff \forall x \in \sqrt{I + JH} \implies x \in \sqrt{I + J} \cap \sqrt{I + H} \\
+        \iff \forall x \in \sqrt{I + JH}, \exists n \in \mathbb{N}, x^n \in I + JH \implies \exists m_1, m_2 \in \mathbb{N}, x^{m_1} \in I + J \text{ and } x^{m_2} \in I + H \\
+    $$
+
+    As $x^n \in I + JH$ implies $\exists x_1 \in I, x_2 \in JH$ such that $x^n = x_1 + x_2$. We use $m_1 = m_2 = n$, as $H \subseteq A$ thus we have $J H \subseteq J$, then $x^{m_1} = x_1 + x_2 \in I + J H \subseteq I + J$, similarly we have $x^{m_2} = x_1 + x_2 \in I + J H \subseteq I + H$. Completing the proof of the forward inclusion.
+
+    <br />
+
+    **Backward inclusion**: $\sqrt{I + J} \cap \sqrt{I + H} \subseteq \sqrt{I + JH}$, that is,
+    $$
+        \sqrt{I + J} \cap \sqrt{I + H} \subseteq \sqrt{I + JH} \iff \forall x \in \sqrt{I + J} \cap \sqrt{I + H} \implies x \in \sqrt{I + JH} \\
+        \iff \forall x \in \sqrt{I + J} \cap \sqrt{I + H}, \exists m_1, m_2 \in \mathbb{N}, x^{m_1} \in I + J \text{ and } x^{m_2} \in I + H \implies \exists n \in \mathbb{N}, x^n \in I + JH \\
+    $$
+
+    Since $x^{m_1} \in I + J$ and $x^{m_2} \in I + H$, thus we have $x^{m_1} \cdot x^{m_2} = x^{m_1 + m_2} \in (I + J)(I + H) \subseteq I + JH$. Let $n = m_1 + m_2$, then $x^n \in I + JH$. Completing the proof of the backward inclusion.
+
+    </details>
+    <br />
