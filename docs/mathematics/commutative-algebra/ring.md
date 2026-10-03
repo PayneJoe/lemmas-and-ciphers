@@ -17,6 +17,7 @@
     - [Facts on Maximal Ideal](#facts-on-maximal-ideal)
   - [Other Special Ideals](#other-special-ideals)
     - [Facts on Special Ideals](#facts-on-special-ideals)
+    - [Krull Dimension](#krull-dimension)
 
 </details>
 
@@ -935,7 +936,11 @@ Let $A$ be a ring, and let $I, I_1, I_2 \subset A$ be proper ideals. Then, $I$ i
 
 1. **prime**, if $ab \in I$ implies $a \in I$ or $b \in I$ for all $a, b \in A$;
 
-    Prime ideal means any element of the ideal can be decomposed into a product of elements, at least one of which lies in the ideal.
+    Prime ideal means any element of the ideal can be decomposed into a product of elements, at least one of which lies in the ideal. We give out an couter-example, suppose $A = \mathbb{Z}$ and $I = \langle 6 \rangle$, then : 
+    $$
+      6 = 2 \cdot 3
+    $$
+    where $2, 3 \notin I$
 
 2. **radical**, if $I = \sqrt{I}$;
 
@@ -1033,3 +1038,33 @@ Let $I$ be a proper ideal of $A$. Then we have the following facts:
     We have assumed that $a b \in I$, thus $\sum_{k=1}^{n} \binom{n}{k} a (bc)^k (-1)^{n-k} \in I$ as well, which implies $(-1)^n a \in I$, and hence $a \in I$. Contradiction happens, which completes the proof.
 
     </details>
+<br />
+
+### Krull Dimension
+
+Let $A$ be a ring. The Krull Dimension of $A$, denoted by $\dim(A)$, is defined as the supremum of the lengths $n$ of all chains of prime ideals:
+$$
+\mathfrak{p}_0 \subsetneq \mathfrak{p}_1 \subsetneq \cdots \subsetneq \mathfrak{p}_n
+$$
+in $A$.
+
+<br />
+
+For example, 
+- if $A$ is a field, there are only two ideals $\langle 0 \rangle$ and $A$, but only $\langle 0 \rangle$ is prime, $\langle 0 \rangle$ forms the longest chain of prime ideals, 
+  $$
+    \langle 0 \rangle
+  $$
+  so the Krull dimension is $0$.
+
+- if $A = \mathbb{Z}$, there are two prime ideals $\langle 0 \rangle$ and $\langle p \rangle$ for any prime number $p$, and a strict inclusion exists between them 
+  $$
+  \langle 0 \rangle \subsetneq \langle p \rangle
+  $$
+  so the Krull dimension is $1$ for the longest chain of prime ideals.
+
+- if $A = k[X]$, similar with $A = \mathbb{Z}$, there are two prime ideals $\langle 0 \rangle$ and $\langle f \rangle$ for any irreducible polynomial $f \in k[X]$, and a strict inclusion exists between them  
+  $$  
+  \langle 0 \rangle \subsetneq \langle f \rangle
+  $$
+  so the Krull dimension is $1$ for the longest chain of prime ideals.
