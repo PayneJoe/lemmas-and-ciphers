@@ -5,6 +5,4 @@ and the mathematics behind their security.
 
 ## Planned topics
 
-- Symmetric and public-key cryptography
-- Hash functions and authenticated data
-- Number theory and algebra for cryptography
+- [Complexity of Lattice Problems](./complexity-of-lattice-problems/)
