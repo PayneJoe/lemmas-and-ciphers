@@ -74,5 +74,41 @@
   "../docs/cryptography/index.md": {
     "postId": 144,
     "link": "https://paynejoe.com/index-5/"
+  },
+  "../docs/formal-verification/index.md": {
+    "postId": 146,
+    "link": "https://paynejoe.com/index-6/"
+  },
+  "../docs/formal-verification/tips.md": {
+    "postId": 147,
+    "link": "https://paynejoe.com/tips/"
+  },
+  "../docs/mathematics/commutative-algebra/affine-algbraic-varieties.md": {
+    "postId": 148,
+    "link": "https://paynejoe.com/affine-algbraic-varieties/"
+  },
+  "../docs/mathematics/commutative-algebra/index.md": {
+    "postId": 149,
+    "link": "https://paynejoe.com/index-7/"
+  },
+  "../docs/mathematics/commutative-algebra/localization.md": {
+    "postId": 150,
+    "link": "https://paynejoe.com/localization/"
+  },
+  "../docs/mathematics/commutative-algebra/modules.md": {
+    "postId": 151,
+    "link": "https://paynejoe.com/modules/"
+  },
+  "../docs/mathematics/commutative-algebra/noetherian-and-artinian-rings.md": {
+    "postId": 152,
+    "link": "https://paynejoe.com/noetherian-and-artinian-rings/"
+  },
+  "../docs/mathematics/commutative-algebra/polynomial-ring.md": {
+    "postId": 153,
+    "link": "https://paynejoe.com/polynomial-ring/"
+  },
+  "../docs/mathematics/commutative-algebra/tensor-product.md": {
+    "postId": 154,
+    "link": "https://paynejoe.com/tensor-product/"
   }
 }
