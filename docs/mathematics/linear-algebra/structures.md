@@ -15,6 +15,8 @@
   - [Inner Products and Norms](#inner-products-and-norms)
   - [Orthonormal Bases](#orthonormal-bases)
 - [Operators on Inner Product Spaces](#operators-on-inner-product-spaces)
+  - [Adjoint Linear Map](#adjoint-linear-map)
+  - [Self-adjoint Operators](#self-adjoint-operators)
 - [Multilinear Algebra and Determinants](#multilinear-algebra-and-determinants)
 
 </details>
@@ -283,7 +285,7 @@ Before we dive into diagonal matrix of linear operator, we first need to underst
 
 <br />
 
-**Lemma 5.9 - Conditions for Upper-Triangular Matrix**
+**Lemma 5.9 - Conditions for Upper-Triangular Matrix**{#lemma-5-9 .lemma anchor}
 
 Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$. Then the following conditions are equivalent:
 - (a) The matrix of $T$ with respect to some basis $v_1, ..., v_n$ of $V$ is upper-triangular.
@@ -301,7 +303,7 @@ $$
 </details>
 <br />
 
-**Lemma 5.10 - Linear Operator Equation**
+**Lemma 5.10 - Linear Operator Equation**{#lemma-5-10 .lemma anchor}
 
 Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$, and it has an upper-triangular matrix with diagonal entries $\lambda_1, ..., \lambda_n$. Then  
 $$
@@ -310,7 +312,7 @@ $$
 
 <br />
 
-**Lemma 5.11 - Determination of Eigenvalues from Upper-Triangular Matrix**
+**Lemma 5.11 - Determination of Eigenvalues from Upper-Triangular Matrix**{#lemma-5-11 .lemma anchor}
 
 Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$, and it has an upper-triangular matrix with diagonal entries $\lambda_1, ..., \lambda_n$. Then the eigenvalues of $T$ are precisely $\lambda_1, ..., \lambda_n$.
 
@@ -318,7 +320,7 @@ Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vect
 
 Not every linear operator has an upper-triangular matrix representation with respect to some basis. Those that do are called triangularizable operators.
 
-**Lemma 5.12 - Condition for Having Upper-Triangular Matrix**
+**Lemma 5.12 - Condition for Having Upper-Triangular Matrix**{#lemma-5-12 .lemma anchor}
 
 Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$. Then $T$ has an upper-triangular matrix with respect to some basis of $V$ if and only if the minimal polynomial of $T$ equals  
 $$
@@ -330,7 +332,7 @@ for some scalars $\lambda_1, ..., \lambda_m \in \mathbb{F}$, where $m \le n$. Mo
 
 ## Diagonalizable Operators
 
-**Definition 5.5 - Eigenspace**
+**Definition 5.5 - Eigenspace**{#definition-5-5 .definition anchor}
 
 Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$, and $\lambda$ is an eigenvalue of $T$. The eigenspace corresponding to $\lambda$ is defined as
 $$
@@ -347,7 +349,7 @@ $$
 
 <br />
 
-**Lemma 5.13 - Sum of Eigenspaces**
+**Lemma 5.13 - Sum of Eigenspaces**{#lemma-5-13 .lemma anchor}
 
 Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$, and $\lambda_1, ..., \lambda_m$ are distinct eigenvalues of $T$. Then the sum of the corresponding eigenspaces is direct, i.e.,
 $$
@@ -382,7 +384,7 @@ Completing the proof.
 </details>
 <br />
 
-**Lemma 5.14 - Euqivalent Conditions for Diagonalizability**
+**Lemma 5.14 - Euqivalent Conditions for Diagonalizability**{#lemma-5-14 .lemma anchor}
 
 Suppose $T \in \mathcal{L}(V)$ is a linear operator on a finite-dimensional vector space $V$. Let $\lambda_1, ..., \lambda_m$ be the distinct eigenvalues of $T$. Then the following are equivalent:
 
@@ -436,7 +438,7 @@ $$
 </details>
 <br />
 
-**Lemma 5.15 - Enough Eigenvalues for Diagonalizability**
+**Lemma 5.15 - Enough Eigenvalues for Diagonalizability**{#lemma-5-15 .lemma anchor}
 
 Suppose $T \in \mathcal{L}(V)$ is a linear operator on an $n$-dimensional vector space $V$, and it has $\dim V$ distinct eigenvalues. Then $T$ is diagonalizable.
 
@@ -452,7 +454,7 @@ This lemma is a special case of lemma 5.14, where the number of distinct eigenva
 </details>
 <br />
 
-**Lemma 5.16 - Sufficient and Necessary Conditions for Diagonalizability**
+**Lemma 5.16 - Sufficient and Necessary Conditions for Diagonalizability**{#lemma-5-16 .lemma anchor}
 
 Suppose $T \in \mathcal{L}(V)$ is a linear operator on an $n$-dimensional vector space $V$. Then $T$ is diagonalizable if and only if the minimal polynomial of $T$ equals  
 $$
@@ -467,7 +469,7 @@ where $\lambda_1, ..., \lambda_m$ are the distinct eigenvalues of $T$.
 
 <br />
 
-**Lemma 5.17 - Restriction of Diagonalizable Operators**
+**Lemma 5.17 - Restriction of Diagonalizable Operators**{#lemma-5-17 .lemma anchor}
 
 Suppose $T \in \mathcal{L}(V)$ is a diagonalizable linear operator on an $n$-dimensional vector space $V$, and $W$ is a $T$-invariant subspace of $V$. Then the restriction of $T$ to $W$, denoted by $T|_W$, is also diagonalizable.
 
@@ -480,13 +482,13 @@ Suppose $T \in \mathcal{L}(V)$ is a diagonalizable linear operator on an $n$-dim
 
 If two operators are commuting, i.e., $AB = BA$, then they are said to commute with each other.
 
-**Lemma 5.18 - Commuting Operators and Commuting Matrices**
+**Lemma 5.18 - Commuting Operators and Commuting Matrices**{#lemma-5-18 .lemma anchor}
 
 Suppose $S$ and $T$ are two linear operators on a finite-dimensional vector space $V$, and $v_1, ..., v_n$ is a basis of $V$. Then $S$ and $T$ commute if and only if $\mathcal{M}(S, \{v_1, ..., v_n\})$ and $\mathcal{M}(T, \{v_1, ..., v_n\})$ commute.
 
 <br />
 
-**Lemma 5.19 - Eigenspace is invariant under commuting operator**
+**Lemma 5.19 - Eigenspace is invariant under commuting operator**{#lemma-5-19 .lemma anchor}
 
 Suppose $S, T \in \mathcal{L}(V)$ are two commuting linear operators on a finite-dimensional vector space $V$ and $\lambda \in \mathbb{F}$. Then $E(\lambda, S)$, the eigenspace of $S$ corresponding to $\lambda$, is invariant under $T$.
 
@@ -503,7 +505,7 @@ Since $S, T$ commute, $S T = T S$, so we have $S(T(v)) = T(S(v)) = T(\lambda v) 
 </details>
 <br />
 
-**Lemma 5.20 - Simultaneous Diagonalizability of Commuting Operators**
+**Lemma 5.20 - Simultaneous Diagonalizability of Commuting Operators**{#lemma-5-20 .lemma anchor}
 
 Two diagonalizable linear operators on a finite-dimensional vector space $V$ commute if and only if they are simultaneously diagonalizable, i.e., there exists a basis of $V$ consisting of eigenvectors common to both operators.
 
@@ -520,7 +522,7 @@ Actually, there are also some geometric features (for example, lengths and angle
 
 ## Inner Products and Norms
 
-**Definition 6.1 - Euclidean (Inner Product) Space**
+**Definition 6.1 - Euclidean (Inner Product) Space**{#definition-6-1 .definition anchor}
 
 An inner product on a vector space $V$ over the field $\mathbb{F}$ (where $\mathbb{F}$ is typically $\mathbb{R}$ or $\mathbb{C}$) is a function $\langle \cdot, \cdot \rangle : V \times V \to \mathbb{F}$ that satisfies the following properties for all $u, v, w \in V$ and all $\alpha \in \mathbb{F}$:
 
@@ -532,7 +534,7 @@ A vector space $V$ equipped with an inner product $\langle \cdot, \cdot \rangle$
 
 <br />
 
-**Definition 6.2 - Norm Induced by Inner Product**
+**Definition 6.2 - Norm Induced by Inner Product**{#definition-6-2 .definition anchor}
 
 For a vector $v \in V$, the norm induced by the inner product is defined as
 $$
@@ -547,7 +549,7 @@ $$
 
 <br />
 
-**Definition 6.3 - Orthogonality**
+**Definition 6.3 - Orthogonality**{#definition-6-3 .definition anchor}
 
 Two vectors $u, v \in V$ are said to be **orthogonal** if their inner product is zero, i.e.,
 $$
@@ -556,7 +558,7 @@ $$
 
 <br />
 
-**Lemma 6.1 - Pythagorean Theorem for Inner Product Spaces**
+**Lemma 6.1 - Pythagorean Theorem for Inner Product Spaces**{#lemma-6-1 .lemma anchor}
 
 If $u, v \in V$ are orthogonal, then
 $$
@@ -574,7 +576,7 @@ $$
 </details >
 <br />
 
-**Lemma 6.4 - Cauchy-Schwarz Inequality**
+**Lemma 6.4 - Cauchy-Schwarz Inequality**{#lemma-6-4 .lemma anchor}
 
 For all vectors $u, v \in V$, the Cauchy-Schwarz inequality states that
 $$
@@ -584,7 +586,7 @@ Equality holds if and only if $u$ and $v$ are linearly dependent.
 
 <br />
 
-**Lemma 6.5 - Triangle Inequality**
+**Lemma 6.5 - Triangle Inequality**{#lemma-6-5 .lemma anchor}
 
 For all vectors $u, v \in V$, the triangle inequality states that
 $$
@@ -594,7 +596,7 @@ Equality holds if and only if $u$ and $v$ are linearly dependent.
 
 <br />
 
-**Lemma 6.6 - Parallelogram Law**
+**Lemma 6.6 - Parallelogram Law**{#lemma-6-6 .lemma anchor}
 
 For all vectors $u, v \in V$, the parallelogram law states that
 $$
@@ -605,7 +607,7 @@ $$
 
 ## Orthonormal Bases
 
-**Definition 6.4 - Orthonormal**
+**Definition 6.4 - Orthonormal**{#definition-6-4 .definition anchor}
 
 An orthonormal set of vectors in an inner product space $V$ is a set of vectors that are all unit vectors (norm equal to 1) and mutually orthogonal. Formally, a set $\{e_1, e_2, \dots, e_n\} \subseteq V$ is orthonormal if
 $$
@@ -621,7 +623,7 @@ We have two properties about orthonormal list of vectors :
 
 <br />
 
-**Lemma 6.7 - Bessel's Inequality**
+**Lemma 6.7 - Bessel's Inequality**{#lemma-6-7 .lemma anchor}
 
 Let $\{e_1, e_2, \dots, e_n\}$ be an orthonormal set of vectors in an inner product space $V$. For any vector $v \in V$, Bessel's inequality states that
 $$
@@ -633,7 +635,7 @@ $$
 
 <br />
 
-**Definition 6.5 - Orthonormal Basis**
+**Definition 6.5 - Orthonormal Basis**{#definition-6-5 .definition anchor}
 
 An orthonormal basis of an inner product space $V$ is an orthonormal set of vectors that spans the entire space $V$. Formally, a set $\{e_1, e_2, \dots, e_n\} \subseteq V$ is an orthonormal basis if it is orthonormal and every vector $v \in V$ can be expressed as a linear combination of the basis vectors:
 $$
@@ -645,7 +647,7 @@ $$
 
 <br />
 
-**Definition 6.6 - Orthogonal Decomposition**
+**Definition 6.6 - Orthogonal Decomposition**{#definition-6-6 .definition anchor}
 
 Suppose $u, v \in V$, with $v \ne 0$. Set 
 $$
@@ -662,7 +664,7 @@ where $w$ is parallel to $v$ and $u - w$ is orthogonal to $v$.
 
 <br />
 
-**Lemma 6.8 - Gram-Schmidt Procedure**
+**Lemma 6.8 - Gram-Schmidt Procedure**{#lemma-6-8 .lemma anchor} 
 
 Suppose $v_1, ..., v_m$ is a linearly independent set of vectors in an inner product space $V$. The Gram-Schmidt procedure constructs an orthonormal set of vectors $e_1, ..., e_m$ as follows:
 1. Let $f_1 = v_1$
@@ -684,13 +686,13 @@ Suppose $v_1, ..., v_m$ is a linearly independent set of vectors in an inner pro
 
 <br />
 
-**Lemma 6.9 - Orthonormal List to Orthonormal Basis**
+**Lemma 6.9 - Orthonormal List to Orthonormal Basis**{#lemma-6-9 .lemma anchor} 
 
 The length of any orthonormal list is not guarrenteed to be $\dim V$, but it can always be extended to form an orthonormal basis of $V$ by applying the Gram-Schmidt procedure to additional linearly independent vectors until the basis is complete.
 
 <br />
 
-**Lemma 6.10 - Upper-triangular Matrix with Respect to Orthonormal Basis**
+**Lemma 6.10 - Upper-triangular Matrix with Respect to Orthonormal Basis**{#lemma-6-10 .lemma anchor} 
 
 By lemma 5.12, every linear operator on a finite-dimensional inner product space has an upper-triangular matrix with respect to **some** basis. It does not specify which basis, but in fact, it can be chosen to be an orthonormal basis.
 
@@ -701,7 +703,7 @@ $$
 
 <br />
 
-**Definition 6.7 - Orthogonal Complement**
+**Definition 6.7 - Orthogonal Complement**{#definition-6-7 .definition anchor} 
 
 Given $U$ is a subset of $V$, the orthogonal complement of $U$, denoted by $U^\perp$, is defined as
 $$
@@ -720,7 +722,7 @@ Orthogonal complement has the following properties:
 > [!Warning]
 > We did not specify that $U$ is a subspace in the definition of orthogonal complement. Therefore, $U^\perp$ is always a subspace of $V$ regardless of whether $U$ itself is a subspace.
 
-**Lemma 6.11 - Direct-sum Decomposition with Orthogonal Complement**
+**Lemma 6.11 - Direct-sum Decomposition with Orthogonal Complement**{#lemma-6-11 .lemma anchor} 
 
 Suppose $U$ is a subspace of a finite-dimensional inner product space $V$. Then
 $$
@@ -738,7 +740,7 @@ $$
 
 <br />
 
-**Definition 6.8 - Orthogonal Projection**
+**Definition 6.8 - Orthogonal Projection**{#definition-6-8 .definition anchor}  
 
 Suppose $U$ is a finite-dimensional subspace of a finite-dimensional inner product space $V$. The orthogonal projection of $V$ onto $U$ is the linear operator $P_U \in \mathcal{L}(V)$ defined as follows : For each $v \in V$, write $v = u + w$, where $u \in U$ and $w \in U^\perp$. Then
 $$
@@ -764,7 +766,7 @@ $$
 
 <br />
 
-**Lemma 6.12 - Minimizing Distance to a Subspace**
+**Lemma 6.12 - Minimizing Distance to a Subspace**{#lemma-6-12 .lemma anchor}   
 
 Suppose $U$ is a finite-dimensional subspace of a finite-dimensional inner product space $V$. For any $v \in V$, the distance from $v$ to $U$ is minimized by the orthogonal projection of $v$ onto $U$. In other words,
 $$
@@ -775,7 +777,11 @@ $$
 
 # Operators on Inner Product Spaces
 
-**Definition 7.1 - Adjoint Function**
+Before talking about adjoint operators, let's first explore the general adjoint linear map and its properties.
+
+## Adjoint Linear Map
+
+**Definition 7.1 - Adjoint Function**{#definition-7-1 .definition anchor}
 
 Suppose $V$ is a finite-dimensional inner product space and $T \in \mathcal{L}(V, W)$. The adjoint function of $T$, denoted by $T^* : W \to V$ such that
 $$
@@ -797,7 +803,7 @@ Comuting the adjoint operator :
 
 <br />
 
-**Lemma 7.1 - Adjoint Function as a Linear Map**
+**Lemma 7.1 - Adjoint Function as a Linear Map**{#lemma-7-1 .lemma anchor}
 
 If $T \in \mathcal{L}(V, W)$, then the adjoint function $T^* \in \mathcal{L}(W, V)$ is also a linear map.
 
@@ -825,6 +831,149 @@ $$
 Hence, $T^*(\lambda w) = \lambda \cdot T^*(w)$, completing the proof of (b).
 
 </details>
+<br />
+
+**Lemma 7.2 - Properties of the Adjoint Linear Map**{#lemma-7-2 .lemma anchor}        
+
+Suppose $T \in \mathcal{L}(V, W)$. Then 
+1. $(S + T)^* = S^* + T^*$ for all $S \in \mathcal{L}(V, W)$.
+2. $(\lambda T)^* = \overline{\lambda} T^*$ for all $\lambda \in \mathbb{F}$.
+3. $(T^*)^* = T$.
+4. $(ST)^* = T^* S^*$ for all $S \in \mathcal{L}(W, U)$ (here $U$ is another finite-dimensional inner product space over the same field $\mathbb{F}$). 
+5. $I^* = I$ where $I$ is the identity operator on $V$.
+6. if $T$ is invertible, then $T^*$ is also invertible and $(T^*)^{-1} = (T^{-1})^*$.
+
+<details>
+<summary>Proof</summary>
+
+The proofs of these properties follow directly from the definition of the adjoint operator and the linearity of the inner product.
+
+1. For all $v \in V$ and $w \in W$, we have
+    $$
+    \langle (S + T)^* w, v \rangle = \langle w, (S + T) v \rangle = \langle w, S v \rangle + \langle w, T v \rangle = \langle S^* w, v \rangle + \langle T^* w, v \rangle = \langle (S^* + T^*) w, v \rangle.
+    $$
+    Hence, $(S + T)^* = S^* + T^*$.
+
+2. For all $v \in V$ and $w \in W$, we have
+    $$
+    \langle (\lambda T)^* w, v \rangle = \langle w, (\lambda T) v \rangle = \langle w, \lambda T v \rangle = \overline{\lambda} \langle w, T v \rangle = \overline{\lambda} \langle T^* w, v \rangle = \langle \overline{\lambda} T^* w, v \rangle.
+    $$
+    Hence, $(\lambda T)^* = \overline{\lambda} T^*$.
+
+3. For all $v \in V$ and $w \in W$, we have
+    $$
+    \langle (T^*)^* v, w \rangle = \langle v, T^* w \rangle = \langle T v, w \rangle.
+    $$
+    Hence, $(T^*)^* = T$.
+
+4. For all $v \in V$ and $u \in U$, we have
+    $$
+    \langle (ST)^* u, v \rangle = \langle u, ST v \rangle = \langle u, S(T v) \rangle = \langle S^* u, T v \rangle = \langle T^* S^* u, v \rangle.
+    $$
+    Hence, $(ST)^* = T^* S^*$.
+
+5. For all $v, w \in V$, we have
+    $$
+    \langle I^* v, w \rangle = \langle v, I w \rangle = \langle v, w \rangle.
+    $$
+    Hence, $I^* = I$.
+
+6. Since $T$ is invertible, we have $T^{-1} T = I$. Applying the adjoint operator to both sides, by (4) and (5), we get
+    $$
+    (T^{-1} T)^* = I^* \implies (T^*) (T^{-1})^* = I \implies (T^*)^{-1} = (T^{-1})^*.
+    $$
+
+</details>
+<br />
+
+**Lemma 7.3 - Null Space and Range of Adjoint Linear Map**{#lemma-7-3 .lemma anchor}
+
+Suppose $T \in \mathcal{L}(V, W)$. Then
+1. $\mathrm{null}(T^*) = \mathrm{range}(T)^\perp$.
+2. $\mathrm{range}(T^*) = \mathrm{null}(T)^\perp$.
+3. $\mathrm{null}(T) = \mathrm{range}(T^*)^\perp$.
+4. $\mathrm{range}(T) = \mathrm{null}(T^*)^\perp$.
+
+<details>
+<summary>Proof</summary>
+
+Regarding (1), let $w \in W$, by the definition 6.7 of orthogonal complement, we have :
+$$
+w \in \mathrm{null}(T^*) \iff T^* (w) = 0 \iff
+\langle T^* w, v \rangle = 0 \quad \forall v \in V \iff
+\langle w, T v \rangle = 0 \quad \forall v \in V \iff
+w \in \mathrm{range}(T)^\perp
+$$
+thus $\mathrm{null}(T^*) = \mathrm{range}(T)^\perp$.
+
+Replacing $T$ with $T^*$ on (4), by property (3) in lemma 7.2, we get (2).
+
+Replacing $T$ with $T^*$ on (1), by property (3) in lemma 7.2, we get (3).
+
+Applying orthogonal complement on both side of (1), we get (4).
+
+</details>
+<br />
+
+**Definition 7.2 - Conjugate Transpose (Adjoint)**
+
+The conjugate transpose of a $m \times n$ matrix $A$ is the $n \times m$ matrix $A^*$ obtained by taking the transpose of $A$ and then taking the complex conjugate of each entry. That is,
+$$
+(A^*)_{j, k} = \overline{A_{k, j}}
+$$
+
+> [!Note]
+> As we know, a linear map $T$ can be represented by a matrix $A$, so is there any relationship between the adjoint of a matrix $A^*$ and the adjoint $T^*$ of the corresponding linear map $T$?
+
+<br />
+
+**Lemma 7.4 - Adjoint Matrix and Adjoint Linear Map**
+
+Let $T \in \mathcal{L}(V, W)$. Suppose $e_1, ..., e_n$ is an orthonormal basis of $V$ and $f_1, ..., f_m$ is an orthonormal basis of $W$. Then $\mathcal{M}(T^*, (f_1,..., f_m), (e_1,..., e_n))$ is the conjugate transpose of $\mathcal{M}(T, (e_1,..., e_n), (f_1,..., f_m))$. In other words,  
+$$
+\mathcal{M}(T^*) = (\mathcal{M}(T))^*
+$$  
+
+<details>
+<summary>Proof</summary>
+
+By the definition of matrix of linear map, the $k$-th column of $\mathcal{M}(T^*)$ is given by the coordinates of $T^*(f_k)$ with respect to the basis $(e_1, ..., e_n)$. That is,
+$$
+T^*(f_k) = c_{1, k} \cdot e_1 + ... + c_{n, k} \cdot e_n \in W
+$$
+where $c_{j, k}$ is the $(j, k)$-th entry of the matrix $\mathcal{M}(T^*)$.
+
+----
+
+By the definition of orthonormal basis, vector $T^*(f_k)$ can be uniquely expressed as a linear combination of the orthonormalbasis $(e_1, ..., e_n)$:
+$$
+T^*(f_k) = \sum_{j=1}^n \langle T^*(f_k), e_j \rangle e_j
+$$
+which implies that the $(j, k)$-th entry of $\mathcal{M}(T^*)$ is given by
+$$
+c_{j, k} = \langle T^*(f_k), e_j \rangle
+$$
+
+---
+
+By the definition of adjoint of linear map, we have 
+$$
+\langle T^*(f_k), e_j \rangle = \langle f_k, T(e_j) \rangle \\
+= f_k \cdot \overline{T(e_j)} = \overline{\overline{f_k}}  \cdot \overline{T(e_j)} \\ 
+= \overline{\langle \overline{f_k},  \overline{T(e_j)} \rangle} \\
+= \overline{\langle T(e_j), f_k \rangle} 
+$$
+where $\langle T(e_j), f_k \rangle$ is just the $(k, j)$-th entry of the matrix $\mathcal{M}(T)$.
+
+---
+
+Therefore, the $(j, k)$-th entry of $\mathcal{M}(T^*)$ is the complex conjugate of the $(k, j)$-th entry of $\mathcal{M}(T)$, which shows that $\mathcal{M}(T^*)$ is the conjugate transpose of $\mathcal{M}(T)$.
+
+</details>
+<br />
+
+## Self-adjoint Operators
+
 <br />
 
 # Multilinear Algebra and Determinants
