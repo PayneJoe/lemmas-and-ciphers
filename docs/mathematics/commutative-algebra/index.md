@@ -6,10 +6,9 @@ Commutative algebra is a branch of algebra that studies commutative rings, their
 
 - [Ring](./ring.md)
 - [Polynomial Ring](./polynomial-ring.md)
-- [Affine Algebraic Variety](./affine-algebraic-variety.md)
-- [Module](./module.md)
+- [Affine Algebraic Varieties](./affine-algbraic-varieties.md)
+- [Modules](./modules.md)
 - [Tensor Product](./tensor-product.md)
 - [Localization](./localization.md)
 - [Noetherian and Artinian Rings](./noetherian-and-artinian-rings.md)
-
 
