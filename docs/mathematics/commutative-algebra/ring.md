@@ -1,5 +1,4 @@
-<details>
-<summary>Table of Contents</summary>
+::: details Table of Contents
 
 - [Rings and Ideals](#rings-and-ideals)
   - [Special Elements of Ring](#special-elements-of-ring)
@@ -19,7 +18,7 @@
     - [Facts on Special Ideals](#facts-on-special-ideals)
     - [Krull Dimension](#krull-dimension)
 
-</details>
+:::
 
 <br />
 
@@ -45,15 +44,12 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
 
 1. If $A \ne 0$, then $\mathcal{N}(A) \subseteq \mathcal{D}(A)$, i.e., every nilpotent element is a zero divisor.
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     It is suffice to show that $\forall y \in \mathcal{N}(A) \to y \in \mathcal{D}(A)$.
 
     By definition (3), choose the **least** $n \in \mathbb{N}$ such that $y^n = 0$. Since $y^0 = 1 \ne 0$, we have $n \ge 1$, so $0 = y^n = y \cdot y^{n - 1}$. By minimality of $n$, $y^{n - 1} \ne 0$. By definition (2), use $b = y^{n - 1}$, we have $y \cdot b = 0$ with $b \ne 0$, hence $y \in \mathcal{D}(A)$.
 
-    <details>
-    <summary>Lean 4 proof</summary>
 
     ```lean
     /-- `a` is a zero divisor if `a * b = 0` for some nonzero `b`. -/
@@ -81,16 +77,14 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
           _ = 0 := hn
     ```
 
-    </details>
+    :::
 
-    </details>
 
     <br />
 
 2. If $A \ne 0$, then $A^* \cap \mathcal{D}(A) = \emptyset$, i.e., no unit is a zero divisor.
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
     
     By contradiction, assume $A^* \cap \mathcal{D}(A) \ne \emptyset$, let $x \in A^* \cap \mathcal{D}(A)$.
     
@@ -106,8 +100,6 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
     This is a contradiction since the right-hand side is $z \ne 0$. Hence no unit can be a zero divisor.
     
 
-    <details>
-    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 2: no unit is a zero divisor. -/
@@ -123,16 +115,14 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
     example {x z : A} (hx : IsUnit x) : x * z = 0 ↔ z = 0 := hx.mul_right_eq_zero
     ```
 
-    </details>
+    :::
 
-    </details>
     
     <br />
 
 3. Let $A$ be a *finite* ring. Then, $A = A^* \cup \mathcal{D}(A)$, i.e., every element of a finite ring is either a unit or a zero divisor.
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     Firstly, considering $A = \{0\}$, then $0 \cdot 0 = 0 = 1$, so $A^* = \{0\}$ and $\mathcal{D}(A) = \emptyset$. Hence, $A = A^* \cup \mathcal{D}(A)$ in this case.
 
@@ -150,8 +140,6 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
     Therefore, every element $x \in A$ is either a unit or a zero divisor, i.e., $x \in A^* \cup \mathcal{D}(A)$.
     
 
-    <details>
-    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 3: every element of a finite ring is a unit or a zero divisor. -/
@@ -169,9 +157,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
         exact ⟨y₁ - y₂, sub_ne_zero.mpr hne, by rw [mul_sub, h, sub_self]⟩
     ```
 
-    </details>
+    :::
 
-    </details>
     <br />
 
 ### Domain VS Field
@@ -182,15 +169,12 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
 
 3. A finite (integral) domain is a field. 
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     By the proof of fact (3), $\mathcal{D}(A) = 0$ implies function $f$ is injective for every non-zero $x \in A$.
 
     By **pigeonhole principle**, *finite* implies that every injective function from the domain to itself is also surjective, which ensures that every non-zero element has a multiplicative inverse, hence the domain is a field.
 
-    <details>
-    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 3: a finite integral domain is a field. -/
@@ -205,9 +189,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
     example [IsDomain A] [Finite A] : IsField A := Finite.isField_of_domain A
     ```
 
-    </details>
+    :::
 
-    </details>
 
     <br />
 
@@ -245,8 +228,7 @@ Ideal is a subset of a ring such that
 
 1. $1 \notin I \iff A^* \cap I = \emptyset$, i.e. No unit exists in a proper ideal of a ring.
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     (a) Regarding the forward direction, in a contrapositive way, we assume $a \in A^*, a \in I$. 
 
@@ -265,8 +247,6 @@ Ideal is a subset of a ring such that
     By definition of ideal, $\forall b \in A, a \cdot b \in I$, therefore, $1 \notin I$.
 
 
-    <details>
-    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 1: an ideal is proper iff it contains no unit. -/
@@ -286,16 +266,14 @@ Ideal is a subset of a ring such that
       Ideal.eq_top_of_isUnit_mem I ha hu
     ```
 
-    </details>
+    :::
 
-    </details>
 
 <br />
 
 2. If $A$ is a field, then it has only has two ideals: the zero ideal $\langle 0 \rangle$ and the field itself $\langle 1 \rangle = A$.
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     (a) Firstly, considering the special case of $A = \{0\}$, then the only ideal is $\langle 0 \rangle = \{0\}$.
 
@@ -312,8 +290,6 @@ Ideal is a subset of a ring such that
 
     Completing the proof.
 
-    <details>
-    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 2: a field has only the ideals `⟨0⟩` and `⟨1⟩`. -/
@@ -329,9 +305,8 @@ Ideal is a subset of a ring such that
     example {K : Type*} [Field K] (I : Ideal K) : I = ⊥ ∨ I = ⊤ := Ideal.eq_bot_or_top I
     ```
 
-    </details>
+    :::
 
-    </details>
 
 <br />
 
@@ -388,15 +363,12 @@ Ideal is a subset of a ring such that
 
 1. Intersection of a family of ideals is also an ideal.
 
-   <details>
-   <summary>Proof</summary>
+   ::: details Proof
 
    Since $\bigcap_{h \in H} I_h \subseteq I_k$ for all $k \in H$, then :
    - for any $a, b \in \bigcap_{h \in H} I_h$, we have $a + b \in I_h$ for all $h \in H$. That implies that $a + b \in \bigcap_{h \in H} I_h$.
    - for any $a \in A$ and $x \in \bigcap_{h \in H} I_h$, we have $x \in I_h$ for all $h \in H$. Since each $I_h$ is an ideal, $a \cdot x \in I_h$ for all $h \in H$. That implies that $a \cdot x \in \bigcap_{h \in H} I_h$.
 
-   <details>
-   <summary>Lean 4 proof</summary>
 
    ```lean
    /- Fact 1: the intersection of a family of ideals is an ideal. -/
@@ -417,15 +389,13 @@ Ideal is a subset of a ring such that
      exact (Submodule.mem_iInf I).symm
    ```
 
-   </details>
+   :::
 
-   </details>
    <br />
 
 2. Quotient is also an ideal.
 
-    <details>
-    <summary>Proof that quotient is also an ideal</summary>
+    ::: details Proof that quotient is also an ideal
 
     For addition closure, let $a, b \in I : J$, we need to show that $a - b \in I : J$. Since 
     - $a \cdot J \subseteq I \iff \forall x \in J, a \cdot x \in I$
@@ -438,8 +408,6 @@ Ideal is a subset of a ring such that
 
     - if $r \ne 0$. Since $a \cdot J \subseteq I \iff \forall x \in J, a \cdot x \in I$, then $\forall x \in J, (r \cdot a) \cdot x = r \cdot (a \cdot x) \in I$ always holds, which implies that $r \cdot a \in I : J$.
 
-    <details>
-    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 2: the quotient `I : J = {a | a * J ⊆ I}` is an ideal. -/
@@ -464,15 +432,13 @@ Ideal is a subset of a ring such that
       rfl
     ```
 
-    </details>
+    :::
 
-    </details>
     <br />
 
 3. Radical is also an ideal.
 
-    <details>
-    <summary>Proof that radical is also an ideal</summary>
+    ::: details Proof that radical is also an ideal
 
     For the addition closure, let $a, b \in \sqrt{I}$, we need to show that $a - b \in \sqrt{I}$. 
 
@@ -494,8 +460,6 @@ Ideal is a subset of a ring such that
     - $\exists n \in \mathbb{N}, a^n \in I$
     Consider $(r \cdot a)^n = r^n \cdot a^n$. Since $a^n \in I$ and $I$ is an ideal, $r^n \cdot a^n \in I$, which implies that $(r \cdot a)^n \in I$. Therefore, $r \cdot a \in \sqrt{I}$.
 
-    <details>
-    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 3: the radical `√I = {a | ∃ n, a ^ n ∈ I}` is an ideal. -/
@@ -531,17 +495,15 @@ Ideal is a subset of a ring such that
     example (I : Ideal A) (a : A) : a ∈ radical I ↔ a ∈ I.radical := Iff.rfl
     ```
 
-    </details>
+    :::
 
-    </details>
     <br />
 
 4. The set of nipotent elements $\mathcal{N}(A)$ is also an ideal.
 
     In particular, set of nilpotent elements is a special case of radical : $\mathcal{N}(A) = \sqrt{\langle 0 \rangle}$. So it is an ideal.
 
-    <details>
-    <summary>Lean 4 proof</summary>
+    ::: details Lean 4 proof
 
     ```lean
     /- Fact 4: the nilpotent elements form the ideal `√⟨0⟩`. -/
@@ -552,13 +514,12 @@ Ideal is a subset of a ring such that
     example (a : A) : a ∈ nilradical A ↔ IsNilpotent a := mem_nilradical
     ```
 
-    </details>
+    :::
 
 
 5. The set of zero-divisors $\mathcal{D}(A)$ is not an ideal in general.
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     Not an ideal means either addition or multiplicity closure fails, we choose the former one. That is 
     $$
@@ -568,8 +529,6 @@ Ideal is a subset of a ring such that
 
     However, $a + b = 5$ and $5 \cdot 5 = 25 = 1$, so $a + b$ is a unit. By fact (2) on special elements, no unit is a zero divisor, so $a + b \notin \mathcal{D}(A)$.
 
-    <details>
-    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 5: the zero divisors need not form an ideal.
@@ -583,15 +542,13 @@ Ideal is a subset of a ring such that
       exact not_isZeroDivisor_of_isUnit h5 ((hI _).mp (I.add_mem h2 h3))
     ```
 
-    </details>
+    :::
 
-    </details>
     <br />
 
 6. If $I, J$ are two ideals of a ring $A$, then $I J \subseteq I \cap J$.
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     Firstly we decompose the argument :
     $$
@@ -599,8 +556,6 @@ Ideal is a subset of a ring such that
     $$
     Since $a \in I$, so we have $a \cdot b \in I$. Similarly, since $b \in J$, we have $a \cdot b \in J$. Therefore, $a \cdot b \in I \cap J$. Completing the proof.
 
-    <details>
-    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 6: `I J ⊆ I ∩ J`. -/
@@ -613,15 +568,13 @@ Ideal is a subset of a ring such that
     example (I J : Ideal A) : I * J ≤ I ⊓ J := Ideal.mul_le_inf
     ```
 
-    </details>
+    :::
 
-    </details>
     <br />
 
 7. If $I, J$ are two ideals of a ring $A$, and $I + J = \langle 1 \rangle$, then $I \cap J = I J$. $I$ and $J$ are *comaximal*.
     
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     By (6), we only need to show the converse inclusion: $I \cap J \subseteq I J$ when $I + J = \langle 1 \rangle$.
 
@@ -633,8 +586,6 @@ Ideal is a subset of a ring such that
     $$
     which proves $\forall x \in I \cap J, x \in I J$. Therefore, $I \cap J \subseteq I J$. Completing the proof.
 
-    <details>
-    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 7: if `I + J = ⟨1⟩`, then `I ∩ J = I J`. -/
@@ -657,9 +608,8 @@ Ideal is a subset of a ring such that
     example (I J : Ideal A) (h : I ⊔ J = ⊤) : I * J = I ⊓ J := Ideal.mul_eq_inf_of_coprime h
     ```
 
-    </details>
+    :::
 
-    </details>
     <br />
 
 8. Let $I_1,...,I_n$ are pairwise *comaximal* ideals of a ring $A$. Then 
@@ -690,8 +640,7 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
 1. if $I \subseteq J$, then $\sqrt{I} \subseteq \sqrt{J}$.
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     In order to show $\sqrt{I} \subseteq \sqrt{J}$, it is suffices to show :
     $$
@@ -700,13 +649,12 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
     Since $x^n \in I \subseteq J$, use $m = n$, we have $x^m \in J$. Completing the proof.
 
-    </details>
-    <br />
+      :::
+      <br />
 
 2. $I \subseteq \sqrt{I}$ and $\sqrt{\sqrt{I}} = \sqrt{I}$
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     For any $x \in I$, we have $x^1 = x \in I$, hence $x \in \sqrt{I}$. This shows $I \subseteq \sqrt{I}$.
 
@@ -718,13 +666,12 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
     Since $x^n \in \sqrt{I}$ for some $n \in \mathbb{N}$, by definition of $\sqrt{I}$, there exists $p \in \mathbb{N}$ such that $(x^n)^p = x^{np} \in I$. So use $m = np$, we have $x^m \in I$. Completing the proof.
 
-    </details>
+    :::
     <br />
 
 3. $\sqrt{I J} = \sqrt{I \cap J} = \sqrt{I} \cap \sqrt{J}$
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     (a) First, we show $\sqrt{I J} = \sqrt{I \cap J}$. Since $I J \subseteq I \cap J$, by property (1) above, we have $\sqrt{I J} \subseteq \sqrt{I \cap J}$. So it suffices to show the backward direction inclusion $\sqrt{I \cap J} \subseteq \sqrt{I J}$. That is, 
     $$
@@ -752,25 +699,23 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
     Since $x^{m_1} \in I, x^{m_2} \in J$, by definition, we have $x^{m_1} \cdot x^{m_2} = x^{m_1 + m_2} \in I J$. Hence, using $n = m_1 + m_2$, we have $x^n \in IJ$. Again by $I J \subseteq I \cap J$, we have $x^n \in I \cap J$. Completing the proof of the backward inclusion.
 
-  </details>
+  :::
   <br />
 
 4. $\sqrt{I^n} = \sqrt{I}$ for any $n \in \mathbb{N}$
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     This is a special case of $\sqrt{IJ} = \sqrt{I \cap J}$ in property (3) above, where we take $J = I^{n-1}$. We just omit the detailed proof here. 
   
-    </details>
+    :::
     <br />
 
 5. $\sqrt{I} = \langle 1 \rangle$ if and only if $I = \langle 1 \rangle$.
 
 6. $\sqrt{I + J} = \sqrt{\sqrt{I} + \sqrt{J}}$
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
       In order to show the equality $\sqrt{I + J} = \sqrt{\sqrt{I} + \sqrt{J}}$, we first show the forward inclusion directions. That is,
       $$
@@ -789,13 +734,12 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
       Since $x^m \in \sqrt{I} + \sqrt{J}$, we have $\exists x_1 \in \sqrt{I}, x_2 \in \sqrt{J}$ such that $x^m = x_1 + x_2$. By definition, there exist $k_1, k_2 \in \mathbb{N}$ such that $x_1^{k_1} \in I$ and $x_2^{k_2} \in J$. Let $n = m \cdot k_1 \cdot k_2$, then $x^n = (x^m)^{k_1 k_2} = (x_1 + x_2)^{k_1 k_2} \in I + J$. Completing the proof of the backward inclusion.
 
-    </details>
+    :::
     <br />
   
 7. $\sqrt{I + JH} = \sqrt{I + J} \cap \sqrt{I + H}$
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     In order to prove the equality $\sqrt{I + JH} = \sqrt{I + J} \cap \sqrt{I + H}$, we need to show both inclusions.
 
@@ -817,7 +761,7 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
     Since $x^{m_1} \in I + J$ and $x^{m_2} \in I + H$, thus we have $x^{m_1} \cdot x^{m_2} = x^{m_1 + m_2} \in (I + J)(I + H) \subseteq I + JH$. Let $n = m_1 + m_2$, then $x^n \in I + JH$. Completing the proof of the backward inclusion.
 
-    </details>
+    :::
     <br />
 
 
@@ -844,8 +788,7 @@ Let $A$ be a non-zero ring. Then
 
 3. Every non-invertible element of $A$ is contained in some maximal ideal of $A$.
 
-<details>
-<summary>Proof</summary>
+::: details Proof
 
 Regarding (1), we can treat $A$ as a poset whose elements are the proper ideals of $A$, ordered by inclusion $\subseteq$. 
 $$
@@ -879,8 +822,6 @@ $$
 $$
 Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\langle a \rangle$ is a proper ideal of $A$. By (2), there exists a maximal ideal $\mathfrak{m}$ such that $\langle a \rangle \subseteq \mathfrak{m}$.
 
-<details>
-<summary>Lean 4 proof</summary>
 
 ```lean
 /- Fact 2: every proper ideal is contained in a maximal ideal (Zorn's lemma). -/
@@ -925,9 +866,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
   exists_max_ideal_of_mem_nonunits ha
 ```
 
-</details>
+:::
 
-</details>
 <br />
 
 ## Other Special Ideals
@@ -967,8 +907,7 @@ Let $I$ be a proper ideal of $A$. Then we have the following facts:
       \text{prime ideal} \subseteq \text{primary ideal}
     $$
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
     
     By the definition of primary ideal, we have
     $$
@@ -977,12 +916,11 @@ Let $I$ be a proper ideal of $A$. Then we have the following facts:
     - Suppose $a \in I$, then choose left side of the implication in definition of prime ideal $a \in I$, thus $a b \in I$ is satisfied trivially.
     - Suppose $a \notin I, b \in \sqrt{I}$, then choose the right side of the implication in definition of prime ideal $b \in \sqrt{I}$, thus $a b \in \sqrt{I}$ is satisfied trivially.
     
-    </details>
+    :::
     <br />
 
 2. If $I$ is a maximal ideal, then $A/I$ is a field. 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
     
     By the definition of field, it is suffices to show :
     $$
@@ -1006,13 +944,12 @@ Let $I$ be a proper ideal of $A$. Then we have the following facts:
     Completing the proof.
 
     
-    </details>
+    :::
     <br />
 
 3. If $\sqrt{I} = \mathfrak{m}$ is a maximal ideal, then $I$ is primary.
 
-    <details>
-    <summary>Proof</summary>
+    ::: details Proof
 
     By the definition of primary ideal, it is suffices to show that for any $ab \in I$ when $a \notin I$, we must have $b \in \sqrt{I}$. By contradiction, we assume $b \notin \sqrt{I}$.
     
@@ -1037,7 +974,7 @@ Let $I$ be a proper ideal of $A$. Then we have the following facts:
     $$
     We have assumed that $a b \in I$, thus $\sum_{k=1}^{n} \binom{n}{k} a (bc)^k (-1)^{n-k} \in I$ as well, which implies $(-1)^n a \in I$, and hence $a \in I$. Contradiction happens, which completes the proof.
 
-    </details>
+    :::
 <br />
 
 ### Krull Dimension
