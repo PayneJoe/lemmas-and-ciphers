@@ -775,4 +775,56 @@ $$
 
 # Operators on Inner Product Spaces
 
+**Definition 7.1 - Adjoint Function**
+
+Suppose $V$ is a finite-dimensional inner product space and $T \in \mathcal{L}(V, W)$. The adjoint function of $T$, denoted by $T^* : W \to V$ such that
+$$
+\langle T v, w \rangle = \langle v, T^* w \rangle \quad \text{for all } v \in V, w \in W.
+$$
+
+> [!Note]
+> The left-hand side of the equation is a inner product in $W$, and the right-hand side is the innner product in $V$. It seems like they have the same value in underline field. But how to make it happen, or how the adjoint operator $T^*$ is computed anyway?
+
+Comuting the adjoint operator :
+
+1. Fix $u \in V, x \in W$, define $T \in \mathcal{L}(V, W)$ by $T(v) = \langle v, u \rangle x$ for all $v \in V$.
+
+2. Then 
+    $$
+    \langle T v, w \rangle = \langle \langle v, u \rangle x, w \rangle = \langle v, u \rangle \langle x, w \rangle = \langle v, \langle x, w \rangle u \rangle.
+    $$
+    Hence, the adjoint operator $T^* \in \mathcal{L}(W, V)$ is given by $T^*(w) = \langle x, w \rangle u$ for all $w \in W$.
+
+<br />
+
+**Lemma 7.1 - Adjoint Function as a Linear Map**
+
+If $T \in \mathcal{L}(V, W)$, then the adjoint function $T^* \in \mathcal{L}(W, V)$ is also a linear map.
+
+<details>
+<summary>Proof</summary>
+
+To show function $T^*$ is a linear map, we need to check its linearity property, i.e.,
+$$
+\begin{aligned}
+&\text{(a) } T^*(w_1 + w_2) = T^*(w_1) + T^*(w_2). \\
+&\text{(b) } T^*(\lambda w) = \lambda \cdot T^*(w) 
+\end{aligned}
+$$
+
+Regarding (a), let $v \in V$, apply a inner product on the left-hand sides with $v$, we get
+$$
+\langle T^*(w_1 + w_2), v \rangle = \langle w_1 + w_2, T v \rangle = \langle w_1, T v \rangle + \langle w_2, T v \rangle = \langle T^*(w_1), v \rangle + \langle T^*(w_2), v \rangle = \langle T^*(w_1) + T^*(w_2), v \rangle.
+$$
+Hence, $T^*(w_1 + w_2) = T^*(w_1) + T^*(w_2)$, completing the proof of (a).
+
+Regarding (b), similarly, let $v \in V$, apply a inner product on the left-hand side with $v$, we get
+$$
+\langle T^*(\lambda w), v \rangle = \langle \lambda w, T v \rangle = \lambda \langle w, T v \rangle = \lambda \langle T^*(w), v \rangle = \langle \lambda \cdot T^*(w), v \rangle.
+$$
+Hence, $T^*(\lambda w) = \lambda \cdot T^*(w)$, completing the proof of (b).
+
+</details>
+<br />
+
 # Multilinear Algebra and Determinants
