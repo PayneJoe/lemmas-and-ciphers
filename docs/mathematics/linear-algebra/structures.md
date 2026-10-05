@@ -972,6 +972,24 @@ Therefore, the $(j, k)$-th entry of $\mathcal{M}(T^*)$ is the complex conjugate 
 </details>
 <br />
 
+> [!Important] Adjoint Map VS Dual Map
+> As we know, for inner product spaces, there is a one-to-one map between vector space $V$ and its dual space $V'$. More specially, every vector $v \in V$ corresponds a unique linear function $f_v \in V'$ that maps any vector $u \in V$ to the inner product $\langle v, u \rangle$, i.e.,   
+> $$
+> v \mapsto f_v : u \mapsto \langle v, u \rangle, \quad \forall u \in V
+> $$
+> The collection of the linear functions $f_v$ forms the dual space $V'$, so as dual space $W'$. The dual map between these two dual spaces is defined by $(T')g = g \circ T \in V'$ for any $g \in W'$.
+>
+> In contrast, the adjoint map $T^*$ is defined by  
+> $$
+> T^*(w) = \langle w, u \rangle \cdot x  \in V \text{ for some } u \in W, x \in V
+> $$
+> 
+> For the dual map, we have $\text{null}(T') = (\text{range}(T))^0$; for the adjoint map, we have $\text{null}(T^*) = (\text{range}(T))^\perp$. As the complement $(\text{range}(T))^\perp$ is conceptually equivalent to the annihilator $(\text{range}(T))^0$, the adjoint map $T^*$ can be seen as the inner product space analogue of the dual map $T'$.
+>
+
+
+![adjoint dual map](./img/adjoint-dual.png)
+
 ## Self-adjoint Operators
 
 <br />
