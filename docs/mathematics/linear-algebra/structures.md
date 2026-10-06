@@ -17,6 +17,7 @@
 - [Operators on Inner Product Spaces](#operators-on-inner-product-spaces)
   - [Adjoint Linear Map](#adjoint-linear-map)
   - [Self-adjoint Operators](#self-adjoint-operators)
+  - [Normal Operators](#normal-operators)
 - [Multilinear Algebra and Determinants](#multilinear-algebra-and-determinants)
 
 </details>
@@ -915,7 +916,7 @@ Applying orthogonal complement on both side of (1), we get (4).
 </details>
 <br />
 
-**Definition 7.2 - Conjugate Transpose (Adjoint)**
+**Definition 7.2 - Conjugate Transpose (Adjoint)**{#definition-7-2 .definition anchor}
 
 The conjugate transpose of a $m \times n$ matrix $A$ is the $n \times m$ matrix $A^*$ obtained by taking the transpose of $A$ and then taking the complex conjugate of each entry. That is,
 $$
@@ -927,7 +928,7 @@ $$
 
 <br />
 
-**Lemma 7.4 - Adjoint Matrix and Adjoint Linear Map**
+**Lemma 7.4 - Adjoint Matrix and Adjoint Linear Map**{#lemma-7-4 .lemma anchor}
 
 Let $T \in \mathcal{L}(V, W)$. Suppose $e_1, ..., e_n$ is an orthonormal basis of $V$ and $f_1, ..., f_m$ is an orthonormal basis of $W$. Then $\mathcal{M}(T^*, (f_1,..., f_m), (e_1,..., e_n))$ is the conjugate transpose of $\mathcal{M}(T, (e_1,..., e_n), (f_1,..., f_m))$. In other words,  
 $$
@@ -1017,6 +1018,169 @@ Therefore, the $(j, k)$-th entry of $\mathcal{M}(T^*)$ is the complex conjugate 
 
 ## Self-adjoint Operators
 
+Self-adjoint is a special case of adjoint operators where the operator is equal to its own adjoint.
+
+**Definition 7.3 self-adjoint operator**{#definition-7.3 .definition anchor}
+
+An operator $T: V \to V$ on an inner product space $V$ is called self-adjoint if $T = T^*$, i.e., 
+$$
+ \langle T(v), u \rangle = \langle v, T(u) \rangle, \quad \forall v, u \in V
+$$
+
+By lemma 7.4, we can also check :
+$$
+\mathcal{M}(T, (e_1, ..., e_n)) = \mathcal{M}(T, (e_1, ..., e_n))^*
+$$
+
+<br />
+
+**Lemma 7.5 - Eigenvalues of Self-adjoint Operators**{#lemma-7.5 .lemma anchor}
+
+If $\mathbb{F} = \mathbb{C}$, then every eigenvalue of a self-adjoint operator is real.
+
+<details>
+<summary>Proof</summary>
+
+Let $\lambda$ be an eigenvalue of a self-adjoint operator $T$ with corresponding eigenvector $v \neq 0$. Then
+$$
+\lambda \| v \|^2 = \langle \lambda v, v \rangle = \langle T(v), v \rangle = \langle v, T(v) \rangle = \langle v, \lambda v \rangle = \overline{\lambda} \| v \|^2
+$$
+Since $v \neq 0$, we have $\| v \|^2 \neq 0$, and thus $\lambda = \overline{\lambda}$, which means $\lambda$ is real.
+
+</details>
+<br />
+
+## Normal Operators
+
+**Definition 7.4 - Normal Operator**{#definition-7.4 .definition anchor}
+
+An operator $T: V \to V$ on an inner product space $V$ is called normal if $T T^* = T^* T$.
+
+> [!Note]
+> If an operator $T$ is normal, it does not necessarily have to be self-adjoint, but every self-adjoint operator is normal.
+
+<br />
+
+**Lemma 7.6 - Criteria of Normal Operators**{#lemma-7.6 .lemma anchor}
+
+An operator $T: V \to V$ on an inner product space $V$ is normal if and only if $\| T(v) \| = \| T^*(v) \|$ for all $v \in V$.
+
+<details>
+<summary>Proof</summary>
+
+Let $T$ be normal. Then $T T^* = T^* T$. For any $v \in V$, we have
+$$
+\| T(v) \|^2 = \langle T(v), T(v) \rangle = \langle T^* T(v), v \rangle = \langle T T^*(v), v \rangle = \langle T^*(v), T^*(v) \rangle = \| T^*(v) \|^2.
+$$
+Conversely, if $\| T(v) \| = \| T^*(v) \|$ for all $v \in V$, then
+$$
+\langle (T T^* - T^* T)(v), v \rangle = \| T^*(v) \|^2 - \| T(v) \|^2 = 0, \quad \forall v \in V.
+$$
+Since $\langle (T T^* - T^* T)(v), v \rangle = 0$ for all $v \in V$, it follows that $T T^* - T^* T = 0$, i.e., $T T^* = T^* T$.
+
+</details >
 <br />
 
 # Multilinear Algebra and Determinants
+
+**Definition 9.1 - Bilinear Form**{#definition-9.1 .definition anchor}
+
+A bilinear form on $V$ is a function $\beta : V \times V \to \mathbb{F}$ such that
+$$
+v \mapsto \beta(v, u), \text{ and } v \mapsto \beta(u, v) \quad \forall u \in V
+$$
+are both linear functions on $V$.
+
+> [!Note]
+>
+> By definition, bilinear form $\beta$ itself is not necessarily a linear function (or linear map), maybe it works for some special structure of $\beta$, but its partial function $\beta(\cdot, u)$ or $\beta(u, \cdot)$ that maps a vector $v \in V$ to $\beta(v, u)$ or $\beta(u, v)$ is a linear function. 
+>
+> ----
+> If let $\beta = \langle \cdot, \cdot \rangle$ be the inner product on inner product space $V$, then 
+> - if $\mathbb{F} = \mathbb{R}$, then $\beta$ is a bilinear form. 
+> - if $\mathbb{F} = \mathbb{C}$, then $\beta$ is not a bilinear form. Since $\beta(u, \lambda v) = \langle u, \lambda v \rangle = \overline{\lambda} \langle u, v \rangle = \overline{\lambda} \beta(u, v)$, it is not linear in the second argument.
+> ----
+> Surely, bilinear form can be any other functions beyond the inner product. For example, 
+> Suppose two dual elements from dual space $\varphi, \tau \in V'$. Then the function $\beta : V \times V \to \mathbb{F}$ defined by $\beta(u, v) = \varphi(u) \tau(v)$ is a bilinear form.
+
+<br />
+
+**Definition 9.2 - Vector Space of Bilinear Forms**{#definition-9.2 .definition anchor}
+
+The set of all bilinear forms on a vector space $V$ over a field $\mathbb{F}$ forms a vector space $V^{(2)}$ over $\mathbb{F}$ with the operations of pointwise addition and scalar multiplication, i.e., for $\beta_1, \beta_2 \in V^{(2)}$ and $\lambda \in \mathbb{F}$,
+$$
+(\beta_1 + \beta_2)(u, v) = \beta_1(u, v) + \beta_2(u, v), \quad (\lambda \beta_1)(u, v) = \lambda \beta_1(u, v), \quad \forall u, v \in V.
+$$
+
+<br />
+
+**Definition 9.3 - Matrix of a Bilinear Form**{#definition-9.3 .definition anchor}
+
+Suppose $\beta \in V^{(2)}$ is a bilinear form on an $n$-dimensional vector space $V$ with a basis $\{ e_1, \dots, e_n \}$. The matrix of $\beta$ with respect to this basis is the $n \times n$ matrix $\mathcal{M}(\beta)$ defined by 
+$$
+\mathcal{M}(\beta, (e_1, \dots, e_n))_{i, j} = \beta(e_i, e_j), \quad 1 \le i, j \le n.
+$$
+
+<br />
+
+**Lemma 9.1 - Isomorphism between Bilinear Forms and Its Matrices**{#lemma-9.1 .lemma anchor}
+
+Suppose $e_1, ..., e_n$ is a basis of $V$. Then the map $\beta \mapsto \mathcal{M}(\beta)$ is a vector space isomorphism between the vector space of bilinear forms $V^{(2)}$ and the vector space of $n \times n$ matrices over $\mathbb{F}$. Furthermore, $\dim V^{(2)} = (\dim V)^2$.
+
+<details>
+<summary>Proof</summary>
+
+The map $\beta \mapsto \mathcal{M}(\beta)$ is clearly linear. To see that it is bijective, note that given any $n \times n$ matrix $A = [a_{ij}]$, we can define a bilinear form $\beta$ by $\beta(e_i, e_j) = a_{ij}$ and extending bilinearly. This shows that every matrix corresponds to a unique bilinear form, hence the map is an isomorphism.
+
+</details>
+<br />
+
+**Lemma 9.2 - Composition of Bilinear Form and Operator**{#lemma-9.2 .lemma anchor}
+
+Suppose $\beta \in V^{(2)}$ is a bilinear form on a vector space $V$ and $T: V \to V$ is a linear operator. Define bilinear form $\alpha, \rho \in V^{(2)}$ by
+$$
+\alpha(u, v) = \beta(u, T(v)), \quad \rho(u, v) = \beta(T(u), v), \quad \forall u, v \in V.
+$$
+Let $e_1, ..., e_n$ be a basis of $V$. Then  
+$$
+\mathcal{M}(\alpha) = \mathcal{M}(\beta) \mathcal{M}(T), \quad \mathcal{M}(\rho) = \mathcal{M}(T)^t \mathcal{M}(\beta)
+$$
+
+<details>
+<summary>Proof</summary>
+
+By the definition of matrix of a bilinear form, we have :
+$$
+\begin{aligned}
+\mathcal{M}(\alpha)_{i, j} &= \alpha(e_i, e_j) \\
+&= \beta(e_i, T(e_j)) \\
+&= \beta(e_i, \sum_{k = 1}^n \mathcal{M}(T)_{k, j} e_k) \\
+&= \sum_{k = 1}^n \mathcal{M}(T)_{k, j} \beta(e_i, e_k) \\
+&= \sum_{k = 1}^n \mathcal{M}(T)_{k, j} \mathcal{M}(\beta)_{i, k} \\
+&= (\mathcal{M}(\beta) \mathcal{M}(T))_{i, j}
+\end{aligned}
+$$
+The third equality follows from the definition of matrix of a operator, the fourth equality follows from the linearity of bilinear form in the second argument, and the fifth equality follows from the definition of matrix of a bilinear map.
+
+The proof for $\mathcal{M}(\rho) = \mathcal{M}(T)^t \mathcal{M}(\beta)$ is similar, using the linearity of the bilinear form in the first argument and the definition of the matrix of a linear operator.
+
+</details>
+<br />
+
+> [!Note]
+> Generally, the matrix of a bilinear form of vector space $V$ depends on : 1) the choice of the basis of $V$. 2) the bilinear form itself. Since the domain of bilinear map is *tuple vectors* from $V \times V$, the basis of $V \times V$ is taken as the product of the bases of $V$ on both arguments, but in default we only consider the same basis for both arguments. This is why we denote the matrix of bilinear form $\beta$ on $V$ as :
+> $$  
+> \mathcal{M}(\beta, (e_1, \dots, e_n))
+> $$
+> in default. But similar with matrix of linear operator, if we want to consider different bases for the two arguments of the bilinear form, we would need to specify both bases explicitly.
+
+**Lemma 9.3 - Change of Basis for Bilinear Form**{#lemma-9.3 .lemma anchor}
+
+Suppose $\beta \in V^{(2)}$ is a bilinear form on a vector space $V$. Let $e_1, ..., e_n$ and $f_1, ..., f_n$ be two bases of $V$. Let 
+$$
+A = \mathcal{M}(\beta, (e_1, ..., e_n)), B = \mathcal{M}(\beta, (f_1, ..., f_n))
+$$
+and $C = \mathcal{M}(\text{Id}, (e_1, ..., e_n), (f_1, ..., f_n))$ be the change of basis matrix from the basis $(e_1, ..., e_n)$ to the basis $(f_1, ..., f_n)$. Then we have
+$$
+B = C^t A C.
+$$
