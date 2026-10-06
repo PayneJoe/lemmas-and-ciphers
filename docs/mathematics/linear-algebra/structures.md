@@ -780,6 +780,20 @@ $$
 
 Before talking about adjoint operators, let's first explore the general adjoint linear map and its properties.
 
+![Linear Map of Inner Product Spaces](./img/linear-map-of-inner-product-space.png)
+
+As we know, linear map is a homomorphism between vector spaces, preserving the **algebraic operations** of vector addition and scalar multiplication, we call this property as linearity. That is, there is one-to-one correspondence between the elements in the domain and the elements in the codomain, i.e.,
+$$
+a u + b v \mapsto a T(u) + b T(v) \quad \text{for all } v, u \in V \text{ and } a, b \in \mathbb{F}.
+$$
+
+----
+
+Inner product space is a special vector space which has an extra operation beyond vector addition and scalar multiplication, namely the inner product, that allows us to measure angles and lengths of vectors geometrically. But, inner product operation is not closure, it maps a pair of vectors to a scalar in the underlying field. So in general, we cannot expect the inner product operation to be preserved by linear maps. Furthermore, there is an equivalence between the inner product of two vectors in domain and the inner product of their images in the codomain under the linear map when the adjoint map is just the reversed of the linear map. That is, 
+$$
+\langle T(u), T(v) \rangle = \langle u, T^* \circ T (v) \rangle = \langle u, v \rangle \text{ if } T^* = T^{-1}.
+$$
+
 ## Adjoint Linear Map
 
 **Definition 7.1 - Adjoint Function**{#definition-7-1 .definition anchor}
@@ -1120,6 +1134,12 @@ Suppose $\beta \in V^{(2)}$ is a bilinear form on an $n$-dimensional vector spac
 $$
 \mathcal{M}(\beta, (e_1, \dots, e_n))_{i, j} = \beta(e_i, e_j), \quad 1 \le i, j \le n.
 $$
+
+You may wonder why the biliear form also has matrix representation just like any other linear maps? This owes to the fact that partial function of a bilinear form $\beta(u, \cdot)$ or $\beta(\cdot, v)$ is a linear map. That is,
+$$
+\beta(x, y) = \beta(\sum_i x_i e_i, \sum_j y_j e_j) = \sum_{i, j} x_i \beta(e_i, e_j) y_j = x^T \mathcal{M}(\beta) y
+$$
+Thus algebraic operations on bilinear forms are reflected by vector-matrix-vector multiplication.
 
 <br />
 
