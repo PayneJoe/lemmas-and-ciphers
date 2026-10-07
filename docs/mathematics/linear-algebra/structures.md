@@ -19,8 +19,16 @@
   - [Self-adjoint Operators](#self-adjoint-operators)
   - [Normal Operators](#normal-operators)
 - [Multilinear Algebra and Determinants](#multilinear-algebra-and-determinants)
+  - [Bilinear Forms and Quadratic Forms](#bilinear-forms-and-quadratic-forms)
+    - [Bilinear Forms](#bilinear-forms)
+    - [Symmetric Bilinear Forms](#symmetric-bilinear-forms)
+    - [Quadratic Forms](#quadratic-forms)
+  - [Alternating Multilinear Forms](#alternating-multilinear-forms)
+  - [Determinants](#determinants)
+  - [Tensor Products](#tensor-products)
 
 </details>
+<br />
 
 # Eigenvalues and Eigenvectors
 
@@ -1097,6 +1105,12 @@ Since $\langle (T T^* - T^* T)(v), v \rangle = 0$ for all $v \in V$, it follows 
 
 # Multilinear Algebra and Determinants
 
+## Bilinear Forms and Quadratic Forms
+
+This section will mainly introduce two sub-types of bilinear forms : symmetric bilinear forms and alternating bilinear forms. More interestingly, every bilinear form space can be decomposed into a direct sum of its symmetric and alternating subspaces. That means for any bilinear form $\beta \in V^{(2)}$, it is either symmetric or alternating. 
+
+### Bilinear Forms
+
 **Definition 9.1 - Bilinear Form**{#definition-9.1 .definition anchor}
 
 A bilinear form on $V$ is a function $\beta : V \times V \to \mathbb{F}$ such that
@@ -1204,3 +1218,146 @@ and $C = \mathcal{M}(\text{Id}, (e_1, ..., e_n), (f_1, ..., f_n))$ be the change
 $$
 B = C^t A C.
 $$
+
+<br />
+
+### Symmetric Bilinear Forms
+
+**Definition 9.4 - Alternating Bilinear Form**
+
+A bilinear form $\alpha \in V^{(2)}$ on a vector space $V$ is called **alternating** if for all $v \in V$, we have
+$$
+\alpha(v, v) = 0.
+$$
+
+<br />
+
+**Lemma 9.4 - Characterization of Alternating Bilinear Forms**
+
+A bilinear form $\alpha \in V^{(2)}$ on a vector space $V$ is alternating if and only if it is **skew-symmetric**, i.e., for all $u, v \in V$, we have
+$$
+\alpha(u, v) = -\alpha(v, u).
+$$
+
+<br />
+
+**Definition 9.5 - Symmetric Bilinear Form**
+
+A bilinear form $\rho \in V^{(2)}$ on a vector space $V$ is called **symmetric** if for all $u, v \in V$, we have
+$$
+\rho(u, v) = \rho(v, u).
+$$
+
+<br />
+
+**Lemma 9.5 - Symmetric Bilinear Forms or Alternating Bilinear Forms**
+
+The sets $V_{\text{sym}}^{(2)}$ and $V_{\text{alt}}^{(2)}$ of symmetric and alternating bilinear forms on a vector space $V$ are subspaces of $V^{(2)}$. Furthermore, 
+$$
+V^{(2)} = V_{\text{sym}}^{(2)} \oplus V_{\text{alt}}^{(2)}.
+$$
+
+<details>
+<summary>Proof</summary>
+
+Proof logic :
+1. We need to show $V_{\text{sym}}^{(2)}$ is a subspace of $V^{(2)}$. This involves checking that it is closed under addition and scalar multiplication, and that it contains the zero bilinear form.
+2. The same argument applies to $V_{\text{alt}}^{(2)}$, showing that it is also a subspace of $V^{(2)}$.
+3. In order to show that $V^{(2)} = V_{\text{sym}}^{(2)} \oplus V_{\text{alt}}^{(2)}$, two steps involved : 
+
+    a. Show $V^{(2)} = V_{\text{sym}}^{(2)} + V_{\text{alt}}^{(2)}$.
+
+    b. Show $V_{\text{sym}}^{(2)} \cap V_{\text{alt}}^{(2)} = \{0\}$.
+
+We omit the detailed proof here..
+
+</details>
+<br />
+
+**Lemma 9.6 - Diagonalization of Symmetric Bilinear Forms**
+
+Suppose $\rho \in V^{(2)}$. Then
+1. $\rho$ is a symmetric bilinear form on $V$.
+2. $\mathcal{M}(\rho, (e_1, ..., e_n))$ is a symmetric matrix for every basis $e_1, ..., e_n$ of $V$.
+3. $\mathcal{M}(\rho, (e_1, ..., e_n))$ is a diagonal matrix for some basis $e_1, ..., e_n$ of $V$.
+
+<details>
+<summary>Proof</summary>
+
+By definition 9.3, any evaluation of a bilinear form can be represented as vector-matrix-vector multiplication:
+$$
+\beta(u, v) = u^T A v
+$$
+Since $\rho$ is symmetric, $\beta(u, v) = \beta(v, u)$, there must exists a basis $e_1,..., e_n$ of $V$ with respect to which the matrix representation of $\beta$ is symmetric, i.e., 
+$$
+u^T A v = v^T A u \iff A = A^T.
+$$
+Completing the proof of (2). Diagonal matrix is just a special case of symmetric matrix, which means there also exists some basis such that the matrix of this symmetric bilinear form is a diagonal matrix. Completing the proof of (3).
+
+</details>
+<br />
+
+### Quadratic Forms
+
+Consider the function of bilinear form $\beta \in V^{(2)}$, 
+$$
+\beta: V \times V \to \mathbb{F},
+\quad (u, v) \mapsto \beta(u, v).
+$$
+More specially, $\beta(v, v)$ defines a **quadratic form** associated with the bilinear form $\beta$.
+
+<br />
+
+**Definition 9.6 - Quadratic Form**
+
+For $\beta$ a bilinear form on $V$, define a function $q_\beta: V \to \mathbb{F}$ by
+$$
+q_\beta(v) = \beta(v, v), \quad \forall v \in V.
+$$
+This function $q_\beta$ is called the **quadratic form** associated with the bilinear form $\beta$.
+
+<br />
+
+Suppose $n$ is positive integer and $q$ is a function from $\mathbb{F}^n$ to $\mathbb{F}$. Then $q$ is quadratic form on $\mathbb{F}^n$ if there exists a matrix of bilinear form $A \in \mathbb{F}^{n \times n}$ such that
+$$
+q(x_1, ..., x_n) = \sum_{i, j} A_{i, j} x_i x_j \quad \forall (x_1, .., x_n) \in \mathbb{F}^n.
+$$
+
+<br />
+
+**Lemma 9.6 - Diagonalization of Quadratic Forms**
+
+Suppose $q$ is a quadratic form on $V$. Then
+1. There exists a basis $e_1, ..., e_n$ of $V$ and $\lambda_1, ..., \lambda_n \in \mathbb{F}$ such that
+    $$
+    q\left(\sum_{i=1}^n x_i e_i\right) = \sum_{i=1}^n \lambda_i x_i^2, \quad \forall (x_1, ..., x_n) \in \mathbb{F}^n.
+    $$
+2. If $\mathbb{F} = \mathbb{R}$ and $V$ is an inner product space, then the basis $e_1, ..., e_n$ can be chosen to be orthonormal with respect to the inner product.
+
+<details>
+<summary>Proof</summary>
+
+Suppose $\beta \in V^{(2)}$ is a symmetric bilinear form associated with the quadratic form $q$, i.e., $q_\beta(v) = \beta(v, v)$ for all $v \in V$. Furthermore, $q_\beta$ must be symmetric. By Lemma 9.6, there exists a basis $e_1, ..., e_n$ of $V$ such that the matrix representation of $\beta$ with respect to this basis is diagonal:
+$$
+\beta\left(\sum_{i=1}^n x_i e_i, \sum_{j=1}^n x_j e_j\right) = \sum_{i=1}^n \lambda_i x_i^2, \quad \forall (x_1, ..., x_n) \in \mathbb{F}^n,
+$$
+where $\lambda_i$ are the diagonal entries of the matrix representation of $\beta$ with respect to the basis $e_1, ..., e_n$. Therefore,
+$$
+q\left(\sum_{i=1}^n x_i e_i\right) = \sum_{i=1}^n \lambda_i x_i^2, \quad \forall (x_1, ..., x_n) \in \mathbb{F}^n.
+$$
+Completing the proof of (1).
+
+</details>
+<br />
+
+## Alternating Multilinear Forms
+
+<br />
+
+## Determinants
+
+<br />
+
+## Tensor Products 
+
+<br />
