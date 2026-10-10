@@ -17,6 +17,12 @@
   - [Other Special Ideals](#other-special-ideals)
     - [Facts on Special Ideals](#facts-on-special-ideals)
     - [Krull Dimension](#krull-dimension)
+  - [Homomorphisms and Quotient Rings](#homomorphisms-and-quotient-rings)
+    - [Definition of Quotient Ring](#definition-of-quotient-ring)
+    - [Ring Homomorphism](#ring-homomorphism)
+    - [Ring Homomorphism Theorems](#ring-homomorphism-theorems)
+    - [Special Ideals](#special-ideals)
+    - [Prime Avoidance Lemma](#prime-avoidance-lemma)
 
 :::
 
@@ -1005,3 +1011,248 @@ For example,
   \langle 0 \rangle \subsetneq \langle f \rangle
   $$
   so the Krull dimension is $1$ for the longest chain of prime ideals.
+
+<br />
+
+## Homomorphisms and Quotient Rings
+
+### Definition of Quotient Ring
+
+Let $A$ be a (commutative with identity) ring,
+
+1. Every ideal $I$ of $A$ is a normal subgroup of $A$, thus $A/I$ forms a quotient group. The reasons behind this are as follows:
+
+    - $A$ itself is a commutative additive group. 
+    - Additive closure of ideal ensures $I$ is a subgroup of $A$. 
+    - Commutative property ensure this subgroup is normal. 
+    - That $I$ is normal ensure that $A/I$ is a quotient group.
+
+2. The element of $A/I$ is denoted as $\overline{x} = x + I$ where $x \in A$ is a representative of the coset $\overline{x}$.
+
+3. The addition and multiplication in the quotient ring $A/I$ are defined as follows:
+   $$
+   \overline{x} + \overline{y} = \overline{x + y}, \quad \overline{x} \cdot \overline{y} = \overline{xy}, \quad \forall x, y \in A.
+   $$
+
+----
+
+We need to show that the addition and multiplication in the quotient ring $A/I$ are **well-defined**, i.e., if $\overline{x} = \overline{x'}$ and $\overline{y} = \overline{y'}$, then 
+$$
+\overline{x} + \overline{y} = \overline{x'} + \overline{y'}, \quad \overline{x} \cdot \overline{y} = \overline{x'} \cdot \overline{y'}.
+$$
+
+<details>
+<summary>Proof</summary>
+
+For addition, by definition, we have :
+- $\overline{x} + \overline{y} = \overline{x + y}$
+- $\overline{x'} + \overline{y'} = \overline{x' + y'}$
+
+So, we need to show that $\overline{x + y} = \overline{x' + y'}$. This is equivalent to showing that $(x + y) - (x' + y') \in I$. Since $\overline{x} = \overline{x'}$ and $\overline{y} = \overline{y'}$, we have $x - x' \in I$ and $y - y' \in I$. Therefore,
+$$
+(x + y) - (x' + y') = (x - x') + (y - y') \in I,
+$$
+which proves that addition is well-defined.
+
+Similar proof also applies to multiplication. We omit the details here for brevity.
+
+</details>
+<br />
+
+### Ring Homomorphism
+
+Let $A$ and $B$ be two rings. A function $\phi: A \to B$ is called a **ring homomorphism** if for all $a, b \in A$, the following conditions hold:
+1. $\phi(a + b) = \phi(a) + \phi(b)$
+2. $\phi(a \cdot b) = \phi(a) \cdot \phi(b)$
+3. $\phi(1_A) = 1_B$ (if $A$ and $B$ have multiplicative identities)
+
+which implies :
+1. $\ker(\phi)$ is an ideal of $A$.
+2. $\phi$ is injective iff $\ker(\phi) = \{0\}$.
+3. $\text{range}(\phi)$ is a subring of $B$.
+
+If $\phi$ is bijective (i.e., both injective and surjective), then $\phi$ is called a **ring isomorphism**, and $A$ and $B$ are said to be **isomorphic rings**.
+
+<br />
+
+### Ring Homomorphism Theorems
+
+If $I \subseteq \ker(\phi)$, then $\phi$ induces a well-defined ring homomorphism $\overline{\phi}: A/I \to B$ such that $\phi = \overline{\phi} \circ \pi$, where $\pi: A \to A/I$ is the **canonical projection** which sends $a \in A$ to $\overline{a} = a + I\in A/I$. The following diagram commutes:
+
+$$
+\begin{array}{ccc}
+A & \xrightarrow{\phi} & B \\
+\downarrow{\pi} & & \uparrow{} \\
+A/I & \to & \overline{\phi}
+\end{array}
+$$
+
+<details>
+<summary>Explanation</summary>
+
+Why the commutative diagram holds? Because by definition, the equivalence of two functions $\phi = \overline{\phi} \circ \pi$ implies :
+$$
+\forall a \in A, \phi(a) = \overline{\phi}(\pi(a)) = \overline{\phi}(\overline{a})
+$$
+This is just a definition of $\overline{\phi}$, i.e., $\phi(\overline{a}) = \phi(a)$, and we need to check that it is well-defined. In other words, we need to check that the definition of $\overline{\phi}$ does not depend on the choice of representative of the coset. i.e., if $\overline{a} = \overline{a'}$, then $\phi(a) = \phi(a')$. This is equivalent to requiring that $a - a' \in I$ implies $\phi(a) - \phi(a') = \phi(a - a') = 0$, which holds if $I \subseteq \ker(\phi)$.
+
+</details>
+<br />
+
+Three theorems are particularly important in the study of ring homomorphisms:
+
+1. **First Isomorphism Theorem**: If $\phi: A \to B$ is a ring homomorphism, then $A/\ker(\phi) \cong \text{range}(\phi)$.
+
+2. **Second Isomorphism Theorem**: If $A$ is a ring, $I$ and $J$ are ideals of $A$ with $I \subseteq J$, then $(A/I)/(J/I) \cong A/J$.
+
+3. **Third Isomorphism Theorem**: If $I \subset A$ be an ideal, and let $B \subset A$ be a subring. Then :
+
+    (a) $B + I \subset A$ is a subring containing $I$.
+    (b) $I$ is an ideal of $B + I$.
+    (c) $B \cap I$ is an ideal of $B$.
+Moreover, 
+    $$
+    (B + I)/I \cong B/(B \cap I)
+    $$
+
+<details>
+<summary>Proof</summary>
+
+For the first isomorphism theorem, let $\overline{\phi}: A/\ker(\phi) \to \text{range}(\phi)$ be defined by $\overline{\phi}(a + \ker(\phi)) = \phi(a)$. In order to show the isomorphism, we need to prove : 
+- (a) $\overline{\phi}$ is well-defined.
+- (b) $\overline{\phi}$ is a ring homomorphism.
+- (c) $\overline{\phi}$ is injective.
+- (d) $\overline{\phi}$ is surjective.
+
+where (a) and (b) are already verified by the definition of $\overline{\phi}$, and (c) and (d) follow from the properties of $\phi$.
+
+---
+
+For the second isomorphism theorem, let $\phi : A / I \to A / J$ be a projection map defined by $\phi(a + I) = a + J$. By the first isomorphism theorem, we need to show : 
+
+1. $\phi$ is surjective, that is $\text{range}(\phi) = A/J$. It is also surjective since $I \subseteq J$, meaning every element of $A/J$ has a preimage in $A/I$. That is, $b + J = b' + I = \phi(b' + I)$.
+2. $\ker(\phi) = J/I$. For any $j \in J$, then $\phi(j + I) = j + I \in J$, implying that $\phi(j + I) = 0$, and $J / I$ is the kernel of $\phi$.
+
+Therefore, by the first isomorphism theorem, we have $(A/I)/(J/I) \cong A/J$, as required.
+
+----
+
+For the third isomorphism theorem, consider a composition map :
+$$
+\phi : B \to B + I \to (B + I)/I
+$$
+which is composed of a inclusion map and a natural projection map. It is obvious that $\phi$ is surjective, $\text{range}(\phi) = (B + I)/I$,  and its kernel is $B \cap I$. By the first isomorphism theorem, we have :
+$$
+B/(B \cap I) \cong (B + I)/I
+$$
+
+</details>
+<br />
+
+### Special Ideals
+
+Let $I$ be an ideal of a ring $A$. Then :
+1. $I$ is proper iff $A / I \ne 0$;
+2. $I$ is maximal iff $A / I$ is a field.
+3. $I$ is prime iff $A / I$ is an (integral) domain.
+4. $I$ is radical iff $A / I$ is reduced.
+5. $I$ is primary iff $\mathcal{N}(A/I) = \mathcal{D}(A/I)$.
+6. If $I$ is maximal, then $I$ is prime.
+7. If $I$ is prime, then $I$ is radical.
+8. If $I$ is prime, then $I$ is primary.
+
+<details>
+<summary>Proof</summary>
+
+For (1), $I$ is proper means $0 \notin I$ or $I \ne A$, implying $A / I \ne 0$.
+
+For (2), since every non-invertible elements of $A$ lie in some maximal ideal $I$, that means if any non-zero $a \notin I$, then exists $b \in A$ such that $a \cdot b = 1$. Thus, $(a + I) \cdot (b + I) = ab + I = 1 + I$, showing that any non-zero element $a + I \in A/I$ is invertible, and hence $A/I$ is a field.
+
+For (3), by definition, $A / I$ is a domain means, for any non-zero element $a + I \in A/I$, there is not any non-zero $b + I \in A/I$ such that $(a + I) \cdot (b + I) = 0$. In other words,  
+$$
+0 \ne a + I, 0 \ne b + I \to (a + I) \cdot (b + I) = ab + I \ne 0 \\
+\iff ab \in I \to a \in I \text{ or } b \in I.
+$$
+
+For (4), by definition, $A / I$ is reduced means it has no non-zero nilpotent elements. That is, for any $a + I \in A/I$, if $(a + I)^n = a^n + I = 0$ for some $n \in \mathbb{Z}^+$, then $a + I = 0$. Furthermore,  
+$$
+\begin{aligned}
+&a^n + I = 0 \to a + I = 0 \\
+&\iff a \in \sqrt{I} \to a \in I \\
+&\iff \sqrt{I} \subseteq I
+\end{aligned}
+$$
+In previous sections, we have already concluded that $I \subseteq \sqrt{I}$, and hence $I = \sqrt{I}$. Therefore, $I$ is radical if and only if $A/I$ is reduced.
+
+----
+
+For (5), by definition of primary ideal :
+$$
+I \text { is primary } \iff ab \in I \to a \in I \text{ or } b \in \sqrt{I} 
+$$
+, the definition of $\mathcal{N}(A/I)$, we have:
+$$
+ \mathcal{N}(A / I) = \{ \overline{a} \in A / I \mid \exists n \in \mathbb{Z}^+, \overline{a}^n = 0 \}
+$$
+and the definition of $\mathcal{D}(A/I)$, we have:
+$$
+ \mathcal{D}(A / I) = \{ \overline{a} \in A / I \mid \exists \overline{b} \ne 0 \in A / I, \overline{a} \cdot \overline{b} = 0 \}
+$$
+Through the definitions above, it is obvious that $\mathcal{N}(A/I) \subseteq \mathcal{D}(A/I)$. So, we only need to show :
+$$
+ab \in I \to a \in I \text{ or } b \in \sqrt{I} \iff \mathcal{D}(A/I) \subseteq \mathcal{N}(A/I)
+$$
+
+For the backward direction, we need to show : 
+$$
+\mathcal{D}(A/I) \subseteq \mathcal{N}(A/I) \implies ab \in I \to a \in I \text{ or } b \in \sqrt{I}
+$$
+Expanding the left-hand side, we have :
+$$
+\mathcal{D}(A/I) \subseteq \mathcal{N}(A/I) \iff \forall \overline{a} \in A/I, (\exists \overline{b} \ne 0 \in A/I, \overline{a} \cdot \overline{b} = 0) \to (\exists n \in \mathbb{Z}^+, \overline{a}^n = 0)
+$$
+that is, for any $\overline{a} \in A/I$, if there exists $\overline{b} \in A/I$ such that $\overline{a} \cdot \overline{b} = 0$, then there exists $n \in \mathbb{Z}^+$ such that $\overline{a}^n = 0$. Two cases involved :
+
+- case $\overline{a} = 0 \iff a \in I$, our goal always holds when we choose the left argument $\overline{a} = 0$.
+
+- case $\overline{a} \ne 0 \iff a \notin I$, then proposition $\overline{a} \cdot \overline{b} = 0$ implies that $\overline{b} \in \mathcal{D}(A/I)$, since $\mathcal{D}(A/I) \subseteq \mathcal{N}(A/I)$, we have $\overline{b} \in \mathcal{N}(A/I)$, i.e., $\exists n \in \mathbb{Z}^+, \overline{b}^n = \overline{b^n} = 0 \iff b^n \in I$. The right arugment $b \in \sqrt{I}$ always holds.
+
+Proof complete for $\mathcal{D}(A/I) \subseteq \mathcal{N}(A/I) \implies ab \in I \to a \in I \text{ or } b \in \sqrt{I}$.
+
+For the forward direction, we omit the detailed proof here.
+
+----
+
+For (6), by (2), if $I$ is maximal, then $A/I$ is a field, thus $A/I$ must be a (integral) domain. By (3), it follows that $I$ is prime. Completing the proof.
+
+For (7), by (3), $A/I$ is a (integral) domain, which implies $\mathcal{D}(A/I) = \{ 0 \}$, and since $\mathcal{N}(A/I) \subseteq \mathcal{D}(A/I)$, we have $\mathcal{N}(A/I) = \{ 0 \}$ ($A/I$ is reduced) as well. By (4), it follows that $I$ is radical.
+
+For (8), by definition of prime ideal:
+$$
+I \text{ is prime } \iff ab \in I \to a \in I \text{ or } b \in I \\
+\iff \overline{a} \cdot \overline{b} = 0 \to \overline{a} = 0 \text{ or } \overline{b} = 0
+$$
+, by definition of primary ideal :
+$$
+I \text{ is primary } \iff ab \in I \to a \in I \text{ or } b^n \in I \\ 
+\iff \overline{a} \cdot \overline{b} = 0 \to \overline{a} = 0 \text{ or } \overline{b}^n = 0 
+$$
+So, we need to show that :
+$$
+\overline{a} \cdot \overline{b} = 0 \to \overline{a} = 0 \text{ or } \overline{b} = 0 \implies 
+\overline{a} \cdot \overline{b} = 0 \to \overline{a} = 0 \text{ or } \overline{b}^n = 0
+$$
+Two cases involved : 
+$$
+\text { (a) } \overline{a} = 0 \implies \overline{a} \cdot \overline{b} = 0 \to \overline{a} = 0 \text{ or } \overline{b}^n = 0 \\
+\text { (b) } \overline{b} = 0 \implies \overline{a} \cdot \overline{b} = 0 \to \overline{a} = 0 \text{ or } \overline{b}^n = 0
+$$
+For case (a), it trivially holds when we choose the left argument $\overline{a} = 0$.
+
+For case (b), it trivially holds when we choose the right argument $\overline{b} = 0$ for $n = 1$.
+
+</details>
+<br />
+
+### Prime Avoidance Lemma
+
