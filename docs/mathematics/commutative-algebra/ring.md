@@ -1,4 +1,5 @@
-::: details Table of Contents
+<details>
+<summary>Table of Contents</summary>
 
 - [Rings and Ideals](#rings-and-ideals)
   - [Special Elements of Ring](#special-elements-of-ring)
@@ -24,13 +25,14 @@
     - [Special Ideals](#special-ideals)
     - [Prime Avoidance Lemma](#prime-avoidance-lemma)
 
-:::
+</details>
+
 
 <br />
 
 Note that all rings considered here are commutative and have a multiplicative identity.
 
-Lean 4 proofs are given under each proof below. They are collected and compiled in [`mathlib-in-lean/commutative-algebra/Ring.lean`](https://github.com/PayneJoe/lemmas-and-ciphers/blob/main/mathlib-in-lean/commutative-algebra/Ring.lean). All snippets assume `variable {A : Type*} [CommRing A]`.
+Each written proof or proof sketch is followed by a separate folded Lean 4 proof. The snippets are collected and compiled in [`mathlib-in-lean/commutative-algebra/Ring.lean`](https://github.com/PayneJoe/lemmas-and-ciphers/blob/main/mathlib-in-lean/commutative-algebra/Ring.lean). They assume that file's imports, namespace `CommAlg`, and `variable {A : Type*} [CommRing A]`; later snippets may use earlier declarations.
 
 # Rings and Ideals
 
@@ -50,12 +52,18 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
 
 1. If $A \ne 0$, then $\mathcal{N}(A) \subseteq \mathcal{D}(A)$, i.e., every nilpotent element is a zero divisor.
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     It is suffice to show that $\forall y \in \mathcal{N}(A) \to y \in \mathcal{D}(A)$.
 
     By definition (3), choose the **least** $n \in \mathbb{N}$ such that $y^n = 0$. Since $y^0 = 1 \ne 0$, we have $n \ge 1$, so $0 = y^n = y \cdot y^{n - 1}$. By minimality of $n$, $y^{n - 1} \ne 0$. By definition (2), use $b = y^{n - 1}$, we have $y \cdot b = 0$ with $b \ne 0$, hence $y \in \mathcal{D}(A)$.
 
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /-- `a` is a zero divisor if `a * b = 0` for some nonzero `b`. -/
@@ -83,29 +91,35 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
           _ = 0 := hn
     ```
 
-    :::
+    </details>
+
 
 
     <br />
 
 2. If $A \ne 0$, then $A^* \cap \mathcal{D}(A) = \emptyset$, i.e., no unit is a zero divisor.
 
-    ::: details Proof
-    
+
+    <details>
+    <summary>Proof</summary>
+
     By contradiction, assume $A^* \cap \mathcal{D}(A) \ne \emptyset$, let $x \in A^* \cap \mathcal{D}(A)$.
-    
+
     By definition (1), there exists $y \in A$ such that $x \cdot y = 1$. 
     By definition (2), there exists an non-zero $z \in A$ such that $x \cdot z = 0$. 
-    
+
     So, we have :
     $$
     (x \cdot y) \cdot z = 1 \cdot z = z \ne 0
     $$
     By the associativity and commutativity of $A$ (as we mentioned earlier that $A$ is commutative ring with identity), the left-hand side $(x \cdot y) \cdot z = (y \cdot x) \cdot z = y \cdot (x \cdot z) = y \cdot 0 = 0$.  
-    
-    This is a contradiction since the right-hand side is $z \ne 0$. Hence no unit can be a zero divisor.
-    
 
+    This is a contradiction since the right-hand side is $z \ne 0$. Hence no unit can be a zero divisor.
+
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 2: no unit is a zero divisor. -/
@@ -121,14 +135,17 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
     example {x z : A} (hx : IsUnit x) : x * z = 0 ↔ z = 0 := hx.mul_right_eq_zero
     ```
 
-    :::
+    </details>
+
 
     
     <br />
 
 3. Let $A$ be a *finite* ring. Then, $A = A^* \cup \mathcal{D}(A)$, i.e., every element of a finite ring is either a unit or a zero divisor.
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     Firstly, considering $A = \{0\}$, then $0 \cdot 0 = 0 = 1$, so $A^* = \{0\}$ and $\mathcal{D}(A) = \emptyset$. Hence, $A = A^* \cup \mathcal{D}(A)$ in this case.
 
@@ -144,8 +161,11 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
     - If $f$ is injective, since $A$ is finite, by the **pigeonhole principle**, $f$ is also surjective, then there exists $y \in A$ such that $f(y) = x \cdot y = 1$, hence $x \in A^*$. 
 
     Therefore, every element $x \in A$ is either a unit or a zero divisor, i.e., $x \in A^* \cup \mathcal{D}(A)$.
-    
 
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 3: every element of a finite ring is a unit or a zero divisor. -/
@@ -163,7 +183,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
         exact ⟨y₁ - y₂, sub_ne_zero.mpr hne, by rw [mul_sub, h, sub_self]⟩
     ```
 
-    :::
+    </details>
+
 
     <br />
 
@@ -175,12 +196,18 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
 
 3. A finite (integral) domain is a field. 
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     By the proof of fact (3), $\mathcal{D}(A) = 0$ implies function $f$ is injective for every non-zero $x \in A$.
 
     By **pigeonhole principle**, *finite* implies that every injective function from the domain to itself is also surjective, which ensures that every non-zero element has a multiplicative inverse, hence the domain is a field.
 
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 3: a finite integral domain is a field. -/
@@ -195,7 +222,8 @@ Lean 4 proofs are given under each proof below. They are collected and compiled 
     example [IsDomain A] [Finite A] : IsField A := Finite.isField_of_domain A
     ```
 
-    :::
+    </details>
+
 
 
     <br />
@@ -234,7 +262,9 @@ Ideal is a subset of a ring such that
 
 1. $1 \notin I \iff A^* \cap I = \emptyset$, i.e. No unit exists in a proper ideal of a ring.
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     (a) Regarding the forward direction, in a contrapositive way, we assume $a \in A^*, a \in I$. 
 
@@ -252,7 +282,10 @@ Ideal is a subset of a ring such that
     $$
     By definition of ideal, $\forall b \in A, a \cdot b \in I$, therefore, $1 \notin I$.
 
+    </details>
 
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 1: an ideal is proper iff it contains no unit. -/
@@ -272,14 +305,17 @@ Ideal is a subset of a ring such that
       Ideal.eq_top_of_isUnit_mem I ha hu
     ```
 
-    :::
+    </details>
+
 
 
 <br />
 
 2. If $A$ is a field, then it has only has two ideals: the zero ideal $\langle 0 \rangle$ and the field itself $\langle 1 \rangle = A$.
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     (a) Firstly, considering the special case of $A = \{0\}$, then the only ideal is $\langle 0 \rangle = \{0\}$.
 
@@ -296,6 +332,10 @@ Ideal is a subset of a ring such that
 
     Completing the proof.
 
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 2: a field has only the ideals `⟨0⟩` and `⟨1⟩`. -/
@@ -311,7 +351,8 @@ Ideal is a subset of a ring such that
     example {K : Type*} [Field K] (I : Ideal K) : I = ⊥ ∨ I = ⊤ := Ideal.eq_bot_or_top I
     ```
 
-    :::
+    </details>
+
 
 
 <br />
@@ -369,39 +410,48 @@ Ideal is a subset of a ring such that
 
 1. Intersection of a family of ideals is also an ideal.
 
-   ::: details Proof
 
-   Since $\bigcap_{h \in H} I_h \subseteq I_k$ for all $k \in H$, then :
-   - for any $a, b \in \bigcap_{h \in H} I_h$, we have $a + b \in I_h$ for all $h \in H$. That implies that $a + b \in \bigcap_{h \in H} I_h$.
-   - for any $a \in A$ and $x \in \bigcap_{h \in H} I_h$, we have $x \in I_h$ for all $h \in H$. Since each $I_h$ is an ideal, $a \cdot x \in I_h$ for all $h \in H$. That implies that $a \cdot x \in \bigcap_{h \in H} I_h$.
+    <details>
+    <summary>Proof</summary>
 
+    Since $\bigcap_{h \in H} I_h \subseteq I_k$ for all $k \in H$, then :
+    - for any $a, b \in \bigcap_{h \in H} I_h$, we have $a + b \in I_h$ for all $h \in H$. That implies that $a + b \in \bigcap_{h \in H} I_h$.
+    - for any $a \in A$ and $x \in \bigcap_{h \in H} I_h$, we have $x \in I_h$ for all $h \in H$. Since each $I_h$ is an ideal, $a \cdot x \in I_h$ for all $h \in H$. That implies that $a \cdot x \in \bigcap_{h \in H} I_h$.
 
-   ```lean
-   /- Fact 1: the intersection of a family of ideals is an ideal. -/
-   def iInter {ι : Type*} (I : ι → Ideal A) : Ideal A where
-     carrier := {x | ∀ h, x ∈ I h}
-     zero_mem' := by
-       intro h
-       exact (I h).zero_mem
-     add_mem' := by
-       intro a b ha hb h
-       exact (I h).add_mem (ha h) (hb h)
-     smul_mem' := by
-       intro a x hx h
-       exact (I h).mul_mem_left a (hx h)
+    </details>
 
-   example {ι : Type*} (I : ι → Ideal A) : iInter I = ⨅ h, I h := by
-     ext x
-     exact (Submodule.mem_iInf I).symm
-   ```
+    <details>
+    <summary>Lean 4 proof</summary>
 
-   :::
+    ```lean
+    /- Fact 1: the intersection of a family of ideals is an ideal. -/
+    def iInter {ι : Type*} (I : ι → Ideal A) : Ideal A where
+      carrier := {x | ∀ h, x ∈ I h}
+      zero_mem' := by
+        intro h
+        exact (I h).zero_mem
+      add_mem' := by
+        intro a b ha hb h
+        exact (I h).add_mem (ha h) (hb h)
+      smul_mem' := by
+        intro a x hx h
+        exact (I h).mul_mem_left a (hx h)
+
+    example {ι : Type*} (I : ι → Ideal A) : iInter I = ⨅ h, I h := by
+      ext x
+      exact (Submodule.mem_iInf I).symm
+    ```
+
+    </details>
+
 
    <br />
 
 2. Quotient is also an ideal.
 
-    ::: details Proof that quotient is also an ideal
+
+    <details>
+    <summary>Proof that quotient is also an ideal</summary>
 
     For addition closure, let $a, b \in I : J$, we need to show that $a - b \in I : J$. Since 
     - $a \cdot J \subseteq I \iff \forall x \in J, a \cdot x \in I$
@@ -414,6 +464,10 @@ Ideal is a subset of a ring such that
 
     - if $r \ne 0$. Since $a \cdot J \subseteq I \iff \forall x \in J, a \cdot x \in I$, then $\forall x \in J, (r \cdot a) \cdot x = r \cdot (a \cdot x) \in I$ always holds, which implies that $r \cdot a \in I : J$.
 
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 2: the quotient `I : J = {a | a * J ⊆ I}` is an ideal. -/
@@ -438,13 +492,16 @@ Ideal is a subset of a ring such that
       rfl
     ```
 
-    :::
+    </details>
+
 
     <br />
 
 3. Radical is also an ideal.
 
-    ::: details Proof that radical is also an ideal
+
+    <details>
+    <summary>Proof that radical is also an ideal</summary>
 
     For the addition closure, let $a, b \in \sqrt{I}$, we need to show that $a - b \in \sqrt{I}$. 
 
@@ -459,13 +516,17 @@ Ideal is a subset of a ring such that
     $$
         (a - b)^{m + n} = (-b)^n \cdot \sum_{k = 0}^{m} \binom{m}{k} a^k (-b)^{m - k} + a^m \cdot \sum_{k = m + 1}^{m + n} \binom{m+n}{k} a^{k-m} (-b)^{m+n-k} 
     $$
-    
+
     Since $I$ is an ideal and closed under addition, $(a - b)^{m+n} \in I$, which implies that $a - b \in \sqrt{I}$.
 
     For the multiplicity closure, let $a \in \sqrt{I}$ and $r \in A$, we need to show that $r \cdot a \in \sqrt{I}$. 
     - $\exists n \in \mathbb{N}, a^n \in I$
     Consider $(r \cdot a)^n = r^n \cdot a^n$. Since $a^n \in I$ and $I$ is an ideal, $r^n \cdot a^n \in I$, which implies that $(r \cdot a)^n \in I$. Therefore, $r \cdot a \in \sqrt{I}$.
 
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 3: the radical `√I = {a | ∃ n, a ^ n ∈ I}` is an ideal. -/
@@ -501,15 +562,23 @@ Ideal is a subset of a ring such that
     example (I : Ideal A) (a : A) : a ∈ radical I ↔ a ∈ I.radical := Iff.rfl
     ```
 
-    :::
+    </details>
+
 
     <br />
 
 4. The set of nipotent elements $\mathcal{N}(A)$ is also an ideal.
 
-    In particular, set of nilpotent elements is a special case of radical : $\mathcal{N}(A) = \sqrt{\langle 0 \rangle}$. So it is an ideal.
+    <details>
+    <summary>Proof</summary>
 
-    ::: details Lean 4 proof
+    In particular, the set of nilpotent elements is a special case of the radical: $\mathcal{N}(A) = \sqrt{\langle 0 \rangle}$. Indeed, $a^n \in \langle 0 \rangle$ if and only if $a^n = 0$. Since the radical is an ideal, the nilpotent elements form an ideal too.
+
+    </details>
+
+
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 4: the nilpotent elements form the ideal `√⟨0⟩`. -/
@@ -520,12 +589,15 @@ Ideal is a subset of a ring such that
     example (a : A) : a ∈ nilradical A ↔ IsNilpotent a := mem_nilradical
     ```
 
-    :::
+    </details>
+
 
 
 5. The set of zero-divisors $\mathcal{D}(A)$ is not an ideal in general.
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     Not an ideal means either addition or multiplicity closure fails, we choose the former one. That is 
     $$
@@ -535,6 +607,10 @@ Ideal is a subset of a ring such that
 
     However, $a + b = 5$ and $5 \cdot 5 = 25 = 1$, so $a + b$ is a unit. By fact (2) on special elements, no unit is a zero divisor, so $a + b \notin \mathcal{D}(A)$.
 
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 5: the zero divisors need not form an ideal.
@@ -548,13 +624,16 @@ Ideal is a subset of a ring such that
       exact not_isZeroDivisor_of_isUnit h5 ((hI _).mp (I.add_mem h2 h3))
     ```
 
-    :::
+    </details>
+
 
     <br />
 
 6. If $I, J$ are two ideals of a ring $A$, then $I J \subseteq I \cap J$.
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     Firstly we decompose the argument :
     $$
@@ -562,6 +641,10 @@ Ideal is a subset of a ring such that
     $$
     Since $a \in I$, so we have $a \cdot b \in I$. Similarly, since $b \in J$, we have $a \cdot b \in J$. Therefore, $a \cdot b \in I \cap J$. Completing the proof.
 
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 6: `I J ⊆ I ∩ J`. -/
@@ -574,13 +657,16 @@ Ideal is a subset of a ring such that
     example (I J : Ideal A) : I * J ≤ I ⊓ J := Ideal.mul_le_inf
     ```
 
-    :::
+    </details>
+
 
     <br />
 
 7. If $I, J$ are two ideals of a ring $A$, and $I + J = \langle 1 \rangle$, then $I \cap J = I J$. $I$ and $J$ are *comaximal*.
     
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     By (6), we only need to show the converse inclusion: $I \cap J \subseteq I J$ when $I + J = \langle 1 \rangle$.
 
@@ -592,6 +678,10 @@ Ideal is a subset of a ring such that
     $$
     which proves $\forall x \in I \cap J, x \in I J$. Therefore, $I \cap J \subseteq I J$. Completing the proof.
 
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
 
     ```lean
     /- Fact 7: if `I + J = ⟨1⟩`, then `I ∩ J = I J`. -/
@@ -614,7 +704,8 @@ Ideal is a subset of a ring such that
     example (I J : Ideal A) (h : I ⊔ J = ⊤) : I * J = I ⊓ J := Ideal.mul_eq_inf_of_coprime h
     ```
 
-    :::
+    </details>
+
 
     <br />
 
@@ -646,7 +737,9 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
 1. if $I \subseteq J$, then $\sqrt{I} \subseteq \sqrt{J}$.
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     In order to show $\sqrt{I} \subseteq \sqrt{J}$, it is suffices to show :
     $$
@@ -655,12 +748,26 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
     Since $x^n \in I \subseteq J$, use $m = n$, we have $x^m \in J$. Completing the proof.
 
-      :::
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
+
+    ```lean
+    theorem radical_mono' (I J : Ideal A) (h : I ≤ J) : I.radical ≤ J.radical := by
+      rintro x ⟨n, hn⟩
+      exact ⟨n, h hn⟩
+    ```
+
+    </details>
+
       <br />
 
 2. $I \subseteq \sqrt{I}$ and $\sqrt{\sqrt{I}} = \sqrt{I}$
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     For any $x \in I$, we have $x^1 = x \in I$, hence $x \in \sqrt{I}$. This shows $I \subseteq \sqrt{I}$.
 
@@ -672,12 +779,29 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
     Since $x^n \in \sqrt{I}$ for some $n \in \mathbb{N}$, by definition of $\sqrt{I}$, there exists $p \in \mathbb{N}$ such that $(x^n)^p = x^{np} \in I$. So use $m = np$, we have $x^m \in I$. Completing the proof.
 
-    :::
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
+
+    ```lean
+    theorem le_radical_and_idem (I : Ideal A) :
+        I ≤ I.radical ∧ I.radical.radical = I.radical := by
+      have hle : I ≤ I.radical := fun x hx => ⟨1, by simpa using hx⟩
+      refine ⟨hle, le_antisymm ?_ Ideal.le_radical⟩
+      rintro x ⟨n, m, h⟩
+      exact ⟨n * m, by simpa only [pow_mul] using h⟩
+    ```
+
+    </details>
+
     <br />
 
 3. $\sqrt{I J} = \sqrt{I \cap J} = \sqrt{I} \cap \sqrt{J}$
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     (a) First, we show $\sqrt{I J} = \sqrt{I \cap J}$. Since $I J \subseteq I \cap J$, by property (1) above, we have $\sqrt{I J} \subseteq \sqrt{I \cap J}$. So it suffices to show the backward direction inclusion $\sqrt{I \cap J} \subseteq \sqrt{I J}$. That is, 
     $$
@@ -705,47 +829,110 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
     Since $x^{m_1} \in I, x^{m_2} \in J$, by definition, we have $x^{m_1} \cdot x^{m_2} = x^{m_1 + m_2} \in I J$. Hence, using $n = m_1 + m_2$, we have $x^n \in IJ$. Again by $I J \subseteq I \cap J$, we have $x^n \in I \cap J$. Completing the proof of the backward inclusion.
 
-  :::
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
+
+    ```lean
+    theorem radical_mul_inf (I J : Ideal A) :
+        (I * J).radical = (I ⊓ J).radical ∧
+          (I ⊓ J).radical = I.radical ⊓ J.radical := by
+      have hi : (I ⊓ J).radical = I.radical ⊓ J.radical := by
+        apply le_antisymm
+        · exact le_inf (radical_mono' _ _ inf_le_left) (radical_mono' _ _ inf_le_right)
+        · rintro x ⟨⟨m, hm⟩, ⟨n, hn⟩⟩
+          refine ⟨m + n, ?_⟩
+          rw [pow_add]
+          exact ⟨I.mul_mem_right _ hm, J.mul_mem_left _ hn⟩
+      refine ⟨le_antisymm (radical_mono' _ _ Ideal.mul_le_inf) ?_, hi⟩
+      rintro x ⟨n, hn⟩
+      refine ⟨n + n, ?_⟩
+      rw [pow_add]
+      exact Ideal.mul_mem_mul hn.1 hn.2
+    ```
+
+    </details>
+
   <br />
 
-4. $\sqrt{I^n} = \sqrt{I}$ for any $n \in \mathbb{N}$
+4. $\sqrt{I^n} = \sqrt{I}$ for any integer $n \ge 1$.
 
-    ::: details Proof
 
-    This is a special case of $\sqrt{IJ} = \sqrt{I \cap J}$ in property (3) above, where we take $J = I^{n-1}$. We just omit the detailed proof here. 
-  
-    :::
+    <details>
+    <summary>Proof</summary>
+
+    Induct on $n \ge 1$. The case $n = 1$ is immediate. For the induction step, property (3) gives $\sqrt{I^{n+1}} = \sqrt{I^n I} = \sqrt{I^n} \cap \sqrt{I} = \sqrt{I}$. The restriction is necessary: $I^0 = A$, whose radical is $A$.
+
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
+
+    ```lean
+    theorem radical_pow_positive (I : Ideal A) (n : ℕ) (hn : n ≠ 0) :
+        (I ^ n).radical = I.radical := by
+      obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn
+      induction k with
+      | zero => simp
+      | succ k ih =>
+        rw [pow_succ, (radical_mul_inf _ _).1, (radical_mul_inf _ _).2,
+          ih (Nat.succ_ne_zero k), inf_idem]
+    ```
+
+    </details>
+
     <br />
 
 5. $\sqrt{I} = \langle 1 \rangle$ if and only if $I = \langle 1 \rangle$.
 
 6. $\sqrt{I + J} = \sqrt{\sqrt{I} + \sqrt{J}}$
 
-    ::: details Proof
 
-      In order to show the equality $\sqrt{I + J} = \sqrt{\sqrt{I} + \sqrt{J}}$, we first show the forward inclusion directions. That is,
-      $$
-        \sqrt{I + J} \subseteq \sqrt{\sqrt{I} + \sqrt{J}} \iff \forall x \in \sqrt{I + J} \implies x \in \sqrt{\sqrt{I} + \sqrt{J}} \\
-        \iff \forall x \in \sqrt{I + J}, \exists n \in \mathbb{N}, x^n \in I + J \implies \exists m \in \mathbb{N}, x^m \in \sqrt{I} + \sqrt{J} \\
-      $$
-      As $x^n \in I + J$ implies $\exists x_1 \in I, x_2 \in J$ such that $x^n = x_1 + x_2$. We use $m = n$, then by the property (2) above, we have $x_1 \in \sqrt{I}, x_2 \in \sqrt{J}$, thus $x^m = x_1 + x_2 \in \sqrt{I} + \sqrt{J}$. Completing the proof of the forward inclusion.
+    <details>
+    <summary>Proof</summary>
 
-      <br />
+    In order to show the equality $\sqrt{I + J} = \sqrt{\sqrt{I} + \sqrt{J}}$, we first show the forward inclusion directions. That is,
+    $$
+      \sqrt{I + J} \subseteq \sqrt{\sqrt{I} + \sqrt{J}} \iff \forall x \in \sqrt{I + J} \implies x \in \sqrt{\sqrt{I} + \sqrt{J}} \\
+      \iff \forall x \in \sqrt{I + J}, \exists n \in \mathbb{N}, x^n \in I + J \implies \exists m \in \mathbb{N}, x^m \in \sqrt{I} + \sqrt{J} \\
+    $$
+    As $x^n \in I + J$ implies $\exists x_1 \in I, x_2 \in J$ such that $x^n = x_1 + x_2$. We use $m = n$, then by the property (2) above, we have $x_1 \in \sqrt{I}, x_2 \in \sqrt{J}$, thus $x^m = x_1 + x_2 \in \sqrt{I} + \sqrt{J}$. Completing the proof of the forward inclusion.
 
-      Next, we show the backward inclusion direction $\sqrt{\sqrt{I} + \sqrt{J}} \subseteq \sqrt{I + J}$. That is,
-      $$
-        \sqrt{\sqrt{I} + \sqrt{J}} \subseteq \sqrt{I + J} \iff \forall x \in \sqrt{\sqrt{I} + \sqrt{J}} \implies x \in \sqrt{I + J} \\
-        \iff \forall x \in \sqrt{\sqrt{I} + \sqrt{J}}, \exists m \in \mathbb{N}, x^m \in \sqrt{I} + \sqrt{J} \implies \exists n \in \mathbb{N}, x^n \in I + J \\
-      $$
+    <br />
 
-      Since $x^m \in \sqrt{I} + \sqrt{J}$, we have $\exists x_1 \in \sqrt{I}, x_2 \in \sqrt{J}$ such that $x^m = x_1 + x_2$. By definition, there exist $k_1, k_2 \in \mathbb{N}$ such that $x_1^{k_1} \in I$ and $x_2^{k_2} \in J$. Let $n = m \cdot k_1 \cdot k_2$, then $x^n = (x^m)^{k_1 k_2} = (x_1 + x_2)^{k_1 k_2} \in I + J$. Completing the proof of the backward inclusion.
+    Next, we show the backward inclusion direction $\sqrt{\sqrt{I} + \sqrt{J}} \subseteq \sqrt{I + J}$. That is,
+    $$
+      \sqrt{\sqrt{I} + \sqrt{J}} \subseteq \sqrt{I + J} \iff \forall x \in \sqrt{\sqrt{I} + \sqrt{J}} \implies x \in \sqrt{I + J} \\
+      \iff \forall x \in \sqrt{\sqrt{I} + \sqrt{J}}, \exists m \in \mathbb{N}, x^m \in \sqrt{I} + \sqrt{J} \implies \exists n \in \mathbb{N}, x^n \in I + J \\
+    $$
 
-    :::
+    Since $x^m \in \sqrt{I} + \sqrt{J}$, write $x^m = x_1 + x_2$ with $x_1^{k_1} \in I$ and $x_2^{k_2} \in J$. In the binomial expansion of $(x_1 + x_2)^{k_1+k_2}$, every term has either at least $k_1$ factors of $x_1$ or at least $k_2$ factors of $x_2$, so every term belongs to $I+J$. Thus $x^{m(k_1+k_2)} \in I+J$, completing the backward inclusion.
+
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
+
+    ```lean
+    theorem radical_sup' (I J : Ideal A) :
+        (I ⊔ J).radical = (I.radical ⊔ J.radical).radical := by
+      apply le_antisymm
+      · exact radical_mono' _ _ (sup_le_sup Ideal.le_radical Ideal.le_radical)
+      · have h : I.radical ⊔ J.radical ≤ (I ⊔ J).radical :=
+          sup_le (radical_mono' _ _ le_sup_left) (radical_mono' _ _ le_sup_right)
+        exact (radical_mono' _ _ h).trans_eq (le_radical_and_idem _).2
+    ```
+
+    </details>
+
     <br />
   
 7. $\sqrt{I + JH} = \sqrt{I + J} \cap \sqrt{I + H}$
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     In order to prove the equality $\sqrt{I + JH} = \sqrt{I + J} \cap \sqrt{I + H}$, we need to show both inclusions.
 
@@ -767,7 +954,37 @@ Let $A$ be a ring, and let $I, J, H$ be ideals of $A$. Then :
 
     Since $x^{m_1} \in I + J$ and $x^{m_2} \in I + H$, thus we have $x^{m_1} \cdot x^{m_2} = x^{m_1 + m_2} \in (I + J)(I + H) \subseteq I + JH$. Let $n = m_1 + m_2$, then $x^n \in I + JH$. Completing the proof of the backward inclusion.
 
-    :::
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
+
+    ```lean
+    theorem radical_sup_mul (I J H : Ideal A) :
+        (I ⊔ J * H).radical = (I ⊔ J).radical ⊓ (I ⊔ H).radical := by
+      apply le_antisymm
+      · exact le_inf
+          (radical_mono' _ _ (sup_le_sup_left ((mul_le_inf' J H).trans inf_le_left) I))
+          (radical_mono' _ _ (sup_le_sup_left ((mul_le_inf' J H).trans inf_le_right) I))
+      · rintro x ⟨⟨m, hm⟩, ⟨n, hn⟩⟩
+        refine ⟨m + n, ?_⟩
+        rw [pow_add]
+        obtain ⟨a, ha, b, hb, hab⟩ := Submodule.mem_sup.mp hm
+        obtain ⟨c, hc, d, hd, hcd⟩ := Submodule.mem_sup.mp hn
+        rw [← hab, ← hcd]
+        have hi : a * c + a * d + b * c ∈ I :=
+          I.add_mem (I.add_mem (I.mul_mem_right _ ha) (I.mul_mem_right _ ha))
+            (I.mul_mem_left _ hc)
+        have hj : b * d ∈ J * H := Ideal.mul_mem_mul hb hd
+        have he : (a + b) * (c + d) = (a * c + a * d + b * c) + b * d := by ring
+        rw [he]
+        exact (I ⊔ J * H).add_mem
+          ((show I ≤ I ⊔ J * H from le_sup_left) hi)
+          ((show J * H ≤ I ⊔ J * H from le_sup_right) hj)
+    ```
+
+    </details>
+
     <br />
 
 
@@ -794,7 +1011,9 @@ Let $A$ be a non-zero ring. Then
 
 3. Every non-invertible element of $A$ is contained in some maximal ideal of $A$.
 
-::: details Proof
+
+<details>
+<summary>Proof</summary>
 
 Regarding (1), we can treat $A$ as a poset whose elements are the proper ideals of $A$, ordered by inclusion $\subseteq$. 
 $$
@@ -828,6 +1047,10 @@ $$
 $$
 Then the principal ideal $\langle a \rangle$ do not contains $1$, which means $\langle a \rangle$ is a proper ideal of $A$. By (2), there exists a maximal ideal $\mathfrak{m}$ such that $\langle a \rangle \subseteq \mathfrak{m}$.
 
+</details>
+
+<details>
+<summary>Lean 4 proof</summary>
 
 ```lean
 /- Fact 2: every proper ideal is contained in a maximal ideal (Zorn's lemma). -/
@@ -872,7 +1095,8 @@ example {a : A} (ha : a ∈ nonunits A) : ∃ M : Ideal A, M.IsMaximal ∧ a ∈
   exists_max_ideal_of_mem_nonunits ha
 ```
 
-:::
+</details>
+
 
 <br />
 
@@ -908,26 +1132,39 @@ Let $I$ be a proper ideal of $A$. Then we have the following facts:
 
 1. If $I$ is primary, then $\sqrt{I}$ is prime.
 
-    This fact is a direct consequence of the inclusion relationship between prime ideal and primary ideal,  
-    $$
-      \text{prime ideal} \subseteq \text{primary ideal}
-    $$
 
-    ::: details Proof
-    
-    By the definition of primary ideal, we have
-    $$
-    a b \in I \implies a \in I \text{ or } b \in \sqrt{I}
-    $$
-    - Suppose $a \in I$, then choose left side of the implication in definition of prime ideal $a \in I$, thus $a b \in I$ is satisfied trivially.
-    - Suppose $a \notin I, b \in \sqrt{I}$, then choose the right side of the implication in definition of prime ideal $b \in \sqrt{I}$, thus $a b \in \sqrt{I}$ is satisfied trivially.
-    
-    :::
+    <details>
+    <summary>Proof</summary>
+
+    Since $I$ is proper, $\sqrt{I}$ is proper: $1 \in \sqrt{I}$ would imply $1^n = 1 \in I$. If $ab \in \sqrt{I}$, choose $n$ with $a^n b^n = (ab)^n \in I$. Primaryness gives either $a^n \in I$, hence $a \in \sqrt{I}$, or $b^n \in \sqrt{I}$. In the latter case choose $m$ with $b^{nm} \in I$, so $b \in \sqrt{I}$. This proves that $\sqrt{I}$ is prime.
+
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
+
+    ```lean
+    theorem primary_radical_prime (I : Ideal A) (hI : I.IsPrimary) : I.radical.IsPrime := by
+      refine ⟨?_, ?_⟩
+      · exact fun h => (Ideal.isPrimary_iff.mp hI).1 (Ideal.radical_eq_top.mp h)
+      · intro a b hab
+        obtain ⟨n, hn⟩ := hab
+        rw [mul_pow] at hn
+        rcases (Ideal.isPrimary_iff.mp hI).2 hn with ha | hb
+        · exact Or.inl ⟨n, ha⟩
+        · exact Or.inr (Ideal.mem_radical_of_pow_mem hb)
+    ```
+
+    </details>
+
     <br />
 
 2. If $I$ is a maximal ideal, then $A/I$ is a field. 
-    ::: details Proof
-    
+
+
+    <details>
+    <summary>Proof</summary>
+
     By the definition of field, it is suffices to show :
     $$
       \forall x + I \in A/I, x \notin I \implies \exists m + I \in A/I, (x + I)(m + I) = 1
@@ -939,7 +1176,7 @@ Let $I$ be a proper ideal of $A$. Then we have the following facts:
     $$
     I \subseteq \langle x \rangle + I = A
     $$
-    otherwise, $\langle x \rangle  + I$ would be the maximal ideal containing $I$, not $I$ itself.
+    because $\langle x \rangle + I$ strictly contains $I$, and maximality forces it to equal $A$.
 
     ---
 
@@ -949,16 +1186,30 @@ Let $I$ be a proper ideal of $A$. Then we have the following facts:
     $$
     Completing the proof.
 
-    
-    :::
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
+
+    ```lean
+    theorem maximal_quotient_field (I : Ideal A) (hI : I.IsMaximal) : IsField (A ⧸ I) := by
+      letI := hI
+      letI := Ideal.Quotient.field I
+      exact Field.toIsField _
+    ```
+
+    </details>
+
     <br />
 
 3. If $\sqrt{I} = \mathfrak{m}$ is a maximal ideal, then $I$ is primary.
 
-    ::: details Proof
+
+    <details>
+    <summary>Proof</summary>
 
     By the definition of primary ideal, it is suffices to show that for any $ab \in I$ when $a \notin I$, we must have $b \in \sqrt{I}$. By contradiction, we assume $b \notin \sqrt{I}$.
-    
+
     ----
 
     Since $\sqrt{I}$ is maximal, by fact (2) above, we know that the quotient ring $A/\sqrt{I}$ is a field, which implies every nonzero element in $A/\sqrt{I}$ is invertible. More specially,
@@ -969,7 +1220,7 @@ Let $I$ be a proper ideal of $A$. Then we have the following facts:
     $$
      (b + \sqrt{I})(c + \sqrt{I}) = b c + \sqrt{I} = 1 + \sqrt{I} 
      \implies bc - 1 \in \sqrt{I} \iff \exists n \in \mathbb{N}, (b c - 1)^n \in I \\
-     \iff \exists n \in \mathbb{N}, a (bc - 1)^n \in I
+     \implies \exists n \in \mathbb{N}, a (bc - 1)^n \in I
     $$
 
     ---
@@ -980,7 +1231,20 @@ Let $I$ be a proper ideal of $A$. Then we have the following facts:
     $$
     We have assumed that $a b \in I$, thus $\sum_{k=1}^{n} \binom{n}{k} a (bc)^k (-1)^{n-k} \in I$ as well, which implies $(-1)^n a \in I$, and hence $a \in I$. Contradiction happens, which completes the proof.
 
-    :::
+    </details>
+
+    <details>
+    <summary>Lean 4 proof</summary>
+
+    ```lean
+    theorem primary_of_maximal_radical (I : Ideal A) (h : I.radical.IsMaximal) :
+        I.IsPrimary := by
+      -- Mathlib packages the maximal-ideal argument, avoiding a binomial expansion.
+      exact Ideal.isPrimary_of_isMaximal_radical h
+    ```
+
+    </details>
+
 <br />
 
 ### Krull Dimension
@@ -1054,7 +1318,31 @@ $$
 $$
 which proves that addition is well-defined.
 
-Similar proof also applies to multiplication. We omit the details here for brevity.
+For multiplication, $xy-x'y'=(x-x')y+x'(y-y') \in I$ by absorption and additive closure of the ideal. Thus multiplication is well-defined too.
+
+</details>
+
+<details>
+<summary>Lean 4 proof</summary>
+
+```lean
+theorem quotient_operations_well_defined (I : Ideal A) (x x' y y' : A)
+    (hx : Ideal.Quotient.mk I x = Ideal.Quotient.mk I x')
+    (hy : Ideal.Quotient.mk I y = Ideal.Quotient.mk I y') :
+    Ideal.Quotient.mk I (x + y) = Ideal.Quotient.mk I (x' + y') ∧
+      Ideal.Quotient.mk I (x * y) = Ideal.Quotient.mk I (x' * y') := by
+  have hxi := Ideal.Quotient.eq.mp hx
+  have hyi := Ideal.Quotient.eq.mp hy
+  constructor
+  · apply Ideal.Quotient.eq.mpr
+    have he : (x + y) - (x' + y') = (x - x') + (y - y') := by ring
+    rw [he]
+    exact I.add_mem hxi hyi
+  · apply Ideal.Quotient.eq.mpr
+    have he : x * y - x' * y' = (x - x') * y + x' * (y - y') := by ring
+    rw [he]
+    exact I.add_mem (I.mul_mem_right _ hxi) (I.mul_mem_left _ hyi)
+```
 
 </details>
 <br />
@@ -1082,8 +1370,8 @@ If $I \subseteq \ker(\phi)$, then $\phi$ induces a well-defined ring homomorphis
 $$
 \begin{array}{ccc}
 A & \xrightarrow{\phi} & B \\
-\downarrow{\pi} & & \uparrow{} \\
-A/I & \to & \overline{\phi}
+\downarrow{\pi} & & \Vert \\
+A/I & \xrightarrow{\overline{\phi}} & B
 \end{array}
 $$
 
@@ -1094,7 +1382,24 @@ Why the commutative diagram holds? Because by definition, the equivalence of two
 $$
 \forall a \in A, \phi(a) = \overline{\phi}(\pi(a)) = \overline{\phi}(\overline{a})
 $$
-This is just a definition of $\overline{\phi}$, i.e., $\phi(\overline{a}) = \phi(a)$, and we need to check that it is well-defined. In other words, we need to check that the definition of $\overline{\phi}$ does not depend on the choice of representative of the coset. i.e., if $\overline{a} = \overline{a'}$, then $\phi(a) = \phi(a')$. This is equivalent to requiring that $a - a' \in I$ implies $\phi(a) - \phi(a') = \phi(a - a') = 0$, which holds if $I \subseteq \ker(\phi)$.
+This defines $\overline{\phi}(\overline{a}) = \phi(a)$, and we need to check that it is well-defined. If $\overline{a} = \overline{a'}$, then $a-a' \in I \subseteq \ker(\phi)$, so $\phi(a)-\phi(a') = \phi(a-a') = 0$. Hence the definition is independent of the representative. Preservation of addition, multiplication, and one follows from the corresponding properties of $\phi$.
+
+</details>
+
+<details>
+<summary>Lean 4 proof</summary>
+
+```lean
+def inducedHom {B : Type*} [CommRing B] (I : Ideal A) (f : A →+* B)
+    (h : I ≤ RingHom.ker f) : A ⧸ I →+* B :=
+  Ideal.Quotient.lift I f (fun _ ha => h ha)
+
+theorem inducedHom_factorization {B : Type*} [CommRing B] (I : Ideal A)
+    (f : A →+* B) (h : I ≤ RingHom.ker f) :
+    (inducedHom I f h).comp (Ideal.Quotient.mk I) = f := by
+  ext a
+  exact Ideal.Quotient.lift_mk I f (fun _ ha => h ha)
+```
 
 </details>
 <br />
@@ -1124,14 +1429,14 @@ For the first isomorphism theorem, let $\overline{\phi}: A/\ker(\phi) \to \text{
 - (c) $\overline{\phi}$ is injective.
 - (d) $\overline{\phi}$ is surjective.
 
-where (a) and (b) are already verified by the definition of $\overline{\phi}$, and (c) and (d) follow from the properties of $\phi$.
+The factorization argument verifies (a) and (b). For (c), equality of the images of $a+\ker(\phi)$ and $a'+\ker(\phi)$ means $\phi(a-a')=0$, hence the cosets are equal. For (d), every element of the range has the form $\phi(a)$ and is the image of $a+\ker(\phi)$.
 
 ---
 
 For the second isomorphism theorem, let $\phi : A / I \to A / J$ be a projection map defined by $\phi(a + I) = a + J$. By the first isomorphism theorem, we need to show : 
 
-1. $\phi$ is surjective, that is $\text{range}(\phi) = A/J$. It is also surjective since $I \subseteq J$, meaning every element of $A/J$ has a preimage in $A/I$. That is, $b + J = b' + I = \phi(b' + I)$.
-2. $\ker(\phi) = J/I$. For any $j \in J$, then $\phi(j + I) = j + I \in J$, implying that $\phi(j + I) = 0$, and $J / I$ is the kernel of $\phi$.
+1. $\phi$ is well-defined since $I \subseteq J$, and it is surjective because $b+J = \phi(b+I)$ for every $b \in A$.
+2. $\phi(a+I)=0$ if and only if $a \in J$, so $\ker(\phi)=J/I$.
 
 Therefore, by the first isomorphism theorem, we have $(A/I)/(J/I) \cong A/J$, as required.
 
@@ -1141,10 +1446,78 @@ For the third isomorphism theorem, consider a composition map :
 $$
 \phi : B \to B + I \to (B + I)/I
 $$
-which is composed of a inclusion map and a natural projection map. It is obvious that $\phi$ is surjective, $\text{range}(\phi) = (B + I)/I$,  and its kernel is $B \cap I$. By the first isomorphism theorem, we have :
+Here $B+I=\{b+i \mid b\in B,\ i\in I\}$ is a subring: addition and negation preserve this form, $1=1+0$, and $(b+i)(b'+i')=bb'+(bi'+ib'+ii')$ with the parenthesized term in $I$. Restricting $I$ to $B+I$ gives an ideal, and restricting it to $B$ gives $B\cap I$.
+
+The map is composed of the inclusion and the natural projection. It is surjective because each $(b+i)+I$ equals $b+I$, and its kernel is precisely $B\cap I$. By the first isomorphism theorem, we have :
 $$
 B/(B \cap I) \cong (B + I)/I
 $$
+
+</details>
+
+<details>
+<summary>Lean 4 proof</summary>
+
+The numbering follows these notes; Mathlib calls the double-quotient result the third isomorphism theorem. `Ideal.map` represents $J/I$, and `Ideal.comap` restricts $I$ to a subring. Below, `subringAddIdeal` defines $B+I$ as the preimage of the image of $B$ in $A/I$; `mem_subringAddIdeal` verifies its usual description.
+
+```lean
+noncomputable def firstIsomorphism {B : Type*} [CommRing B] (f : A →+* B) :
+    A ⧸ RingHom.ker f ≃+* f.range :=
+  RingHom.quotientKerEquivRange f
+
+def secondIsomorphism (I J : Ideal A) (h : I ≤ J) :
+    (A ⧸ I) ⧸ J.map (Ideal.Quotient.mk I) ≃+* A ⧸ J :=
+  DoubleQuot.quotQuotEquivQuotOfLE h
+
+noncomputable def subringQuotientImage (I : Ideal A) (B : Subring A) :
+    B ⧸ I.comap B.subtype ≃+* ((Ideal.Quotient.mk I).comp B.subtype).range := by
+  let f := (Ideal.Quotient.mk I).comp B.subtype
+  have hk : RingHom.ker f = I.comap B.subtype := by
+    ext b
+    exact Ideal.Quotient.eq_zero_iff_mem
+  exact (Ideal.quotEquivOfEq hk.symm).trans (RingHom.quotientKerEquivRange f)
+
+-- The preimage of the image of B under A → A/I is precisely B + I.
+def subringAddIdeal (I : Ideal A) (B : Subring A) : Subring A :=
+  ((Ideal.Quotient.mk I).comp B.subtype).range.comap (Ideal.Quotient.mk I)
+
+theorem mem_subringAddIdeal (I : Ideal A) (B : Subring A) (a : A) :
+    a ∈ subringAddIdeal I B ↔ ∃ b ∈ B, ∃ i ∈ I, a = b + i := by
+  change (∃ b : B, Ideal.Quotient.mk I (b : A) = Ideal.Quotient.mk I a) ↔ _
+  constructor
+  · rintro ⟨b, hb⟩
+    refine ⟨b, b.property, a - b, Ideal.Quotient.eq.mp hb.symm, ?_⟩
+    ring
+  · rintro ⟨b, hb, i, hi, rfl⟩
+    refine ⟨⟨b, hb⟩, ?_⟩
+    rw [map_add, Ideal.Quotient.eq_zero_iff_mem.mpr hi, add_zero]
+
+def subringAddIdealProjection (I : Ideal A) (B : Subring A) :
+    subringAddIdeal I B →+* ((Ideal.Quotient.mk I).comp B.subtype).range where
+  toFun a := ⟨Ideal.Quotient.mk I a, a.property⟩
+  map_zero' := Subtype.ext (map_zero _)
+  map_one' := Subtype.ext (map_one _)
+  map_add' a b := Subtype.ext (map_add (Ideal.Quotient.mk I) (a : A) (b : A))
+  map_mul' a b := Subtype.ext (map_mul (Ideal.Quotient.mk I) (a : A) (b : A))
+
+noncomputable def thirdIsomorphism (I : Ideal A) (B : Subring A) :
+    B ⧸ I.comap B.subtype ≃+*
+      (subringAddIdeal I B) ⧸ I.comap (subringAddIdeal I B).subtype := by
+  let g := subringAddIdealProjection I B
+  have hg : Function.Surjective g := by
+    rintro ⟨x, b, rfl⟩
+    refine ⟨⟨b, ?_⟩, rfl⟩
+    exact ⟨b, rfl⟩
+  have hk : RingHom.ker g = I.comap (subringAddIdeal I B).subtype := by
+    ext a
+    change (⟨Ideal.Quotient.mk I a, a.property⟩ :
+      ((Ideal.Quotient.mk I).comp B.subtype).range) = 0 ↔ (a : A) ∈ I
+    rw [Subtype.ext_iff]
+    exact Ideal.Quotient.eq_zero_iff_mem
+  let e := (Ideal.quotEquivOfEq hk.symm).trans
+    (RingHom.quotientKerEquivOfSurjective hg)
+  exact (subringQuotientImage I B).trans e.symm
+```
 
 </details>
 <br />
@@ -1156,7 +1529,7 @@ Let $I$ be an ideal of a ring $A$. Then :
 2. $I$ is maximal iff $A / I$ is a field.
 3. $I$ is prime iff $A / I$ is an (integral) domain.
 4. $I$ is radical iff $A / I$ is reduced.
-5. $I$ is primary iff $\mathcal{N}(A/I) = \mathcal{D}(A/I)$.
+5. If $I$ is proper, then $I$ is primary iff $\mathcal{N}(A/I) = \mathcal{D}(A/I)$.
 6. If $I$ is maximal, then $I$ is prime.
 7. If $I$ is prime, then $I$ is radical.
 8. If $I$ is prime, then $I$ is primary.
@@ -1164,9 +1537,9 @@ Let $I$ be an ideal of a ring $A$. Then :
 <details>
 <summary>Proof</summary>
 
-For (1), $I$ is proper means $0 \notin I$ or $I \ne A$, implying $A / I \ne 0$.
+For (1), $I$ is proper means $1 \notin I$, equivalently $I \ne A$. This is equivalent to $1+I \ne 0+I$, hence to $A/I \ne 0$.
 
-For (2), since every non-invertible elements of $A$ lie in some maximal ideal $I$, that means if any non-zero $a \notin I$, then exists $b \in A$ such that $a \cdot b = 1$. Thus, $(a + I) \cdot (b + I) = ab + I = 1 + I$, showing that any non-zero element $a + I \in A/I$ is invertible, and hence $A/I$ is a field.
+For (2), if $I$ is maximal and $a \notin I$, then $I+\langle a\rangle=A$. Write $1=i+ba$ with $i \in I$; modulo $I$, this gives $(b+I)(a+I)=1+I$. Thus $A/I$ is a field; $a$ need not be invertible in $A$ itself. Conversely, if $A/I$ is a field and an ideal $J$ strictly contains $I$, choose $a \in J \setminus I$ and an inverse $b+I$ of $a+I$. Then $1-ab \in I \subseteq J$ and $ab \in J$, so $1 \in J$ and $J=A$. Therefore $I$ is maximal.
 
 For (3), by definition, $A / I$ is a domain means, for any non-zero element $a + I \in A/I$, there is not any non-zero $b + I \in A/I$ such that $(a + I) \cdot (b + I) = 0$. In other words,  
 $$
@@ -1198,7 +1571,7 @@ and the definition of $\mathcal{D}(A/I)$, we have:
 $$
  \mathcal{D}(A / I) = \{ \overline{a} \in A / I \mid \exists \overline{b} \ne 0 \in A / I, \overline{a} \cdot \overline{b} = 0 \}
 $$
-Through the definitions above, it is obvious that $\mathcal{N}(A/I) \subseteq \mathcal{D}(A/I)$. So, we only need to show :
+Since $I$ is proper, $A/I$ is nonzero, and the earlier nilpotent-element argument gives $\mathcal{N}(A/I) \subseteq \mathcal{D}(A/I)$. Properness is essential: in the zero ring the only element is nilpotent, but there is no nonzero annihilator. So, we only need to show :
 $$
 ab \in I \to a \in I \text{ or } b \in \sqrt{I} \iff \mathcal{D}(A/I) \subseteq \mathcal{N}(A/I)
 $$
@@ -1219,7 +1592,7 @@ that is, for any $\overline{a} \in A/I$, if there exists $\overline{b} \in A/I$ 
 
 Proof complete for $\mathcal{D}(A/I) \subseteq \mathcal{N}(A/I) \implies ab \in I \to a \in I \text{ or } b \in \sqrt{I}$.
 
-For the forward direction, we omit the detailed proof here.
+For the forward direction, if $\overline{b}$ is a zero divisor, choose $\overline{a}\ne0$ with $\overline{a}\overline{b}=0$. Then $ab\in I$ and $a\notin I$, so primaryness implies $b\in\sqrt{I}$, equivalently $\overline{b}$ is nilpotent.
 
 ----
 
@@ -1252,7 +1625,75 @@ For case (a), it trivially holds when we choose the left argument $\overline{a} 
 For case (b), it trivially holds when we choose the right argument $\overline{b} = 0$ for $n = 1$.
 
 </details>
+
+<details>
+<summary>Lean 4 proof</summary>
+
+```lean
+theorem proper_iff_nontrivial_quotient (I : Ideal A) :
+    I ≠ ⊤ ↔ Nontrivial (A ⧸ I) :=
+  Ideal.Quotient.nontrivial_iff.symm
+
+theorem maximal_iff_field_quotient (I : Ideal A) :
+    I.IsMaximal ↔ IsField (A ⧸ I) :=
+  Ideal.Quotient.maximal_ideal_iff_isField_quotient I
+
+theorem prime_iff_domain_quotient (I : Ideal A) :
+    I.IsPrime ↔ IsDomain (A ⧸ I) :=
+  (Ideal.Quotient.isDomain_iff_prime I).symm
+
+theorem radical_iff_reduced_quotient (I : Ideal A) :
+    I.IsRadical ↔ IsReduced (A ⧸ I) :=
+  Ideal.isRadical_iff_quotient_reduced I
+
+theorem nilpotent_mk_iff (I : Ideal A) (a : A) :
+    IsNilpotent (Ideal.Quotient.mk I a) ↔ a ∈ I.radical := by
+  simp only [IsNilpotent, Ideal.mem_radical_iff, ← map_pow,
+    Ideal.Quotient.eq_zero_iff_mem]
+
+theorem primary_iff_quotient_zeroDivisors (I : Ideal A) (hI : I ≠ ⊤) :
+    I.IsPrimary ↔ ∀ x : A ⧸ I, IsNilpotent x ↔ IsZeroDivisor x := by
+  letI : Nontrivial (A ⧸ I) := Ideal.Quotient.nontrivial_iff.mpr hI
+  constructor
+  · intro hp x
+    constructor
+    · exact isZeroDivisor_of_isNilpotent
+    · rintro ⟨y, hy, hxy⟩
+      obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
+      obtain ⟨b, rfl⟩ := Ideal.Quotient.mk_surjective y
+      have hba : b * a ∈ I := Ideal.Quotient.eq_zero_iff_mem.mp (by
+        rw [map_mul, mul_comm]
+        exact hxy)
+      rcases (Ideal.isPrimary_iff.mp hp).2 hba with hb | ha
+      · exact False.elim (hy (Ideal.Quotient.eq_zero_iff_mem.mpr hb))
+      · exact (nilpotent_mk_iff I a).mpr ha
+  · intro h
+    refine Ideal.isPrimary_iff.mpr ⟨hI, ?_⟩
+    intro a b hab
+    by_cases ha : a ∈ I
+    · exact Or.inl ha
+    · right
+      apply (nilpotent_mk_iff I b).mp
+      apply (h _).mpr
+      refine ⟨Ideal.Quotient.mk I a, ?_, ?_⟩
+      · exact fun hz => ha (Ideal.Quotient.eq_zero_iff_mem.mp hz)
+      · rw [← map_mul, mul_comm]
+        exact Ideal.Quotient.eq_zero_iff_mem.mpr hab
+
+theorem maximal_prime (I : Ideal A) (h : I.IsMaximal) : I.IsPrime :=
+  h.isPrime
+
+theorem prime_radical (I : Ideal A) (h : I.IsPrime) : I.IsRadical := by
+  rintro x ⟨n, hn⟩
+  exact h.mem_of_pow_mem n hn
+
+theorem prime_primary (I : Ideal A) (h : I.IsPrime) : I.IsPrimary := by
+  refine Ideal.isPrimary_iff.mpr ⟨h.ne_top, ?_⟩
+  intro a b hab
+  exact (h.mem_or_mem hab).imp id (fun hb => Ideal.le_radical hb)
+```
+
+</details>
 <br />
 
 ### Prime Avoidance Lemma
-

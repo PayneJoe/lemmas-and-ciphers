@@ -5,6 +5,9 @@ import Mathlib.RingTheory.Finiteness.Basic
 import Mathlib.Data.ZMod.Basic
 import Mathlib.RingTheory.IntegralDomain
 import Mathlib.Order.Zorn
+import Mathlib.RingTheory.Ideal.IsPrimary
+import Mathlib.RingTheory.Ideal.Quotient.Operations
+import Mathlib.RingTheory.Ideal.Quotient.Nilpotent
 
 import MIL.Common
 
@@ -276,5 +279,245 @@ theorem inf_eq_mul_of_sup_eq_top (I J : Ideal A) (h : I ⊔ J = ⊤) : I ⊓ J =
   exact Ideal.add_mem _ (Ideal.mul_mem_mul hy hxJ) (Ideal.mul_mem_mul hxI hz)
 
 example (I J : Ideal A) (h : I ⊔ J = ⊤) : I * J = I ⊓ J := Ideal.mul_eq_inf_of_coprime h
+
+/-! ## Properties of the Radical -/
+
+theorem radical_mono' (I J : Ideal A) (h : I ≤ J) : I.radical ≤ J.radical := by
+  rintro x ⟨n, hn⟩
+  exact ⟨n, h hn⟩
+
+theorem le_radical_and_idem (I : Ideal A) :
+    I ≤ I.radical ∧ I.radical.radical = I.radical := by
+  have hle : I ≤ I.radical := fun x hx => ⟨1, by simpa using hx⟩
+  refine ⟨hle, le_antisymm ?_ Ideal.le_radical⟩
+  rintro x ⟨n, m, h⟩
+  exact ⟨n * m, by simpa only [pow_mul] using h⟩
+
+theorem radical_mul_inf (I J : Ideal A) :
+    (I * J).radical = (I ⊓ J).radical ∧
+      (I ⊓ J).radical = I.radical ⊓ J.radical := by
+  have hi : (I ⊓ J).radical = I.radical ⊓ J.radical := by
+    apply le_antisymm
+    · exact le_inf (radical_mono' _ _ inf_le_left) (radical_mono' _ _ inf_le_right)
+    · rintro x ⟨⟨m, hm⟩, ⟨n, hn⟩⟩
+      refine ⟨m + n, ?_⟩
+      rw [pow_add]
+      exact ⟨I.mul_mem_right _ hm, J.mul_mem_left _ hn⟩
+  refine ⟨le_antisymm (radical_mono' _ _ Ideal.mul_le_inf) ?_, hi⟩
+  rintro x ⟨n, hn⟩
+  refine ⟨n + n, ?_⟩
+  rw [pow_add]
+  exact Ideal.mul_mem_mul hn.1 hn.2
+
+theorem radical_pow_positive (I : Ideal A) (n : ℕ) (hn : n ≠ 0) :
+    (I ^ n).radical = I.radical := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn
+  induction k with
+  | zero => simp
+  | succ k ih =>
+    rw [pow_succ, (radical_mul_inf _ _).1, (radical_mul_inf _ _).2,
+      ih (Nat.succ_ne_zero k), inf_idem]
+
+theorem radical_sup' (I J : Ideal A) :
+    (I ⊔ J).radical = (I.radical ⊔ J.radical).radical := by
+  apply le_antisymm
+  · exact radical_mono' _ _ (sup_le_sup Ideal.le_radical Ideal.le_radical)
+  · have h : I.radical ⊔ J.radical ≤ (I ⊔ J).radical :=
+      sup_le (radical_mono' _ _ le_sup_left) (radical_mono' _ _ le_sup_right)
+    exact (radical_mono' _ _ h).trans_eq (le_radical_and_idem _).2
+
+theorem radical_sup_mul (I J H : Ideal A) :
+    (I ⊔ J * H).radical = (I ⊔ J).radical ⊓ (I ⊔ H).radical := by
+  apply le_antisymm
+  · exact le_inf
+      (radical_mono' _ _ (sup_le_sup_left ((mul_le_inf' J H).trans inf_le_left) I))
+      (radical_mono' _ _ (sup_le_sup_left ((mul_le_inf' J H).trans inf_le_right) I))
+  · rintro x ⟨⟨m, hm⟩, ⟨n, hn⟩⟩
+    refine ⟨m + n, ?_⟩
+    rw [pow_add]
+    obtain ⟨a, ha, b, hb, hab⟩ := Submodule.mem_sup.mp hm
+    obtain ⟨c, hc, d, hd, hcd⟩ := Submodule.mem_sup.mp hn
+    rw [← hab, ← hcd]
+    have hi : a * c + a * d + b * c ∈ I :=
+      I.add_mem (I.add_mem (I.mul_mem_right _ ha) (I.mul_mem_right _ ha))
+        (I.mul_mem_left _ hc)
+    have hj : b * d ∈ J * H := Ideal.mul_mem_mul hb hd
+    have he : (a + b) * (c + d) = (a * c + a * d + b * c) + b * d := by ring
+    rw [he]
+    exact (I ⊔ J * H).add_mem
+      ((show I ≤ I ⊔ J * H from le_sup_left) hi)
+      ((show J * H ≤ I ⊔ J * H from le_sup_right) hj)
+
+/-! ## Facts on Special Ideals -/
+
+theorem primary_radical_prime (I : Ideal A) (hI : I.IsPrimary) : I.radical.IsPrime := by
+  refine ⟨?_, ?_⟩
+  · exact fun h => (Ideal.isPrimary_iff.mp hI).1 (Ideal.radical_eq_top.mp h)
+  · intro a b hab
+    obtain ⟨n, hn⟩ := hab
+    rw [mul_pow] at hn
+    rcases (Ideal.isPrimary_iff.mp hI).2 hn with ha | hb
+    · exact Or.inl ⟨n, ha⟩
+    · exact Or.inr (Ideal.mem_radical_of_pow_mem hb)
+
+theorem maximal_quotient_field (I : Ideal A) (hI : I.IsMaximal) : IsField (A ⧸ I) := by
+  letI := hI
+  letI := Ideal.Quotient.field I
+  exact Field.toIsField _
+
+theorem primary_of_maximal_radical (I : Ideal A) (h : I.radical.IsMaximal) :
+    I.IsPrimary := by
+  -- Mathlib packages the maximal-ideal argument, avoiding a binomial expansion.
+  exact Ideal.isPrimary_of_isMaximal_radical h
+
+/-! ## Quotient Rings and Homomorphisms -/
+
+theorem quotient_operations_well_defined (I : Ideal A) (x x' y y' : A)
+    (hx : Ideal.Quotient.mk I x = Ideal.Quotient.mk I x')
+    (hy : Ideal.Quotient.mk I y = Ideal.Quotient.mk I y') :
+    Ideal.Quotient.mk I (x + y) = Ideal.Quotient.mk I (x' + y') ∧
+      Ideal.Quotient.mk I (x * y) = Ideal.Quotient.mk I (x' * y') := by
+  have hxi := Ideal.Quotient.eq.mp hx
+  have hyi := Ideal.Quotient.eq.mp hy
+  constructor
+  · apply Ideal.Quotient.eq.mpr
+    have he : (x + y) - (x' + y') = (x - x') + (y - y') := by ring
+    rw [he]
+    exact I.add_mem hxi hyi
+  · apply Ideal.Quotient.eq.mpr
+    have he : x * y - x' * y' = (x - x') * y + x' * (y - y') := by ring
+    rw [he]
+    exact I.add_mem (I.mul_mem_right _ hxi) (I.mul_mem_left _ hyi)
+
+def inducedHom {B : Type*} [CommRing B] (I : Ideal A) (f : A →+* B)
+    (h : I ≤ RingHom.ker f) : A ⧸ I →+* B :=
+  Ideal.Quotient.lift I f (fun _ ha => h ha)
+
+theorem inducedHom_factorization {B : Type*} [CommRing B] (I : Ideal A)
+    (f : A →+* B) (h : I ≤ RingHom.ker f) :
+    (inducedHom I f h).comp (Ideal.Quotient.mk I) = f := by
+  ext a
+  exact Ideal.Quotient.lift_mk I f (fun _ ha => h ha)
+
+noncomputable def firstIsomorphism {B : Type*} [CommRing B] (f : A →+* B) :
+    A ⧸ RingHom.ker f ≃+* f.range :=
+  RingHom.quotientKerEquivRange f
+
+def secondIsomorphism (I J : Ideal A) (h : I ≤ J) :
+    (A ⧸ I) ⧸ J.map (Ideal.Quotient.mk I) ≃+* A ⧸ J :=
+  DoubleQuot.quotQuotEquivQuotOfLE h
+
+noncomputable def subringQuotientImage (I : Ideal A) (B : Subring A) :
+    B ⧸ I.comap B.subtype ≃+* ((Ideal.Quotient.mk I).comp B.subtype).range := by
+  let f := (Ideal.Quotient.mk I).comp B.subtype
+  have hk : RingHom.ker f = I.comap B.subtype := by
+    ext b
+    exact Ideal.Quotient.eq_zero_iff_mem
+  exact (Ideal.quotEquivOfEq hk.symm).trans (RingHom.quotientKerEquivRange f)
+
+-- The preimage of the image of B under A → A/I is precisely B + I.
+def subringAddIdeal (I : Ideal A) (B : Subring A) : Subring A :=
+  ((Ideal.Quotient.mk I).comp B.subtype).range.comap (Ideal.Quotient.mk I)
+
+theorem mem_subringAddIdeal (I : Ideal A) (B : Subring A) (a : A) :
+    a ∈ subringAddIdeal I B ↔ ∃ b ∈ B, ∃ i ∈ I, a = b + i := by
+  change (∃ b : B, Ideal.Quotient.mk I (b : A) = Ideal.Quotient.mk I a) ↔ _
+  constructor
+  · rintro ⟨b, hb⟩
+    refine ⟨b, b.property, a - b, Ideal.Quotient.eq.mp hb.symm, ?_⟩
+    ring
+  · rintro ⟨b, hb, i, hi, rfl⟩
+    refine ⟨⟨b, hb⟩, ?_⟩
+    rw [map_add, Ideal.Quotient.eq_zero_iff_mem.mpr hi, add_zero]
+
+def subringAddIdealProjection (I : Ideal A) (B : Subring A) :
+    subringAddIdeal I B →+* ((Ideal.Quotient.mk I).comp B.subtype).range where
+  toFun a := ⟨Ideal.Quotient.mk I a, a.property⟩
+  map_zero' := Subtype.ext (map_zero _)
+  map_one' := Subtype.ext (map_one _)
+  map_add' a b := Subtype.ext (map_add (Ideal.Quotient.mk I) (a : A) (b : A))
+  map_mul' a b := Subtype.ext (map_mul (Ideal.Quotient.mk I) (a : A) (b : A))
+
+noncomputable def thirdIsomorphism (I : Ideal A) (B : Subring A) :
+    B ⧸ I.comap B.subtype ≃+*
+      (subringAddIdeal I B) ⧸ I.comap (subringAddIdeal I B).subtype := by
+  let g := subringAddIdealProjection I B
+  have hg : Function.Surjective g := by
+    rintro ⟨x, b, rfl⟩
+    refine ⟨⟨b, ?_⟩, rfl⟩
+    exact ⟨b, rfl⟩
+  have hk : RingHom.ker g = I.comap (subringAddIdeal I B).subtype := by
+    ext a
+    change (⟨Ideal.Quotient.mk I a, a.property⟩ :
+      ((Ideal.Quotient.mk I).comp B.subtype).range) = 0 ↔ (a : A) ∈ I
+    rw [Subtype.ext_iff]
+    exact Ideal.Quotient.eq_zero_iff_mem
+  let e := (Ideal.quotEquivOfEq hk.symm).trans
+    (RingHom.quotientKerEquivOfSurjective hg)
+  exact (subringQuotientImage I B).trans e.symm
+
+/-! ## Special Ideals and Quotient Rings -/
+
+theorem proper_iff_nontrivial_quotient (I : Ideal A) :
+    I ≠ ⊤ ↔ Nontrivial (A ⧸ I) :=
+  Ideal.Quotient.nontrivial_iff.symm
+
+theorem maximal_iff_field_quotient (I : Ideal A) :
+    I.IsMaximal ↔ IsField (A ⧸ I) :=
+  Ideal.Quotient.maximal_ideal_iff_isField_quotient I
+
+theorem prime_iff_domain_quotient (I : Ideal A) :
+    I.IsPrime ↔ IsDomain (A ⧸ I) :=
+  (Ideal.Quotient.isDomain_iff_prime I).symm
+
+theorem radical_iff_reduced_quotient (I : Ideal A) :
+    I.IsRadical ↔ IsReduced (A ⧸ I) :=
+  Ideal.isRadical_iff_quotient_reduced I
+
+theorem nilpotent_mk_iff (I : Ideal A) (a : A) :
+    IsNilpotent (Ideal.Quotient.mk I a) ↔ a ∈ I.radical := by
+  simp only [IsNilpotent, Ideal.mem_radical_iff, ← map_pow,
+    Ideal.Quotient.eq_zero_iff_mem]
+
+theorem primary_iff_quotient_zeroDivisors (I : Ideal A) (hI : I ≠ ⊤) :
+    I.IsPrimary ↔ ∀ x : A ⧸ I, IsNilpotent x ↔ IsZeroDivisor x := by
+  letI : Nontrivial (A ⧸ I) := Ideal.Quotient.nontrivial_iff.mpr hI
+  constructor
+  · intro hp x
+    constructor
+    · exact isZeroDivisor_of_isNilpotent
+    · rintro ⟨y, hy, hxy⟩
+      obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
+      obtain ⟨b, rfl⟩ := Ideal.Quotient.mk_surjective y
+      have hba : b * a ∈ I := Ideal.Quotient.eq_zero_iff_mem.mp (by
+        rw [map_mul, mul_comm]
+        exact hxy)
+      rcases (Ideal.isPrimary_iff.mp hp).2 hba with hb | ha
+      · exact False.elim (hy (Ideal.Quotient.eq_zero_iff_mem.mpr hb))
+      · exact (nilpotent_mk_iff I a).mpr ha
+  · intro h
+    refine Ideal.isPrimary_iff.mpr ⟨hI, ?_⟩
+    intro a b hab
+    by_cases ha : a ∈ I
+    · exact Or.inl ha
+    · right
+      apply (nilpotent_mk_iff I b).mp
+      apply (h _).mpr
+      refine ⟨Ideal.Quotient.mk I a, ?_, ?_⟩
+      · exact fun hz => ha (Ideal.Quotient.eq_zero_iff_mem.mp hz)
+      · rw [← map_mul, mul_comm]
+        exact Ideal.Quotient.eq_zero_iff_mem.mpr hab
+
+theorem maximal_prime (I : Ideal A) (h : I.IsMaximal) : I.IsPrime :=
+  h.isPrime
+
+theorem prime_radical (I : Ideal A) (h : I.IsPrime) : I.IsRadical := by
+  rintro x ⟨n, hn⟩
+  exact h.mem_of_pow_mem n hn
+
+theorem prime_primary (I : Ideal A) (h : I.IsPrime) : I.IsPrimary := by
+  refine Ideal.isPrimary_iff.mpr ⟨h.ne_top, ?_⟩
+  intro a b hab
+  exact (h.mem_or_mem hab).imp id (fun hb => Ideal.le_radical hb)
 
 end CommAlg
