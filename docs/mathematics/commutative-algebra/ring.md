@@ -1757,5 +1757,16 @@ We use $x = \prod_{i = 1}^n a_i$ where $a_i \in I_i$ and $a_i \notin \mathfrak{p
 
 *As shown in the above figure, $x = a_1 \cdot a_2 \cdot a_3 \in \cap_i I_i$ but $x \notin \mathfrak{p}$, this mainly owe to the primality of $\mathfrak{p}$ which ensures that the product of elements not in $\mathfrak{p}$ is also not in $\mathfrak{p}$.*
 
+----
+
+For (3), we wan to show :
+$$
+\begin{aligned}
+&\mathfrak{p} \text{ is prime} \implies \mathfrak{p} \text{ is irreducible} \\
+&\iff \mathfrak{p} \text{ is prime} \implies I = I_1 \cap I_2, I_1 \subseteq I \text{ or } I_2 \subseteq I 
+\end{aligned}
+$$
+Since $I = I_1 \cap I_2$, then $\forall x \in I$, we have $\exists a \in I_1, b \in I_2$ such that $x = a \cdot b$. By $I$ is prime, we have $a \in I$ or $b \in I$, which implies $I_1 \subseteq I$ or $I_2 \subseteq I$. This completes the proof.
+
 </details>
 <br />
