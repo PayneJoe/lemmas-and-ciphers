@@ -1697,3 +1697,65 @@ theorem prime_primary (I : Ideal A) (h : I.IsPrime) : I.IsPrimary := by
 <br />
 
 ### Prime Avoidance Lemma
+
+1. Let $\mathfrak{p}_1, \dots, \mathfrak{p}_n$ be prime ideals of a commutative ring $A$. If an ideal $I$ of $A$ is contained in the union of these prime ideals, then $I$ is contained in one of them. This is known as the **Prime Avoidance Lemma**. That is, 
+$$
+I \subseteq \bigcup_{i=1}^n \mathfrak{p}_i \implies I \subseteq \mathfrak{p}_j \text{ for some } j \in \{1, \dots, n\}.
+$$
+
+![Prime Avoidance Lemma 1](./img/prime-avoidance-lemma-1.png)
+
+2. Let $I_1, ..., I_n$ be ideals, and let $\mathfrak{p}$ be a prime such that 
+    $$
+    \bigcap_{i=1}^n I_i \subseteq \mathfrak{p}.
+    $$
+    Then $I_i \subseteq \mathfrak{p}$ for some $i \in \{1, \dots, n\}$. Furthermore, if $\bigcap_{i=1}^n I_i = \mathfrak{p}$, then $I_i = \mathfrak{p}$ for some $i \in \{1, \dots, n\}$.
+
+![Prime Avoidance Lemma 2](./img/prime-avoidance-lemma-2.png)
+
+3. Every prime ideal is irreducible.
+
+<details>
+<summary>Explanation</summary>
+
+We use contrapositive way to prove these theorems, i,e. $p \implies Q \iff \neg Q \implies \neg p$.
+
+<br />
+
+Regarding (1), let's first consider a more simpler case when $n = 2$. Let $b = a_1 + a_2$, where $a_1 \in \mathfrak{p}_1 \setminus \mathfrak{p}_2$, and $a_2 \in \mathfrak{p}_2 \setminus \mathfrak{p}_1$. Then we have below proposition :
+$$
+b \notin \mathfrak{p}_1, b \notin \mathfrak{p}_2 \implies b \notin \mathfrak{p}_1 \cup \mathfrak{p}_2
+$$
+The argument (1) holds for any general ideals $\mathfrak{p}_i$, the primality is not a necessary condition for the case of $n = 2$. So why do we need the primality?
+
+Now, let's consider the general case when $n \ge 2$. A natural question arises: how to choose a proper $b$ such that $b \notin \mathfrak{p}_i$ for all $i \in \{1, \dots, n\}$? There is a simple fact :
+$$
+a \in \mathfrak{p}_i, b \notin \mathfrak{p}_i \implies a + b \notin \mathfrak{p}_i
+$$
+Let $b = \sum_{i = 1}^n \prod_{j \ne i}^n a_j$, where $a_j \in \mathfrak{p}_j$ and $a_j \notin \mathfrak{p}_i$ for all $i \ne j$. Then for the $i$-th term of $b$ , 
+$$
+\prod_{j \ne i}^n a_j \notin \mathfrak{p}_i
+$$
+it does not belong to $\mathfrak{p}_i$ since $\mathfrak{p}_i$ are prime and all factors of the product are not in $\mathfrak{p}_i$. And for other terms except the $i$-th one are belong to $\mathfrak{p}_i$ since one factor of each of these terms is in $\mathfrak{p}_i$. Therefore, $b \notin \mathfrak{p}_i$ for all $i \in \{1, \dots, n\}$, moreover $b \notin \bigcup_{i=1}^n \mathfrak{p}_i$.
+
+<br />
+
+*As shown in the above figure, the $i$-th term of $b$, $a_1 \cdot a_2$, is not in $\mathfrak{p}_i$. This mainly owe to the primality of $\mathfrak{p}_i$ which ensures that the product of elements not in $\mathfrak{p}_i$ is also not in $\mathfrak{p}_i$.*
+
+----
+
+Regarding (2), let $J = \cap_i I_i$, the contrapositive way to show the statement is to prove
+$$
+\begin{aligned}
+&\neg (\exists i \le n, I_i \subseteq \mathfrak{p}) \implies \neg (J \subseteq \mathfrak{p}) \\
+&\iff (\forall i \le n, \exists a_i \in I_i, a_i \notin \mathfrak{p} ) \implies \exists x \in J, x \notin \mathfrak{p} 
+\end{aligned}
+$$
+We use $x = \prod_{i = 1}^n a_i$ where $a_i \in I_i$ and $a_i \notin \mathfrak{p}$. By the definition of ideal, $x \in \cap_i I_i = J$. And since $\mathfrak{p}$ is prime and none of the $a_i$ are in $\mathfrak{p}$, it follows that $x \notin \mathfrak{p}$. This completes the proof of the contrapositive.
+
+<br />
+
+*As shown in the above figure, $x = a_1 \cdot a_2 \cdot a_3 \in \cap_i I_i$ but $x \notin \mathfrak{p}$, this mainly owe to the primality of $\mathfrak{p}$ which ensures that the product of elements not in $\mathfrak{p}$ is also not in $\mathfrak{p}$.*
+
+</details>
+<br />
