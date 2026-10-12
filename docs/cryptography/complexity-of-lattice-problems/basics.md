@@ -314,6 +314,43 @@ Note that lattice $\Lambda$ is a set of discrete even points on x-axis, and $S$ 
    Therefore, there must exist two points $x \in S_0$ and $y \in S_2$ such that $x - y \in \Lambda$. For instance, $x = 0.5 \in S_0$ and $y = 2.5 \in S_2$, then $x - y = -2 \in \Lambda$.
 
 </details>
+<br />
+
+**Convex Body Theorem**
+
+For any lattice $\Lambda$ of rank $n$ and any convex set $S \subset \text{span}(\Lambda)$ symmetric about the origin, if $\text{vol}(S) > 2^n \det(\Lambda)$, then $S$ contains a non-zero lattice point of $\Lambda$.
+
+![Convex Body Theorem](./img/convex-body-theorem.png)
+
+<details>
+<summary>Proof</summary>
+
+Consider another set $S' = \{x \in \mathbb{R}^n \mid 2x \in S\}$, whose volume :
+$$
+\text{vol}(S') = \frac{1}{2^n} \text{vol}(S)
+$$
+Since $\text{vol}(S) > 2^n \det(\Lambda)$, it follows that 
+$$
+\text{vol}(S') = \frac{1}{2^n} \text{vol}(S) > \det(\Lambda)
+$$
+By Blichfeldt's Theorem, there exist two distinct points $x, y \in S'$ such that $x - y \in \Lambda$. Since $S'$ is a scaled version of $S$, we have $2x, 2y \in S$. Since $S$ is symmetric, then $-2x, -2y \in S$, and the mid-point $\frac{2x + (-2y)}{2} = x - y \in S$. Therefore, $S$ contains a non-zero lattice point of $\Lambda$.
+
+</details>
+<br />
+
+By observing the figure above, we can see that :
+1. The symmetric convex $S = \mathcal{B}(0, \sqrt{n} \det(\Lambda)^{1/n})$ be a balll of radius $\sqrt{n} \det(\Lambda)^{1/n}$ centered at the origin.
+2. $\text{vol}(S) > 2^n \det(\Lambda)$ always holds because it contains an $n$-dimensional hypercube with edges of length $2 \det(\Lambda)^{1/n}$. So $\text{vol}(S)$ always exceeds $(2 \det(\Lambda)^{1/n})^n = 2^n \det(\Lambda)$. 
+3. By Minkowski's theorem there exists a non-zero lattice point in $S$, that is $v \in \mathcal{L}(B) \setminus \{0\}$, and $\| v \| \lt \sqrt{n} \det(\Lambda)^{1/n}$. Therefore, the shortest nonzero lattice has length :
+    $$
+    \lambda_1(\Lambda) \le \| v \| \lt \sqrt{n} \det(\Lambda)^{1/n}
+    $$
+
+By now, we have established an upper bound on the length of **the shortest nonzero lattice vector** in terms of the determinant of the lattice and the dimension.
+
+<br />
+
+**Minkowski's Second Theorem**
 
 <br />
 
