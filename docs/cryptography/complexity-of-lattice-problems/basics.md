@@ -333,7 +333,7 @@ Since $\text{vol}(S) > 2^n \det(\Lambda)$, it follows that
 $$
 \text{vol}(S') = \frac{1}{2^n} \text{vol}(S) > \det(\Lambda)
 $$
-By Blichfeldt's Theorem, there exist two distinct points $x, y \in S'$ such that $x - y \in \Lambda$. Since $S'$ is a scaled version of $S$, we have $2x, 2y \in S$. Since $S$ is symmetric, then $-2x, -2y \in S$, and the mid-point $\frac{2x + (-2y)}{2} = x - y \in S$. Therefore, $S$ contains a non-zero lattice point of $\Lambda$.
+By Blichfeldt's Theorem, there exist two distinct points $x, y \in S'$ such that $x - y \in \Lambda$. Since $S'$ is a scaled version of $S$, we have $2x, 2y \in S$. Since $S$ is symmetric, then $-2x, -2y \in S$, and since $S$ is also convex, so the mid-point $\frac{2x + (-2y)}{2} = x - y \in S$. Therefore, $S$ contains a non-zero lattice point of $\Lambda$.
 
 </details>
 <br />
@@ -352,6 +352,62 @@ By now, we have established an upper bound on the length of **the shortest nonze
 
 **Minkowski's Second Theorem**
 
+For any rank $n$ lattice $\mathcal{L}(B)$, the successive minima (in the $l_2$ norm) $\lambda_1, ..., \lambda_n$ satisfy :
+$$
+(\prod_i^n \lambda_i)^{1/n} \lt \sqrt{n} \det(\mathcal{L}(B))^{1/n}
+$$
+
+![Minkowski's Second Theorem](./img/minkowski-second-theorem.png)
+
+<details>
+<summary>Proof Logic</summary>
+
+The equivalence of the goal is :
+$$
+\prod_i^n \lambda_i \lt (\sqrt{n})^n \det(\mathcal{L}(B))
+$$
+we will prove it by contradiction. We assume that 
+$$
+\prod_i^n \lambda_i \ge (\sqrt{n})^n \det(\mathcal{L}(B))
+$$
+then we need to find a contradiction after some inductions.
+
+----
+
+As shown in above figure, for simplicity we consider $n = 2$, a lattice $\Lambda = \mathcal{L}(B)$ with basis $B = (b_1, b_2)$ where $\| b_1 \| \le \| b_2 \|$, and successive minima $\lambda_1 = \| b_1 \|, \lambda_2 = \| b_2 \|$. 
+
+Let $S \subseteq \text{span}(\mathcal{L}(B))$ be an open (real) circle with unit radius in the real space of $\text{span}(\Lambda)$. Define a transformation that scale the horizontal axis of circle $S$ by a factor $\lambda_1$, and the vertical axis by a factor $\lambda_2$. Then we obtain an ellipse $T(S)$:
+$$
+T((x, y)) = (\lambda_1 x, \lambda_2 y), \quad (x, y) \in S
+$$
+
+*If we can find a non-zero lattice point whose length is less than $\lambda_2 = \| b_2 \|$ inside the ellipse $T(S)$, then it would contradict the definition of successive minima. This is the key idea behind our proof.*
+
+----
+
+It is clear that their volumn is scaled by the product of the scaling factors along each axis:
+$$
+\text{vol}(T(S)) = \lambda_1 \cdot \lambda_2 \cdot \text{vol}(S)
+$$
+(In 2D, the volume corresponds to the area of the ellipse, $\text{vol}(T(S)) = \pi \lambda_1 \lambda_2$ and $\text{vol}(S) = \pi$). By our assumption, $\lambda_1 \cdot \lambda_2 \ge (\sqrt{2})^2 \det(\mathcal{L}(B)) = 2 \det(\mathcal{L}(B))$, and $\text{vol}(S) = \pi > 2$, we have:
+$$
+\text{vol}(T(S)) \gt (2 \text{vol}(S)) \cdot \det(\mathcal{L}(B)) \gt 2^2 \det(\mathcal{L}(B))
+$$
+Since the ellipse $T(S)$ is convex and symmetric with respect to the origin, all conditions of Minkowski's convex body theorem are satisfied, by Minkowski's convex body theorem, the ellipse $T(S)$ must contain a non-zero lattice point of $\mathcal{L}(B)$. For example, the point $ts \in T(S)$ is a lattice point, and it is scaled by $T$ from point $s \in S$.
+
+----
+
+Let $s = (x, y)$, then $ts = (\lambda_1 x, \lambda_2 y)$, then we have :
+$$
+|\| ts \|^2 = \| (\lambda_1 x, \lambda_2 y) \|^2 = (\lambda_1 x)^2 + (\lambda_2 y)^2
+$$
+By successive minima, $\lambda_1 \le \lambda_2$ and the length of $s$ is at most 1 (since $s$ lies on the unit circle), we have : 
+$$
+\| ts \|^2 = (\lambda_1 x)^2 + (\lambda_2 y)^2 \le \lambda_2^2 (x^2 + y^2) \lt \lambda_2^2 
+$$
+Thus $\| ts \| \lt \lambda_2$ breaks the successive minima condition, leading to a contradiction.
+
+</details>
 <br />
 
 ## Computational Problems
