@@ -7,6 +7,9 @@ $$
 |\| a \|, \| b \| \le \| a + b \|, \| a - b \|
 $$
 
+> [!Note] Intuition Behind
+> Consider constructing a triangle with known two edges $a$ and $b$, the third edge is unknown. If $[a, b]$ is reduced, by definition, we can say that $a, b$ are the shortest two edges of the triangle.
+
 ----
 <br />
 
@@ -52,6 +55,38 @@ namely, basis $[a, b]$ is reduced.
 
 ## Gauss Algorithm
 
+Definition 2.2 - For a lattice basis $[a, b]$, without loss of generality, we assume $\| a \| \le \| b \|$, if $\| a \| \le \| a - b \| \le \| b \|$, then we call the basis $[a, b]$ a well-ordered basis.
+
+<br />
+
+**Algorithm**
+
+![Gauss Algorithm](./img/gauss-algorithm.png)
+
+<details>
+<summary>Explanation</summary>
+
+For the line-1 and line-2, we are trying to ensure 
+- lattice vector $a$ is the smaller one, i.e., $\| a \| \le \| b \|$ 
+- both lattice vectors $a$ and $b$ are in the same direction, i.e., $\| a - b \| \le \| a + b \|$.
+
+----
+
+After then we will consider following cases :
+
+1. For the line-3, it is the simplest case where $\| b \| \le \min \{ \| a + b \|, \| a - b \| \} = \| a -  b \|$, in this case, we must have :
+    $$
+    |\| a \| \le \| b \| \le \| a - b \| \le \| a + b \|
+    $$
+    then the basis $[a, b]$ is strictly reduced, return $[a, b]$.
+
+2. For the line-4, it is the case of $\| a - b \| \le \| b \|$, there are two subcases to consider:
+   - (2.1) $\| a \| \le \| a - b \|$, then basis $[a, b]$ is a typical well-ordered basis.
+   - (2.2) $\| a - b \| \le \| a \| \le \| b \|$, then there are two subcases to consider : 
+      - (2.2.1) $\| a - b \| \le \| a \| = \| b \|$, this is a very special case, $\|a \| = \| b \|$ and $\| a - b \| \le \| a \|$ ensure that vectors $a - b$ and $a$ are in the same direction, in this case, $\| a \| = \| b \| \le \| 2a - b \|$. Since $\| (a - b) - a \| = \| b \|$, thus the basis $[a - b, a]$ is reduced, return $[a - b, a]$.
+      - (2.2.2) $\| a - b \| \le \| a \| < \| b \|$, we do not know the whether $a - b$ and $a$ are in the same direction or not, but $\| a \| \le \| b \|$ and $\| a - b \| \le \| a \|$ ensures that vectors $b - a$ and $a$ are in the same direction, so $\| b - a \| \le \| (b - a) - a \| \le \| a \|$. Therefore, the basis $[b - a, a]$ is well-ordered basis. 
+
+</details>
 <br />
 
 ## Running Time Analysis
