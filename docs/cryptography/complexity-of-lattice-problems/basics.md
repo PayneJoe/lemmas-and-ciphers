@@ -7,9 +7,7 @@
     - [Successive Minima](#successive-minima)
     - [Minkowski's Theorem](#minkowskis-theorem)
   - [Computational Problems](#computational-problems)
-    - [Complexity Theory](#complexity-theory)
     - [Same Lattice Problems](#same-lattice-problems)
-    - [Hardness of Approximation](#hardness-of-approximation)
 
 </details>
 <br />
@@ -412,14 +410,34 @@ Thus $\| ts \| \lt \lambda_2$ breaks the successive minima condition, leading to
 
 ## Computational Problems
 
-### Complexity Theory
+![Asymptotic Tightness of Minkowski's Bound](./img/asymptotically-tight.png)
 
-<br />
+> *Minkowski's bound is asymptotically tight in worst case.*
+
+That means for some lattice, the actual $\lambda_1$ is propotional to the Minkowski's bound by some factor $0 < c < 1$:
+$$
+\lambda_1 \approx c \cdot \sqrt{n} \det(\mathcal{L})^{1/n}
+$$
+In this case, when $n$ grows, the Minkowski's bound also grows, and the actual $\lambda_1$ grows proportionally, but by a smaller factor $c$. But the ratio between the actual $\lambda_1$ and the Minkowski's bound remains unchanged. 
 
 ### Same Lattice Problems
 
+The problem of finding a lattice vector of length $\lambda_1$ is known as the Shortest Vector Problem (SVP).
+
 <br />
 
-### Hardness of Approximation
+Given a lattice vector $t$, finding a nonzero lattice vector such that $\| v - t \|$ is minimized is known as the Closest Vector Problem (CVP).
+
+<br />
+
+**Approximate SVP**
+
+Given a basis $B \in \mathbb{Z}^{m \times n}$, find a nonzero lattice vector $Bx$ where $x \in \mathbb{Z}^n \setminus \{0\}$, such that $\| Bx \| \le \gamma \cdot \| B y \|$ for any other nonzero lattice vector $By$.
+
+<br />
+
+**Approximate CVP**
+
+Given a basis $B \in \mathbb{Z}^{m \times n}$ and a target vector $t \in \mathbb{R}^m$, find a lattice vector $Bx$ where $x \in \mathbb{Z}^n$, such that $\| Bx - t \| \le \gamma \cdot \| By - t \|$ for any other lattice vector $By$.
 
 <br />
