@@ -78,13 +78,56 @@ After then we will consider following cases :
     $$
     |\| a \| \le \| b \| \le \| a - b \| \le \| a + b \|
     $$
-    then the basis $[a, b]$ is strictly reduced, return $[a, b]$.
+    then the basis $[a, b]$ is strictly reduced, and they are in the same direction, return $[a, b]$.
 
-2. For the line-4, it is the case of $\| a - b \| \le \| b \|$, there are two subcases to consider:
-   - (2.1) $\| a \| \le \| a - b \|$, then basis $[a, b]$ is a typical well-ordered basis.
-   - (2.2) $\| a - b \| \le \| a \| \le \| b \|$, then there are two subcases to consider : 
-      - (2.2.1) $\| a - b \| \le \| a \| = \| b \|$, this is a very special case, $\|a \| = \| b \|$ and $\| a - b \| \le \| a \|$ ensure that vectors $a - b$ and $a$ are in the same direction, in this case, $\| a \| = \| b \| \le \| 2a - b \|$. Since $\| (a - b) - a \| = \| b \|$, thus the basis $[a - b, a]$ is reduced, return $[a - b, a]$.
-      - (2.2.2) $\| a - b \| \le \| a \| < \| b \|$, we do not know the whether $a - b$ and $a$ are in the same direction or not, but $\| a \| \le \| b \|$ and $\| a - b \| \le \| a \|$ ensures that vectors $b - a$ and $a$ are in the same direction, so $\| b - a \| \le \| (b - a) - a \| \le \| a \|$. Therefore, the basis $[b - a, a]$ is well-ordered basis. 
+2. For the rest of lines, it is the case of $\| a - b \| \lt \| b \|$, there are two subcases to consider:
+
+   - (2.1) for the line-4, $\| a \| \le \| a - b \| \lt \| b \|$, then basis $[a, b]$ is a typical well-ordered basis, and they are in the same direction.
+
+   - (2.2) for line-5 and line-6, $\| a - b \| \le \| a \| \le \| b \|$, then there are two subcases to consider : 
+
+      - (2.2.1) for the line-5, $\| a - b \| \le \| a \| = \| b \|$, this is a very special case, $\|a \| = \| b \|$ and $\| a - b \| \le \| a \|$ ensure that vectors $a - b$ and $a$ are in the same direction, in this case, $\| a \| = \| b \| \le \| 2a - b \|$. Since $\| (a - b) - a \| = \| b \|$, thus the basis $[a - b, a]$ is reduced, and they are in the same direction, return $[a - b, a]$.
+
+      - (2.2.2) from line-6, $\| a - b \| \le \| a \| < \| b \|$, we do not know the whether $a - b$ and $a$ are in the same direction or not, but $\| a \| \le \| b \|$ and $\| a - b \| \le \| a \|$ ensures that vectors $b - a$ and $a$ are in the same direction, so $\| b - a \| \le \| (b - a) - a \| \le \| a \|$. Therefore, the basis $[b - a, a]$ is well-ordered basis. 
+
+The remaining problem is how to find the reduced basis through well-ordered basis in the loop :
+
+1. Since $[a, b]$ is a well-ordered basis, there are other lattice vectors that can be fit between $[\| a \|, \| b \|]$, what we need to do is finding the smallest one. This is achieved by find the integer $\mu$ such that $\| b - \mu a \|$ is minimal, then replace $b$ with $b - \mu a$.
+
+2. Now we can check that if the updated basis $[a, b]$ is reduced, not that before checking we need to make sure that $\| a \| \le \| b \|$, if not, swap $a$ and $b$.
+
+3. repeat the above steps until the basis $[a, b]$ is reduced.
+
+</details>
+<br />
+
+*Lemma 2.3 - Let $a, b$ be two vectors such that $\| b - a \| < \| b \|$. Then, one can efficiently find an integer $\mu$ such that $\| b - \mu a \|$ is minimal. Moreover, $\mu$ satisfies $1 \le \mu \le \lceil 2\frac{\| b \|}{\| a \|} \rceil$.*
+
+![Gauss Algorithm 1](./img/gauss-algorithm-1.png)
+
+<details>
+<summary>Explanation</summary>
+
+Note that, in Gauss algorithm, before entering the loop, we have ensured that the basis $[a, b]$ is well-ordered, i.e., $\| a \| \le \| b \|$ and $\| a \| \le \| a - b \| \le \| b \|$. But, this theorem does only mentioned last-half condition of well-ordered basis, i.e., $\| a - b \| \le \| b \|$. So this is a more general setting than the well-ordered basis condition.
+
+<br />
+
+For better understanding Gauss algorithm, we will specially consider the l2 norm, and explain why we are able to find a reduced basis from well-ordered basis with geometric intuition. 
+
+Condition $\| a \| \le \| a - b \| < \| b \|$  implies :
+- vectors $a, b$ are in the same direction.
+- projection scalar of $b$ onto $a$, i.e., $\frac{\langle a, b \rangle}{\| a \|^2} > 1/2$. 
+- the minimal distance between $b$ and $a$ is $\| b - \frac{\langle a, b \rangle}{\| a \|^2} a \|$.
+
+Two cases involved in finding the optimal integer $\mu$ are:
+1. If $\frac{1}{2} < \frac{\langle a, b \rangle}{\| a \|^2} \le 1$, then $\| b - \mu a \|, u \in \mathbb{N}$ increases as $\mu$ moves away from the minimal value $\frac{\langle a, b \rangle}{\| a \|^2}$. In this case, $\mu = 1$ is the optimal integer choice.
+2. If $\frac{\langle a, b \rangle}{\| a \|^2} > 1$, then $\| b - \mu a \|, u \in \mathbb{N}$ increases in the range $[1, \frac{\langle a, b \rangle}{\| a \|^2})$, and decreases in the range $(\frac{\langle a, b \rangle}{\| a \|^2}, \infty)$. In this case, the optimal integer choice must come from either $\lfloor \frac{\langle a, b \rangle}{\| a \|^2} \rfloor$ or $\lceil \frac{\langle a, b \rangle}{\| a \|^2} \rceil$.
+
+----
+
+Additionally, we will simply explain why $\frac{\langle a, b \rangle}{\| a \|^2} > 1/2$ in the contex of well-ordered basis with one diagraph below.
+
+![Well Ordered Basis](./img/well-ordered-basis.png)
 
 </details>
 <br />
