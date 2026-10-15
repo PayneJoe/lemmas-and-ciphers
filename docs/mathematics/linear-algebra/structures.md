@@ -1281,6 +1281,8 @@ Suppose $\rho \in V^{(2)}$. Then
 2. $\mathcal{M}(\rho, (e_1, ..., e_n))$ is a symmetric matrix for every basis $e_1, ..., e_n$ of $V$.
 3. $\mathcal{M}(\rho, (e_1, ..., e_n))$ is a diagonal matrix for some basis $e_1, ..., e_n$ of $V$.
 
+are equivalent.
+
 <details>
 <summary>Proof</summary>
 
@@ -1325,7 +1327,62 @@ $$
 
 <br />
 
-**Lemma 9.6 - Diagonalization of Quadratic Forms**
+**Lemma 9.7 - Characterization of Quadratic Forms**
+
+Suppose $q$ is a quadratic form on vector space $V$. Then it implies : 
+1. There exists a unique symmetric bilinear form $\rho$ on $\mathbb{F}^n$ such that $q = q_\rho$.
+2. $q(\lambda v) = \lambda^2 q(v), \quad \forall \lambda \in \mathbb{F}, \forall v \in \mathbb{F}^n.$, and the function 
+    $$
+    (u, w) \mapsto q(u + w) - q(u) - q(w)
+    $$
+    is a symmetric bilinear form on $V$.
+3. $q(2v) = 4q(v), \quad \forall v \in V.$ and the function 
+    $$
+    (u, w) \mapsto q(u + w) - q(u) - q(w)
+    $$
+    is a symmetric bilinear form on $V$.
+
+<details>
+<summary>Proof</summary>
+
+For (1), $q$ is a quadratic form on $V$ implies there exists a bilinear form $\beta$ such that 
+$$
+q(v) = \beta(v, v), \quad \forall v \in V.
+$$
+By lemma 9.5, $\beta$ can be decomposed into a symmetric bilinear form $\rho$ and an alternating bilinear form $\alpha$, i.e.,
+$$
+\beta = \rho + \alpha, \quad \forall u, v \in V.
+$$
+Thus we have $q = q_\beta = q_\rho + q_\alpha = q_\rho$. In order to show the uniqueness of $\rho$, we suppose $\rho'$ is another symmetric bilinear form such that $q = q_{\rho'}$. Then we have
+$$
+q_\rho = q_{\rho'} \implies q_{\rho - \rho'} = 0.
+$$
+Since $\rho - \rho'$ is symmetric, it follows that $\rho - \rho' = 0$, i.e., $\rho = \rho'$. Hence, the symmetric bilinear form $\rho$ is unique.
+
+----
+
+For (2), suppose $q = q_\beta$ where $\beta$ is a bilinear form on $V$. Then :
+$$
+q(\lambda v) = \beta(\lambda v, \lambda v) = \lambda^2 \beta(v, v) = \lambda^2 q(v), \quad \forall \lambda \in \mathbb{F}, \forall v \in V.
+$$
+Next, we show that the function 
+$$
+(u, w) \mapsto q(u + w) - q(u) - q(w)
+$$
+is a symmetric bilinear form on $V$. By (1), we have $q = q_\rho$ where $\rho$ is the unique symmetric bilinear form associated with $q$, we have : 
+$$
+q(u + w) - q(u) - q(w) = \rho(u + w, u + w) - \rho(u, u) - \rho(w, w) = \rho(u, w) + \rho(w, u) = 2 \rho(u, w), \quad \forall u, w \in V.
+$$
+Hence, the function above is a symmetric bilinear form $2 \rho$ on $V$.
+
+----
+
+For (3), the proof is similar to (2), we omit the details.
+
+</details>
+<br />
+
+**Lemma 9.8 - Diagonalization of Quadratic Forms**
 
 Suppose $q$ is a quadratic form on $V$. Then
 1. There exists a basis $e_1, ..., e_n$ of $V$ and $\lambda_1, ..., \lambda_n \in \mathbb{F}$ such that
