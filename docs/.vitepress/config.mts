@@ -67,9 +67,6 @@ export default defineConfig({
               items: [
                 { text: 'Basics', link: '/cryptography/complexity-of-lattice-problems/basics' },
                 { text: 'Approximation Algorithms', link: '/cryptography/complexity-of-lattice-problems/approximation-algorithms' },
-                { text: 'Closest Vector Problem', link: '/cryptography/complexity-of-lattice-problems/closest-vector-problem' },
-                { text: 'Basic Reduction Problem', link: '/cryptography/complexity-of-lattice-problems/basic-reduction-problem' },
-                { text: 'Cryptographic Functions', link: '/cryptography/complexity-of-lattice-problems/cryptographic-functions' },
               ],
             },
           ],
