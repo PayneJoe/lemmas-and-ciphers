@@ -1,5 +1,8 @@
 - [Basics](./basics.md)
 - [Approximation Algorithms](./approximation-algorithms.md)
-- [Closest Vector Problem (CVP)](./closest-vector-problem.md)
-- [Basic Reduction Problem](./basic-reduction-problem.md)
-- [Cryptographic Functions](./cryptographic-functions.md)
+
+Planned topics (notes not yet published):
+
+- Closest Vector Problem (CVP)
+- Basic Reduction Problem
+- Cryptographic Functions
