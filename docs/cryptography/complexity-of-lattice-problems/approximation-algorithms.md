@@ -55,6 +55,8 @@ namely, basis $[a, b]$ is reduced.
 
 ## Gauss Algorithm
 
+![Well-Ordered Basis](./img/well-ordered-basis.png)
+
 Definition 2.2 - For a lattice basis $[a, b]$, without loss of generality, we assume $\| a \| \le \| b \|$, if $\| a \| \le \| a - b \| \le \| b \|$, then we call the basis $[a, b]$ a well-ordered basis.
 
 <br />
@@ -213,6 +215,114 @@ As $m$ is fixed, the term $\log_2 \sqrt{m}$ is constant, so $k = O(N)$.
 <br />
 
 # Approximating SVP in Dimension n
+
+Similar with the Gauss algorithm for dimension 2, the LLL basis reduction algorithm aims to find a reduced basis for higher-dimensional lattices. The definition of reduced basis in higher dimensions involves conditions on the Gram-Schmidt orthogonalization of the basis vectors and certain size-reduction criteria.
+
+A basis $B = [b_1, ..., b_n] \in \mathbb{R}^{m \times n}$ is LLL-reduced with parameter $\delta$ if it satisfies the following conditions:
+1. $\mu_{i, j} \le 1/2$ for all $1 \le j < i \le n$, where $\mu_{i, j}$ are the Gram-Schmidt coefficients defined by 
+   $$
+   \mu_{i, j} = \frac{\langle b_i, b_j^* \rangle}{\langle b_j^*, b_j^* \rangle},
+   $$
+   and $b_j^*$ are the Gram-Schmidt orthogonalized vectors of $b_j$.
+2. for any pair of consecutive Gram-Schmidt vectors $b_i^*$ and $b_{i-1}^*$, the Lovász condition holds:
+   $$
+   \delta \| \pi_i(b_i) \|^2 \le \| \pi_i(b_{i + 1}) \|^2
+   $$
+   where $\pi_i$ denotes the projections except the first $i-1$ Gram-Schmidt vectors $b_1^*, ..., b_{i-1}^*$. Suppose $1 > \delta > 1/4$.
+
+----
+
+Regarding the Lovasz condition (2), we have :
+$$ 
+\pi_i(b_i) = b_i - \sum_{j=1}^{i-1} \frac{\langle b_i, b_j^* \rangle}{\langle b_j^*, b_j^* \rangle} b_j^* = b_i^* 
+$$
+and 
+$$
+\pi_i(b_{i + 1}) = b_{i + 1} - \sum_{j=1}^{i-1} \frac{\langle b_{i + 1}, b_j^* \rangle}{\langle b_j^*, b_j^* \rangle} b_j^* = b_{i + 1}^* + \mu_{i+1, i} b_i^*
+$$
+By the Lovasz condition (2), we have an relationship between adjacent Gram-Schmidt vectors:
+$$
+(\delta - 1/4) \| b_i^* \|^2 \le \| b_{i + 1}^* \|^2
+$$
+In particular, we have an relationship between Gram-Schmidt vector $b_i^*$ and the first $\delta$-LLL basis reduced vector $b_1$ :
+$$
+\| b_i^* \| \ge \sqrt{\delta - 1/4}^{i - 1} \| b_1^* \| \ge  \sqrt{\delta - 1/4}^{i - 1} \| b_1 \|
+$$
+As the shortest lattice vector has lower bound $\lambda_1 \ge \min_{i} \| b_i^* \|$, we have 
+$$
+\lambda_1 \ge \sqrt{\delta - 1/4}^{i - 1} \| b_1 \|
+$$
+
+Therefore, the first vector $b_1$ of a $\delta$-LLL reduced basis provides an approximation to the shortest lattice vector within a factor of $\sqrt{\delta - 1/4}^{-(i - 1)}$:
+$$
+\| b_1 \| \le \sqrt{\delta - 1/4}^{-(i - 1)} \lambda_1
+$$
+
+----
+
+In summary, if we find the a $\delta$-LLL reduced basis for a lattice, the first basis vector $b_1$ provides an approximation to the shortest lattice vector within a factor of $\sqrt{\delta - 1/4}^{-(i - 1)}$:
+$$
+\| b_1 \| \le \sqrt{\delta - 1/4}^{-(i - 1)} \lambda_1
+$$
+
+<br />
+
+## The LLL basis reduction Algorithm
+
+![LLL Algorithm](./img/LLL-algorithm.png)
+
+<br />
+
+### Basis Reduction
+
+![Basis Reduction](./img/LLL-basis-reduction.png)
+
+Line-1 to line-3 of LLL algorithm is to ensure that the Gram-Schmidt coefficients after reduced satisfy the size-reduction condition:
+$$
+\mu_{i, j} \le 1/2 \quad \text{for all } 1 \le j < i \le n
+$$
+A few facts to be noted about the size-reduction condition are:
+1. To ensure that the updated basis vector $b_i$ after reduced is still a valid latice vector. We need to substract integer multiples $c_{i, j}$ of previous basis vectors $b_j$ for $j < i$, not arbitrary real multiples $\mu_{i, j}$ of orthogonal vectors $b_j^*$. In this case, the projections of $b_i$ on previous orthogonal basis vectors are not entirely eliminated, but only fraction of less than $1/2$ remains. That is, after reduced on $b_i$, it satisfies :
+    $$
+    b_i = b_i^* + \sum_{j=1}^{i-1} u_{i, j} b_j^*
+    $$
+    where $u_{i, j} \le 1/2$.
+
+    Notice that, there is a obvious typing error in the LLL algorithm above, that is :
+    $$
+    c_{i, j} = \lfloor \mu_{i, j} \rceil = \lfloor \frac{\langle b_i, b_j^* \rangle}{\langle b_j^*, b_j^* \rangle} \rceil
+    $$
+2. Geometrically, the size-reduction condition ensures the angle between the updated basis vector $b_i$ and the actual orthogonal basis vector $b_i^*$ not too large, keeping $b_i$ relatively close to $b_i^*$ in direction.
+3. The Gram-Schmidt basis vectors $b_i^*$ are not affected by the reduction process.
+
+<br />
+
+### Lovasz Condition Check
+
+Line-4 to line-5 of the LLL algorithm is to check the Lovasz condition, that is any consecutive Gram-Schmidt vectors satisfy
+$$
+(\delta - 1/4) \| b_i^* \|^2 \le \| b_{i + 1}^* \|^2
+$$ 
+which ensures that the first reduced basis vector $b_1$ is not too far from the shortest lattice vector $\lambda_1$ :
+$$
+\| b_1 \| \le \sqrt{\delta - 1/4}^{-(i - 1)} \lambda_1
+$$
+
+<br />
+
+## Running Time Analysis
+
+The running time cost is composed by two factors :
+
+1. the number of iterations required for the algorithm to converge.
+
+2. the computational cost of each iteration, which involves size-reduction and Lovasz condition checks for the basis vectors.
+
+As we know, for any $i$, the lattice not changed through basis reduction from $B_i = [b_1, ..., b_i]$ to $B' = [b_1', ..., b_i']$, that is :
+$$ 
+\Lambda(B_i) = \Lambda(B_i')
+$$
+So the determinant of the lattice remains unchanged, we denote it as $\det(\Lambda_i)$. But the swap operation when the Lovasz condition is violated may change the individual Gram-Schmidt vectors, and we need to analyze its effect on the running time.
 
 <br />
 
