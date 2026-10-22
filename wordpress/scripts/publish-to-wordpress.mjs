@@ -139,6 +139,22 @@ function buildRenderer() {
   md.use(termAutolinkPlugin);
   md.use(admonitionPlugin);
   md.use(headingAnchorsPlugin);
+  const renderImage = md.renderer.rules.image;
+  md.renderer.rules.image = (tokens, index, options, env, renderer) => {
+    tokens[index].attrJoin('style', 'max-width:100%;width:auto;height:auto;box-sizing:border-box;');
+    return renderImage(tokens, index, options, env, renderer);
+  };
+  md.renderer.rules.table_open = (tokens, index, options, env, renderer) => {
+    const end = tokens.findIndex((token, i) => i > index && token.type === 'table_close');
+    const hasImages = tokens.slice(index + 1, end).some(
+      (token) => token.children?.some((child) => child.type === 'image')
+    );
+    if (hasImages) {
+      // Automatic table layout can expand columns to an image's intrinsic width.
+      tokens[index].attrJoin('style', 'table-layout:fixed;width:100%;max-width:100%;');
+    }
+    return renderer.renderToken(tokens, index, options);
+  };
   return md;
 }
 

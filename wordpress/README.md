@@ -230,7 +230,12 @@ What it does per file:
 5. Leaves `$...$` / `$$...$$` math untouched (protected from Markdown's
    emphasis parsing) so the MathJax/QuickLaTeX plugin renders it client-side.
 6. Uploads any local images (`![alt](./img/foo.png)`) to the WordPress
-   media library and rewrites the URL.
+   media library and rewrites the URL. Published Markdown images have inline
+   responsive sizing (`max-width:100%`, automatic width/height) so oversized
+   figures shrink to the article or table cell without cropping or distortion.
+   Image-containing Markdown tables use fixed column layout to keep
+   side-by-side figures within the article. Text-only tables are unchanged.
+   These styles are part of the post HTML; no Additional CSS update is needed.
 7. Assigns a two-level WordPress category automatically based on the
    note's folder under `docs/`: a parent
    (`docs/mathematics/...` → "Mathematics", `docs/cryptography/...` →
