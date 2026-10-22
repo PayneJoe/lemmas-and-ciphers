@@ -5,19 +5,52 @@ on:
     branches: [main]
     paths:
       - "docs/**/*.md"
+      - "wordpress/scripts/**"
+      - "wordpress/package*.json"
+      - ".github/workflows/publish-wordpress.yml"
+  pull_request:
+    branches: [main]
   workflow_dispatch:
+    inputs:
+      base_ref:
+        description: "Commit before the changes to republish (compare against current main)"
+        required: true
+        type: string
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: wordpress-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
+  cancel-in-progress: false
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: wordpress/package-lock.json
+      - run: npm ci
+        working-directory: wordpress
+      - run: npm test
+        working-directory: wordpress
+
   publish:
+    if: github.event_name != 'pull_request'
+    needs: test
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          ref: main
+          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -30,32 +63,15 @@ jobs:
         working-directory: wordpress
         run: npm ci
 
-      - name: Find changed notes
-        id: changed
-        run: |
-          files=$(git diff --name-only HEAD^ HEAD -- 'docs/**/*.md' | tr '\n' ' ')
-          echo "files=$files" >> "$GITHUB_OUTPUT"
-
       - name: Publish changed notes
-        if: steps.changed.outputs.files != ''
         working-directory: wordpress
         env:
+          BEFORE: ${{ github.event.before || inputs.base_ref }}
+          AFTER: ${{ github.sha }}
           WP_URL: ${{ secrets.WP_URL }}
           WP_USER: ${{ secrets.WP_USER }}
           WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
-        run: |
-          for f in ${{ steps.changed.outputs.files }}; do
-            node scripts/publish-to-wordpress.mjs "../$f"
-          done
-
-      - name: Refresh section hub pages
-        if: steps.changed.outputs.files != ''
-        working-directory: wordpress
-        env:
-          WP_URL: ${{ secrets.WP_URL }}
-          WP_USER: ${{ secrets.WP_USER }}
-          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
-        run: node scripts/generate-section-pages.mjs
+        run: node scripts/publish-changed-notes.mjs
 
       # publish-to-wordpress.mjs tracks file->post-ID mappings in
       # post-mapping.json so re-publishing a note updates it in place
@@ -64,7 +80,7 @@ jobs:
       # fresh checkout, so without this the mapping created above would be
       # thrown away and the next run would never know posts already exist).
       - name: Commit updated post-mapping.json
-        if: steps.changed.outputs.files != ''
+        if: always() && !cancelled()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

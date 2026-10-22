@@ -259,12 +259,26 @@ so its link shows up on the section's hub page, and
 
 ### Automatic publishing (GitHub Actions)
 
-`.github/workflows/publish-wordpress.yml` runs the two steps above for you
-automatically: on every push to `main` that touches a `docs/**/*.md` file,
-it runs `publish-to-wordpress.mjs` on each changed file, then re-runs
-`generate-section-pages.mjs`. So the day-to-day loop is just: **add or
-edit a `.md` file under `docs/`, commit, push** — no manual publish
-command needed.
+`.github/workflows/publish-wordpress.yml` runs the two steps above for you.
+It publishes added/modified Markdown notes across the complete pushed commit
+range, then refreshes section pages only if note publishing succeeds. Deleted
+files are excluded. Filenames are passed as arguments, not interpolated into
+shell commands. Related publisher/workflow changes also trigger the workflow.
+Pull requests run `npm test` in `wordpress/` without production credentials;
+only pushes to `main` and manual runs publish content.
+
+Publication runs are serialized. The checkout starts from current `main` so
+previous mapping updates are available. Each successful publication and
+migration step saves its mapping immediately; the workflow attempts to commit
+mapping changes even when a later publication fails. Request failures include
+transport codes or HTTP status and cause a nonzero exit, rather than a
+success-shaped workflow. Requests have a timeout; writes are not automatically
+retried because a lost response does not prove that the server did not commit.
+
+To retry a failed run, use GitHub Actions' **Re-run failed jobs**. For a manual
+run, supply `base_ref`, the commit immediately before the notes you want to
+republish; the comparison ends at the selected workflow commit. Select `main`
+for production manual runs. No credentials should be supplied as workflow inputs.
 
 One-time setup, in the GitHub repo that this branch is pushed to (its
 Settings → Secrets and variables → Actions → **New repository secret**),
@@ -278,8 +292,17 @@ Notes:
   workflow — those still need a manual re-paste in wp-admin whenever
   `additional.css` or the sidebar HTML changes (see sections 4–5 above);
   the workflow only handles publishing post/page content via the REST API.
-- Deleting/renaming a `.md` file is not auto-handled (no post is deleted);
-  remove it manually in wp-admin if needed.
+- Arbitrary deleted/renamed notes do not cause automatic WordPress deletion.
+  The lattice-chapter merge is an explicit, narrowly scoped exception:
+  publishing `complexity-of-lattice-problems.md` first creates/updates its
+  deterministic-slug post, then moves the mapped `basics.md` and
+  `approximation-algorithms.md` posts to trash. Their mapping entries are
+  removed only after retirement succeeds. Re-running resumes an interrupted
+  migration and recovers an already-created merged post by slug if its first
+  response was lost. Unrelated posts and media are not deleted.
+- Relative Markdown note links are resolved through `post-mapping.json`.
+  Publish a newly linked target before publishing its index; a missing target
+  mapping is reported as an error rather than publishing a broken `.md` URL.
 - You can still run any script manually at any time — the workflow doesn't
   replace that, it just saves you from remembering to run it after normal
   edits.

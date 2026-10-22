@@ -8,7 +8,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "publish": "node scripts/publish-to-wordpress.mjs"
+    "publish": "node scripts/publish-to-wordpress.mjs",
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "github-slugger": "^2.0.0",

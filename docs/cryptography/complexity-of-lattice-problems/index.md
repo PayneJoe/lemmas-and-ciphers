@@ -1,5 +1,4 @@
-- [Basics](./basics.md)
-- [Approximation Algorithms](./approximation-algorithms.md)
+- [Complexity of Lattice Problems](./complexity-of-lattice-problems.md)
 
 Planned topics (notes not yet published):
 
