@@ -47,17 +47,9 @@
     "postId": 124,
     "link": "https://paynejoe.com/structures/"
   },
-  "../docs/cryptography/complexity-of-lattice-problems/approximation-algorithms.md": {
-    "postId": 136,
-    "link": "https://paynejoe.com/approximation-algorithms/"
-  },
   "../docs/cryptography/complexity-of-lattice-problems/basic-reduction-problem.md": {
     "postId": 137,
     "link": "https://paynejoe.com/basic-reduction-problem/"
-  },
-  "../docs/cryptography/complexity-of-lattice-problems/basics.md": {
-    "postId": 140,
-    "link": "https://paynejoe.com/basics/"
   },
   "../docs/cryptography/complexity-of-lattice-problems/closest-vector-problem.md": {
     "postId": 141,
@@ -110,5 +102,9 @@
   "../docs/mathematics/commutative-algebra/tensor-product.md": {
     "postId": 154,
     "link": "https://paynejoe.com/tensor-product/"
+  },
+  "../docs/cryptography/complexity-of-lattice-problems/complexity-of-lattice-problems.md": {
+    "postId": 274,
+    "link": "https://paynejoe.com/complexity-of-lattice-problems/"
   }
 }
