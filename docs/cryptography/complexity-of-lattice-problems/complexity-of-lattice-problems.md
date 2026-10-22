@@ -461,6 +461,7 @@ Given a basis $B \in \mathbb{Z}^{m \times n}$ and a target vector $t \in \mathbb
 ### Reduced Basis
 
 Definition 2.1 - Let $[a, b]$ be a lattice basis. The basis is reduced if  {#definition-2-1 .definition-anchor}
+
 $$
 |\| a \|, \| b \| \le \| a + b \|, \| a - b \|
 $$

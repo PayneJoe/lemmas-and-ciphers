@@ -28,7 +28,7 @@
 //      post instead of creating a duplicate.
 
 import { readFile, writeFile } from 'node:fs/promises';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import process from 'node:process';
@@ -391,6 +391,14 @@ async function publishPost({ title, html, existingPostId, categoryIds, excerpt, 
 
 // --- Main ----------------------------------------------------------------
 
+export function renderNote(markdown, md = buildRenderer()) {
+  const { protectedText, stash } = protectMath(markdown);
+  let html = restoreMath(md.render(protectedText), stash);
+  html = markTableOfContents(html);
+  const excerpt = excerptFromHtml(html);
+  return { html: insertReadMoreMarker(html), excerpt };
+}
+
 async function processFile(filePath, mapping, md) {
   console.log(`\nProcessing ${filePath}`);
   const absPath = path.resolve(filePath);
@@ -407,12 +415,7 @@ async function processFile(filePath, mapping, md) {
   markdown = resolveNoteLinks(markdown, absPath, mapping, process.cwd());
   markdown = await resolveAndUploadImages(markdown, absPath);
 
-  const { protectedText, stash } = protectMath(markdown);
-  let html = md.render(protectedText);
-  html = restoreMath(html, stash);
-  html = markTableOfContents(html);
-  const excerpt = excerptFromHtml(html);
-  html = insertReadMoreMarker(html);
+  const { html, excerpt } = renderNote(markdown, md);
 
   const mappingKey = path.relative(process.cwd(), absPath);
   let existingPostId = mapping[mappingKey]?.postId;
@@ -481,7 +484,9 @@ async function main() {
   if (failed) process.exitCode = 1;
 }
 
-main().catch((error) => {
-  console.error(error.message);
-  process.exitCode = 1;
-});
+if (process.argv[1] && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error.message);
+    process.exitCode = 1;
+  });
+}
