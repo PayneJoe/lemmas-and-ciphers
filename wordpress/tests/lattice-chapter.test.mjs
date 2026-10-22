@@ -32,3 +32,24 @@ test('combined TOC and hover references resolve to unique WordPress anchors', ()
   assert.ok(links.length >= 19);
   for (const target of links) assert.ok(ids.includes(target), `Missing anchor ${target}`);
 });
+
+test('every chapter figure fits its container without changing aspect ratio', () => {
+  const { html } = renderNote(source);
+  const images = [...html.matchAll(/<img\b[^>]*>/g)].map((match) => match[0]);
+  assert.equal(images.length, [...source.matchAll(/!\[[^\]]*\]\([^)]+\)/g)].length);
+  assert.ok(images.length > 0);
+  for (const image of images) {
+    assert.match(image, /style="[^"]*max-width:100%;width:auto;height:auto;box-sizing:border-box;/);
+    assert.match(image, /alt="[^"]+"/);
+  }
+  assert.match(html, /<table[^>]*style="table-layout:fixed;width:100%;max-width:100%;"/);
+});
+
+test('image styles preserve authored attributes and leave text tables alone', () => {
+  const { html } = renderNote('![Figure](figure.png){width=1200 height=600}\n\n| Text |\n| --- |\n| Value |\n');
+  assert.match(html, /width="1200"/);
+  assert.match(html, /height="600"/);
+  assert.match(html, /max-width:100%;width:auto;height:auto;/);
+  assert.match(html, /<table>/);
+  assert.doesNotMatch(html, /table-layout:fixed/);
+});
