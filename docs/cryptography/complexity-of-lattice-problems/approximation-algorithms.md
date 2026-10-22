@@ -317,12 +317,291 @@ The running time cost is composed by two factors :
 1. the number of iterations required for the algorithm to converge.
 
 2. the computational cost of each iteration, which involves size-reduction and Lovasz condition checks for the basis vectors.
+    - in the reduction step, we need to round the Gram-Schmidt coefficients 
+        $$
+        c_{i, j} = \lfloor \mu_{i, j} \rceil = \lfloor \frac{\langle b_i, b_j^* \rangle}{\| b_j^* \|^2} \rceil
+        $$
+        , which divisions of numerator and denominator of $\mu_{i, j}$ is involved. And only $b_i$ is integer valued, while the Gram-Schmidt vectors $b_j^*$ are generally not integer valued. So we need to figure the bits required for the denominator of $\mu_{i, j}$ after simplification, which not necessarily must be $\| b_j \|^2$.
+    - in the reduction step, we also need to update basis vector 
+        $$
+        b_i \leftarrow b_i - c_{i, j} b_j
+        $$
+        **coordinate-wise**, if the rounded integer coefficient $c_{i, j}$ is too large, then the bit length of intermediate value $c_{i, j} b_j$ coordinates could become very large, affecting the overall computational cost of the reduction step even though original bit length of $b_i$ coordinates is $N$.
+
+<br />
+
+### Bound the Number of Iterations
 
 As we know, for any $i$, the lattice not changed through basis reduction from $B_i = [b_1, ..., b_i]$ to $B' = [b_1', ..., b_i']$, that is :
 $$ 
 \Lambda(B_i) = \Lambda(B_i')
 $$
-So the determinant of the lattice remains unchanged, we denote it as $\det(\Lambda_i)$. But the swap operation when the Lovasz condition is violated may change the individual Gram-Schmidt vectors, and we need to analyze its effect on the running time.
+So the determinant of the lattice remains unchanged, we denote it as $\det(\Lambda_i)$. But the swap operation when the Lovasz condition is violated may change the individual Gram-Schmidt vectors, it has some effect on some sub-lattice, but the overall determinant remains the same. 
+
+For example, we suppose the reduced basis is $B = [b_1, b_2, b_3, b_4]$, if the Lovasz condition is violated for $b_2$ and $b_3$, that is :
+$$ 
+\| b_3^* \|^2 < (\delta - 1/4) \| b_2^* \|^2
+$$
+, in this case, we have to swap $b_2$ and $b_3$. After the swap, the new basis is $B' = [b_1, b_3, b_2, b_4]$. We see that :
+- lattice $\Lambda_1$ not changed, because it only involves $b_1$.
+- lattice $\Lambda_2$ changed from $\mathcal{L}([b_1, b_2])$ to $\mathcal{L}([b_1, b_3])$ after the swap. 
+- lattice $\Lambda_3$ not change, because $\Lambda([b_1, b_2, b_3]) = \Lambda([b_1, b_3, b_2])$ even after the swap. And it does not affect the overall determinant of the lattice $\Lambda_4$.
+
+----
+
+So we define  
+$$
+D_{i} = \det (\Lambda_i)^2 = \det([b_1, ..., b_{i - 1}, b_i]) = \prod_{k=1}^{i} \| b_k^* \|^2
+$$
+as the squared determinant of the sub-lattice $\Lambda_i$ before swapping operation. And 
+$$
+D_{i}^{(1)} = \det (\Lambda_i')^2 = \det([b_1, ..., b_{i - 1}, b_{i + 1}]) = \prod_{k=1}^{i - 1} \| b_k^* \|^2 \cdot (\mu_{i + 1, i} \| b_i^* \| + b_{i + 1}^*)^2
+$$
+as the squared determinant of the sub-lattice $\Lambda_i$ after swapping operation. Put them together, we have :
+$$
+\frac{D_{i}^{(1)}}{D_i} = \frac{\prod_{k=1}^{i - 1} \| b_k^* \|^2 \cdot (\mu_{i + 1, i} \| b_i^* \| + b_{i + 1}^*)^2}{\prod_{k=1}^{i} \| b_k^* \|^2} = \frac{(\mu_{i + 1, i} \| b_i^* \| + b_{i + 1}^*)^2}{\| b_i^* \|^2} \lt \delta 
+$$
+which means the square determinant of sublattice $D_i$ decreases by a factor of at most $\delta$. But swap operation may happen position within $n$, so we need to track all possible these changes induced by swap operations. We define :
+$$
+\Phi_0 = \prod_{i=1}^{n} D_i 
+$$
+as the product of the squared determinants of all sub-lattices before any swapping operation. It will drop by at most a factor of $\delta$ for any swap operation at any position $i$ within the basis :
+$$
+\Phi_0 \rightarrow_{i_1} \Phi_1 \rightarrow_{i_2} \Phi_2 ... \rightarrow_{i_k} \Phi_k
+$$
+So after $k$ iterations, we have :
+$$
+\Phi_k \lt \delta^k \Phi_0
+$$
+particularly we get the relationship between iteration number $k$ and the initial product of the squared determinants of all sub-lattices $\Phi_0$ :
+$$ 
+k \lt \frac{\ln \Phi_0}{\ln (1/\delta)}
+$$
+
+----
+
+For one input vector $b_i$, we have :
+$$
+\| b_i \|^2 \le m \cdot 2^{2N} 
+$$
+, and $\| b_i^* \|^2 \le \| b_i \|^2 \le m \cdot 2^{2N}$. We can bound $\Phi_0$ in terms of input size $N$ :
+$$
+\Phi_0 = \prod_{i=1}^{n} D_i = \prod_{i=1}^{n} \prod_{k=1}^{i} \| b_k^* \|^2 \le \prod_{i=1}^{n} (m \cdot 2^{2N})^i = (m \cdot 2^{2N})^{\frac{n(n+1)}{2}}
+$$
+So we have :
+$$
+\ln \Phi_0 \le \ln \left( (m \cdot 2^{2N})^{\frac{n(n+1)}{2}} \right) = \frac{n(n+1)}{2} \cdot (\ln m + 2N)
+$$
+which is polynomial in the input size $N$ and the dimension $n$ as we expected. 
+
+---
+
+Since $\delta < 1$ is a fixed number, we can just treat $\ln (1/\delta)$ as a constant. Therefore, the number of iterations $k$ is polynomially bounded in terms of the input size $N$ and the dimension $n$.
+
+----
+
+### Bound the Time Cost Per Iteration
+
+As we mentioned before, we need to bound two things :
+1. the bit-length of the denominator of Gram-Schmidt coefficients $\mu_{i,j}$.
+2. the bit-length of intermediate values after some reduction step induced by multiplying (integer) rounded Gram-Schmidt coefficients $c_{i, j}$.
+
+----
+
+Regarding (1), as we know $D_i = \prod_{k=1}^{i} \| b_k^* \|^2$, thus $\| b_j^* \|^2 = \frac{D_{j}}{D_{j - 1}}$, therefore  
+$$
+\mu_{i, j} = \frac{\langle b_i, b_j^* \rangle}{\| b_j^* \|^2} = \frac{\langle b_i, D_{j - 1} \cdot b_j^* \rangle}{D_j}
+$$
+We see that vector $b_j$ coordinates are integers, and will show that :
+
+(1.1) $D_j$ is an integer 
+
+(1.2) $D_{j - 1} \cdot b_j^*$ is integer vector
+
+In this case, $D_j$ is divisible by the actual denominator of $\mu_{i, j}$, that is, 
+$$
+\text{denom}(\mu_{i, j}) \mid D_j
+$$
+or 
+$$
+\text{denom}(\mu_{i, j}) \le D_j \le \Phi_0
+$$
+Thus the bit-length of the actual denominator of $\mu_{i, j}$ is at most the bit-length of $\Phi_0$, which is polynomially bounded in terms of the input size $N$ and the dimension $n$. That is,
+$$
+\log \text{denom}(\mu_{i, j}) \le \log \Phi_0 \le \frac{n(n+1)}{2} \cdot (\ln m + 2N)
+$$
+
+<details>
+<summary> Proof of (1.1) and (1.2) </summary>
+
+For (1.1) we can express $D_j$ with Gram matrix $B_j^T B_j$ where $B_j = [b_1, ..., b_j]$, that is :
+$$
+D_j = \det (\mathcal{L}([b_1, ..., b_j])) = \det (B_j^T B_j) 
+$$
+
+<details>
+<summary> Proof </summary>
+
+Define 
+$$
+C_j = [b_1^*, b_2^*, ..., b_j^*]
+$$
+as the matrix whose columns are the Gram-Schmidt vectors $b_1^*, ..., b_j^*$.
+
+The relationship between Gram-Schmidt vectors $b_i^*$ and the original basis vectors $b_i$ is given by:
+$$
+\begin{aligned}
+b_1 &= b_1^* \\
+b_2 &= b_2^* + \mu_{2,1} b_1^* \\
+b_3 &= b_3^* + \mu_{3,2} b_2^* + \mu_{3,1} b_1^* \\
+\vdots \\
+b_j &= b_j^* + \sum_{k=1}^{j-1} \mu_{j,k} b_k^*
+\end{aligned}
+$$
+Let 
+$$
+U = \begin{matrix}
+1 & \mu_{2,1} & \mu_{3, 1} & \cdots & \mu_{j,1} \\
+0 & 1 & \mu_{3,2} & \cdots & \mu_{j,2} \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+\vdots & \vdots & \vdots & \ddots & \mu_{j,j-1} \\
+0 & 0 & 0 & \cdots & 1
+\end{matrix}
+$$
+be the upper triangular matrix relating the original basis vectors $b_i$ to the Gram-Schmidt vectors $b_i^*$, so we have :
+$$
+B_j = C_j \cdot U
+$$
+Furthermore :
+$$
+B_j^T B_j = (C_j \cdot U)^T (C_j \cdot U) = U^T C_j^T C_j U
+$$
+Since the columns of $C_j$ are orthogonal, thus $C_j^T C_j$ is a diagonal matrix with entries $\| b_1^* \|^2, \| b_2^* \|^2, ..., \| b_j^* \|^2$ on the diagonal, that is :
+$$
+C_j^T C_j = \text{diag}(\| b_1^* \|^2, \| b_2^* \|^2, ..., \| b_j^* \|^2)
+$$
+
+By the property of determinants, we have:
+$$
+\det(B_j^T B_j) = \det(U^T C_j^T C_j U) = \det(U^T) \det(C_j^T C_j) \det(U) = (\det(U))^2 \det(C_j^T C_j)
+$$
+Since $U$ is an upper triangular matrix with all diagonal entries equal to 1, we have $\det(U) = 1$. Therefore:
+$$
+D_j = \det(B_j^T B_j) = \det(C_j^T C_j) = \prod_{k=1}^{j} \| b_k^* \|^2
+$$
+
+</details>
+<br />
+
+Therefore $D_j$ is an integer since it is the determinant of an integer matrix $C_j^T C_j$.
+
+----
+
+For (1.2), by Gram-Schmidt process, we have : 
+$$
+b_j^* = b_j - \sum_{k=1}^{j-1} \mu_{j,k} b_k^*
+$$
+Unfortunately, we cannot determine if $D_{j - 1} b_j^*= D_{j - 1} b_j - \sum_{k=1}^{j-1} \langle b_j, b_k^* \rangle b_k^*$ is an integer directly since Gram-Schmidt vectors $b_j^*$ are generally not integer vectors.
+
+-----
+
+We express $D_{j - 1}$ with Gram matrix $G_{j - 1} = B_{j-1}^T B_{j-1}$ where $B_{j-1} = [b_1, ..., b_{j-1}]$:
+$$
+D_{j - 1} = \det (\mathcal{L}([b_1, ..., b_{j-1}])) = \det (G_{j - 1})
+$$
+We will show that :
+
+a. $G_{j - 1}^{-1} = \text{adj}(G_{j - 1}) / \det(G_{j - 1}) = \text{adj}(G_{j - 1}) / D_{j - 1}$
+
+This formula demonstrate the relationship between the inverse of the Gram matrix $G_{j - 1}$ and its adjugate and determinant, which will be useful in expressing $b_j^*$ in terms of integer matrices.
+
+<details>
+<summary>Proof of (a)</summary>
+
+We need to show :
+$$
+G_{j - 1} \cdot \text{adj}(G_{j - 1}) = D_{j - 1} = \det(G_{j - 1}) I
+$$
+
+By Cramer's rule, the determinant of square matrix $G_{j - 1}$ can be expressed as a linear combination of the entries of any row (or column) and their corresponding determinants of the submatrices obtained by removing the row and column of each entry :
+$$
+\det(G_{j - 1}) = \sum_{t = 1}^{j-1} G_{{j - 1}, (r, t)} \cdot \boxed{(-1)^{r + t} \det(G_{j - 1} \setminus {[r,t]})}
+$$
+
+----
+
+Firstly, we define the cofactor matrix of $G_{j - 1}$ as $\text{Cof}(G_{j - 1})$, where the $(i, j)$-th entry of it is :
+$$
+\text{Cof}(G_{j - 1})_{i,j} = (-1)^{i+j} \det(G_{j - 1} \setminus {[i,j]})
+$$
+where $G_{j - 1} \setminus {[i,j]}$ is the matrix obtained from $G_{j - 1}$ by removing the $i$-th row and $j$-th column. And the adjugate of $G_{j - 1}$ is defined as the transpose of the cofactor matrix:
+$$
+\text{adj}(G_{j - 1}) = \text{Cof}(G_{j - 1})^T
+$$
+
+----
+
+Secondly, the $(r, s)$-th entry of the matrix $H = G_{j - 1} \cdot \text{adj}(G_{j - 1})$ is : 
+$$
+H_{r, s} = \langle G_{j - 1, (r, :)}, \text{adj}(G_{j - 1})_{(:, s)} \rangle = \langle G_{j - 1, (r, :)}, \text{Cof}(G_{j - 1})_{(s, :)} \rangle = \sum_{t = 1}^{j-1} G_{j - 1, (r, t)} \cdot (-1)^{s + t} \det(G_{j - 1} \setminus {[s, t]})
+$$
+Two cases arise:
+1. If $r = s$, then above formula is aligned with that of determinant of $G_{j - 1}$, giving $H_{r, s} = \det(G_{j - 1}) = D_{j - 1}$.
+2. if $r \ne s$, then $H_{r, s}$ equals the derminant of another matrix $G_{j - 1}'$ obtained by replacing the $s$-th row of $G_{j - 1}$ with a copy of the $r$-th row.  Since $G_{j - 1}'$ has two identical rows, its determinant must be zero. Therefore, $H_{r, s} = 0$ for $s \ne r$.
+Hence, $H$ is a diagonal matrix with $D_{j - 1} = \det(G_{j - 1})$ on the diagonal. 
+
+This completes the proof of (a).
+
+</details>
+<br />
+
+b. $b_j^* = b_j - B_{j - 1}^T G_{j - 1}^{-1} B_{j - 1} b_j$ is another expression for the Gram-Schmidt vector $b_j^*$.
+
+<details>
+<summary>Proof of (b)</summary>
+
+</details>
+<br />
+
+In this case, we can express $D_{j - 1} b_j^*$ as:
+$$
+D_{j - 1} b_j^* = D_{j - 1} \left( b_j - B_{j - 1}^T G_{j - 1}^{-1} B_{j - 1} b_j \right) = D_{j - 1} b_j - B_{j - 1}^T \text{adj}(G_{j - 1}) B_{j - 1} b_j
+$$
+Since $D_{j - 1} = \det(G_{j - 1})$ and $\text{adj}(G_{j - 1})$ are integer matrices, the right-hand side is an integer vector. Therefore, $D_{j - 1} b_j^*$ is an integer vector.
+
+</details>
+<br />
+
+----
+
+Regarding (2), assume $b_i$ is the reduced basis vector, each entry is bounded by :  
+$$
+\| b_{i, j} \|^2 \le \| b_i \|^2
+$$
+By Gram-Schmidt process, we can consider to bound $\| b_i \|^2$ : 
+$$
+\| b_i \|^2 = (\| b_i^* \| + \sum_{k = 1}^{i-1} \mu_{i, k} \| b_k^* \|)^2 = \| b_i^* \|^2 + \sum_{k = 1}^{i - 1} \mu_{i, k}^2 \| b_k^* \|^2
+$$
+By previous definition, we have :
+$$
+\|b_i^*\|^2 = \frac{D_i}{D_{i-1}}
+$$
+since $1 \le D_i \le \Phi_0$, we have :
+$$
+1 / \Phi_0 \le \| b_i^* \|^2 \le \Phi_0
+$$
+As after reduced, the Gram-Schmidt coefficients $\mu_{i, k}$ satisfy $|\mu_{i, k}| \le 1/2$, we have:
+$$
+\begin{aligned}
+\| b_i \|^2 &\le (1 + \sum_{k = 1}^{i - 1} (1/2)^2) \| b_i^* \|^2 \\
+&= (1 + \frac{i - 1}{4}) \| b_i^* \|^2 \\
+&\le (1 + \frac{i - 1}{4}) \Phi_0 \\
+\end{aligned}
+$$
+Therefore the bit-length of each entry of $b_i$ is bounded by $O(\log \Phi_0)$ where $\log \Phi_0$ is polynomial in the input size $N$ as :
+$$
+\log \Phi_0 \le \frac{n(n + 1)}{2} (\log m + 2N)
+$$
 
 <br />
 
