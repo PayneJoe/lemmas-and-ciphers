@@ -3,10 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import MarkdownIt from 'markdown-it';
-import attrs from 'markdown-it-attrs';
-import { headingAnchorsPlugin } from '../scripts/heading-anchors.mjs';
-import { termAutolinkPlugin } from '../scripts/term-autolink.mjs';
+import { renderNote } from '../scripts/publish-to-wordpress.mjs';
 
 const folder = fileURLToPath(new URL('../../docs/cryptography/complexity-of-lattice-problems/', import.meta.url));
 const source = readFileSync(path.join(folder, 'complexity-of-lattice-problems.md'), 'utf8');
@@ -28,8 +25,7 @@ test('the merged chapter replaces both sources and retains local image reference
 });
 
 test('combined TOC and hover references resolve to unique WordPress anchors', () => {
-  const html = new MarkdownIt({ html: true })
-    .use(attrs).use(termAutolinkPlugin).use(headingAnchorsPlugin).render(source);
+  const { html } = renderNote(source);
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
   assert.equal(new Set(ids).size, ids.length, 'Duplicate IDs in combined chapter');
   const links = [...html.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]);
