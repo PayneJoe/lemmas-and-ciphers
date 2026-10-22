@@ -14,6 +14,11 @@ export function headingAnchorsPlugin(md) {
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i];
       if (token.type !== 'heading_open') continue;
+      const explicitId = token.attrGet('id');
+      if (explicitId) {
+        slugger.slug(explicitId);
+        continue;
+      }
       const inline = tokens[i + 1];
       if (!inline || inline.type !== 'inline') continue;
       const text = inline.children

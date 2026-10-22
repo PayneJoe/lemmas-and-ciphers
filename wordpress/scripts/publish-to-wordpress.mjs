@@ -37,6 +37,7 @@ import markdownItAttrs from 'markdown-it-attrs';
 import { termAutolinkPlugin } from './term-autolink.mjs';
 import { admonitionPlugin } from './admonition.mjs';
 import { headingAnchorsPlugin } from './heading-anchors.mjs';
+import { wordpressRequest as fetch, retireMergedNotes, resolveNoteLinks, MERGED_NOTE, MERGED_SLUG } from './publishing-state.mjs';
 
 const SCRIPTS_DIR = path.dirname(fileURLToPath(import.meta.url));
 const WORDPRESS_DIR = path.dirname(SCRIPTS_DIR);
@@ -353,12 +354,13 @@ async function getOrCreateCategoryId(name, parentId) {
 
 // --- WordPress post publish/update --------------------------------------
 
-async function publishPost({ title, html, existingPostId, categoryIds, excerpt }) {
+async function publishPost({ title, html, existingPostId, categoryIds, excerpt, slug }) {
   const body = {
     title,
     content: `<!-- wp:html -->\n${html}\n<!-- /wp:html -->`,
     status: 'publish',
   };
+  if (slug) body.slug = slug;
   if (categoryIds && categoryIds.length) {
     body.categories = categoryIds;
   }
@@ -402,6 +404,7 @@ async function processFile(filePath, mapping, md) {
   // separately and we no longer use it as the title source.
   markdown = markdown.replace(/^#\s+.+\n?/m, '');
 
+  markdown = resolveNoteLinks(markdown, absPath, mapping, process.cwd());
   markdown = await resolveAndUploadImages(markdown, absPath);
 
   const { protectedText, stash } = protectMath(markdown);
@@ -412,7 +415,15 @@ async function processFile(filePath, mapping, md) {
   html = insertReadMoreMarker(html);
 
   const mappingKey = path.relative(process.cwd(), absPath);
-  const existingPostId = mapping[mappingKey]?.postId;
+  let existingPostId = mapping[mappingKey]?.postId;
+  if (mappingKey === MERGED_NOTE && !existingPostId) {
+    const found = await (await fetch(
+      `${WP_URL}/wp-json/wp/v2/posts?slug=${MERGED_SLUG}&context=edit`,
+      { headers: { Authorization: authHeader() } }
+    )).json();
+    if (found.length > 1) throw new Error('Multiple merged posts found; refusing to create another.');
+    existingPostId = found[0]?.id;
+  }
 
   const categoryPath = resolveCategoryPathForFile(absPath);
   let categoryIds;
@@ -428,8 +439,18 @@ async function processFile(filePath, mapping, md) {
     }
   }
 
-  const result = await publishPost({ title, html, existingPostId, categoryIds, excerpt });
+  const result = await publishPost({
+    title, html, existingPostId, categoryIds, excerpt,
+    slug: mappingKey === MERGED_NOTE ? MERGED_SLUG : undefined,
+  });
   mapping[mappingKey] = { postId: result.id, link: result.link };
+  await saveMapping(mapping);
+  if (mappingKey === MERGED_NOTE) {
+    await retireMergedNotes(mapping, (route, options = {}) => fetch(
+      `${WP_URL}/wp-json/wp/v2${route}`,
+      { ...options, headers: { Authorization: authHeader() } }
+    ), saveMapping);
+  }
 
   console.log(`  ${existingPostId ? 'Updated' : 'Created'} post #${result.id}: ${result.link}`);
 }
@@ -446,15 +467,21 @@ async function main() {
   const md = buildRenderer();
   const mapping = await loadMapping();
 
+  let failed = false;
   for (const file of files) {
     try {
       await processFile(file, mapping, md);
     } catch (err) {
+      failed = true;
       console.error(`  ERROR processing ${file}:`, err.message);
     }
   }
 
   await saveMapping(mapping);
+  if (failed) process.exitCode = 1;
 }
 
-main();
+main().catch((error) => {
+  console.error(error.message);
+  process.exitCode = 1;
+});

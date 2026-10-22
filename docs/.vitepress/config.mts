@@ -65,8 +65,7 @@ export default defineConfig({
               text: 'Complexity of Lattice Problems',
               link: '/cryptography/complexity-of-lattice-problems/',
               items: [
-                { text: 'Basics', link: '/cryptography/complexity-of-lattice-problems/basics' },
-                { text: 'Approximation Algorithms', link: '/cryptography/complexity-of-lattice-problems/approximation-algorithms' },
+                { text: 'Combined Chapter', link: '/cryptography/complexity-of-lattice-problems/complexity-of-lattice-problems' },
               ],
             },
           ],

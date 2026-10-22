@@ -20,6 +20,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { wordpressRequest as fetch } from './publishing-state.mjs';
 
 const SCRIPTS_DIR = path.dirname(fileURLToPath(import.meta.url));
 const WORDPRESS_DIR = path.dirname(SCRIPTS_DIR);
