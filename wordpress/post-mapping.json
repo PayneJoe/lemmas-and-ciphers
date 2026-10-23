@@ -106,5 +106,13 @@
   "../docs/cryptography/complexity-of-lattice-problems/complexity-of-lattice-problems.md": {
     "postId": 274,
     "link": "https://paynejoe.com/complexity-of-lattice-problems/"
+  },
+  "../docs/cryptography/a-decade-of-lattice-cryptography/a-decade-of-lattice-cryptography.md": {
+    "postId": 308,
+    "link": "https://paynejoe.com/a-decade-of-lattice-cryptography/"
+  },
+  "../docs/cryptography/a-decade-of-lattice-cryptography/index.md": {
+    "postId": 309,
+    "link": "https://paynejoe.com/index-8/"
   }
 }
