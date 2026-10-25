@@ -98,41 +98,71 @@ where $\lambda_n(\Lambda)$ denotes the $n$-th successive minimum of the lattice 
 
 Then, we will focus on constructing a SIVP instance from a given SIS instance with a lattice $\Lambda$ with basis $B$, and show how the hardness of SIS can be related to the hardness of SIVP.
 
-**Step 1: Sampling the SIS matrix**
+**Step 0: Initialization**
 
-Given the basis $B \in \mathbb{R}^{n \times n}$ of the lattice $\Lambda$, by randomly sampling an integer vector $a_i \in \mathbb{Z}^n$, we can then obtain a lattice vector corresponding to $a_i$ :
-$$
-v_i = B \cdot a_i
-$$
-So, if we sample $m$ times, we obtain a lattice matrix $V^{n \times m}$ corresponding to a random integer matrix $A^{n \times m}$, that is,  
-$$
-V = B \cdot A
-$$
-, where matrix $A$ is the SIS matrix.
+1. a lattice $\Lambda = \mathcal{L}(B)$ with rank $n$.
+2. initialization with basis $S^{(0)} = B$.
+3. a SIS oracle instance
 
 <br />
 
-**Step 2: Generating an SIVP vector**
+**Step 1: Sampling the SIS matrix**
 
-Assume there is a SIS oracle $O$, given the SIS matrix $A$, we can query $O$ to obtain a non-trivial solution $z \in \mathbb{Z}^m$ such that
+Given a fixed set of lattice vectors $S^{(0)}$, we aim to sample a SIS matrix $A$ that corresponds to lattice vectors $V$ generated from this initial basis. This will allow us to later query the SIS oracle to obtain solutions $z$ that can be used to construct SIVP vectors.
+
+- (a) Sample an integer vector $u_i$ by the initial set $S^{(0)}$ understand specific distribution :
+    $$
+        S^{(0)} \rightarrow u_i \in \mathbb{Z}^n
+    $$
+    and repeat $m$ times to obtain a integer matrix $U \in \mathbb{Z}^{n \times m}$.
+- (b) Modulo reduction to obtain the SIS matrix $A$:
+    $$
+        A \equiv U \mod q \in \mathbb{Z}_q^{n \times m}
+    $$
+- (c) Generate temporary lattice vectors corresponding to the SIS matrix $A$:
+    $$
+        V \equiv B \cdot U \in \mathbb{R}^{n \times m}
+    $$
+
+Define the initial length of $S^{(0)}$ as $L^{(0)} = \max_{v \in S^{(0)}} \| v \|$, under some specific distribution we can ensure that the length of the temporary lattice vectors $V$ is bounded as :
 $$
-A z = 0 \pmod{q} \tag{3.1} 
+L_V^{(0)} \le L^{(0)} p(n)
 $$
-Then, we can construct a new lattice vector with the SIS solution vector $z$ and initially sampled lattice matrix $V$ as follows:
+where $p(n)$ is some polynomial function of the lattice rank $n$. We do not plan to dive into the sampling technique in detail here.
+
+<br />
+
+**Step 2: Constructing an SIVP vector** 
+
+Given a SIS instance oracle, we can query it with the sampled SIS matrix $A$ to obtain a non-trivial solution $z \in \mathbb{Z}^m$ such that
+$$
+A z = 0 \pmod{q} \tag{3.1}
+$$
+
+Then, we can construct a new lattice vector with the SIS solution vector $z$ and temporary sampled lattice matrix $V$ as follows:
 $$
 v = \frac{V \cdot z}{q} = \frac{B \cdot A \cdot z}{q} = B \cdot \frac{A \cdot z}{q} = B \cdot c 
 $$
-where $c = \frac{A \cdot z}{q} \in \mathbb{Z}^n$ is an integer vector as equation (3.1) already ensures that $A \cdot z$ is divisible by $q$. Thus, vector $v$ is a lattice vector in $\Lambda$.
+where $c = \frac{A \cdot z}{q} \in \mathbb{Z}^n$ is an integer vector as equation (3.1) already ensures that $A \cdot z$ is divisible by $q$. Thus, vector $v$ is a lattice vector in $\Lambda$. We need to check that if the newly generated vector $v$ satisfies the two SIVP conditions: 
+
+- independent from the previously generated vectors like $v$
+
+- short enough $\| v \| \le \gamma \cdot \lambda_n(\Lambda)$ 
+
+    > [!Warning]
+    Notice that $\lambda_n(\Lambda)$ is an intrinsic property of the lattice that represents the length of the longest vector among the $n$ linearly independent shortest vectors in the lattice. We do not know its exact value in general, it only provides a benchmark for analysis, we won't actually compare $\| v \|$ with $\lambda_n(\Lambda)$ in practice.
+
+We will focus on the second condition which is more tricky to satisfy in practice, as it involves ensuring that the newly generated lattice vector is sufficiently short relative to the lattice's intrinsic geometry.
 
 ----
 
-Furthermore, we can try to bound the norm of the new lattice vector $v$ as follows. By triangle inequality, we have
+We can try to bound the length of the new lattice vector $v$ as follows. By triangle inequality, we have
 $$ 
-\| V z \| \le \sum_{i=1}^m |z_i| \cdot \| v_i \|.
+\| V z \| \le \sum_{i=1}^m |z_i| \cdot \| v_i \|,
 $$
-Assume the length of inital sampled lattice vector $v_i$ is bounded by some value $\| v_i \| \le R$, then we have 
+, then we have 
 $$
-\sum_{i = 1}^m | z_i | \cdot \| v_i \| \le \| z \|_1 \cdot R.
+\sum_{i = 1}^m | z_i | \cdot \| v_i \| \le \| z \|_1 \cdot L_V^{(0)} \le \| z \|_1 \cdot L^{(0)} p(n).
 $$
 By Cauchy-Schwarz inequality $| \langle u, v \rangle | \le \| u \|_2 \cdot \| v \|_2$, we have
 $$
@@ -140,34 +170,33 @@ $$
 $$
 which implies
 $$
-\| V z \| \le \| z \|_1 \cdot R \le \sqrt{m} \cdot \| z \|_2 \cdot R.
+\| V z \| \le \| z \|_1 \cdot L_V^{(0)} \le \sqrt{m} \cdot \| z \|_2 \cdot L_V^{(0)} \le \sqrt{m} \cdot \| z \|_2 \cdot L^{(0)} p(n).
 $$
 
 Therefore, the norm of the reduced lattice vector $v$ is bounded as :
 $$
-\| v \| = \left\| \frac{V z}{q} \right\| = \frac{\| V z \|}{q} \le \frac{\sqrt{m} \cdot \| z \|_2 \cdot R}{q} 
+\| v \| = \left\| \frac{V z}{q} \right\| = \frac{\| V z \|}{q} \le \frac{\sqrt{m} \cdot \| z \|_2 \cdot L^{(0)} p(n)}{q} \le \frac{\sqrt{m} \cdot \beta}{q} \cdot L^{(0)} p(n).
 $$
-So if $q$ is sufficiently large compared to $\sqrt{m} \cdot \| z \|_2$, the norm of the reduced lattice vector $v$ can be made much smaller compared with initial bound $R$.
+So if the parameter $q$ is sufficiently large compared to $\sqrt{m} \cdot \beta \cdot p(n)$, the norm of the reduced lattice vector $v$ can be made much smaller compared with initial bound $L^{(0)}$ of the set $S^{(0)}$.
 
 ----
 
-For now, we only obtain an shorter lattice vector $v$ whose norm is dropped by a factor of roughly $\frac{\sqrt{m} \cdot \| z \|_2}{q}$ compared to the initial bound $R$ on the original lattice vectors $v_i$. If we repeat this (sampling) process $n$ times, then we will get $n$ such lattice vectors like $v$. 
+Therefore, for each newly generated lattice vector $v$, once we confirmed that the independent condition is satisfied, then we need to check that if its length drops as we desired :
+$$
+\| v \| \le \delta \cdot L^{(0)}
+$$
+where $\delta = \frac{\sqrt{m} \cdot \beta}{q} \cdot p(n)$. 
+- If yes, then repeat step 1-2 generating more lattice vectors $v$ to fill the newly set $S^{(1)}$ with sufficiently short and independent lattice vectors.
+- If no, discard the generated lattice vector $v$ and repeat the steps 1-2 to generate a new candidate $v$ (still with fixed set $S^{(0)}$) until the desired length drop condition is satisfied or the maximum number of attempts $t_m$ is reached.
 
-But our final goal is to generate a SIVP solution, two conditions must be satisfied simultaneously for each iteration :  
-1. We need to ensure that the newly generated vector is linearly independent from the previously generated vectors. I think this is achievable by carefully choosing the SIS matrix $A$ and the solution vector $z$ in each iteration, so that the resulting lattice vector $v$ does not lie in the span of the previously generated vectors. We won't plan to detail too much here for this.
-
-2. We need to ensure that 
-    $$
-        \| v \| \le \gamma \cdot \lambda_n(\Lambda)
-    $$
-    where $\gamma$ is the approximation factor and $\lambda_n(\Lambda)$ is the $n$-th successive minimum of the lattice $\Lambda$. This condition ensures that the generated vector $v$ is not only short but also within a factor $\gamma$ of the optimal shortest vector in the lattice. 
-    
-    > [!Warning]
-    Notice that $\lambda_n(\Lambda)$ is an intrinsic property of the lattice that represents the length of the longest vector among the $n$ linearly independent shortest vectors in the lattice. We do not know its exact value in general, it only provides a benchmark for analysis, we won't actually compare $\| v \|$ with $\lambda_n(\Lambda)$ in practice.
-
-So, the natural question is how to ensure the second condition of SIVP problem is satisfied?
+After some trials, if the newly set $S^{(1)}$ is full, then repeat the entire process with the new set $S^{(1)}$, until terminate at round $k$ : 
+$$
+S^{(0)} \to S^{(1)} \to S^{(2)} \to \dots \to S^{(k)}
+$$
+. At round $k$, we are trying to fill the newly set $S^{(k + 1)}$ with $S^{(k)}$, but maximum number of attempts $t_m$ is reached, then the process terminates and we take $S^{(k)}$ as the final set of sufficiently short and independent lattice vectors. And we deem that 
+$$
+L^{(k)} \le \gamma \cdot \lambda_n(\Lambda) 
+$$
+this newly set satisfies the second SIVP condition with high probability.
 
 <br />
-
-**Step 3: Ensuring the Second Condition**
-
