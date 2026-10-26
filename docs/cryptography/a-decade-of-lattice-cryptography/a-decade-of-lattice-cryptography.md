@@ -1,4 +1,25 @@
-## Ch02 - Early Results
+<details>
+<summary>Table of Contents</summary>
+
+- [Ch02 - Early Results](#ch02---early-results)
+- [Ch03 - Modern Foundations](#ch03---modern-foundations)
+  - [3.1 - SIS Problem](#31---sis-problem)
+    - [3.1.1 - Definition](#311---definition)
+    - [3.2 - Observations](#32---observations)
+    - [3.3 - Normal Form](#33---normal-form)
+    - [3.4 - Hardness](#34---hardness)
+  - [3.2 - LWE](#32---lwe)
+    - [3.2.1 - Definition](#321---definition)
+    - [3.2.2 - Observations](#322---observations)
+    - [3.2.3 - Normal Form](#323---normal-form)
+    - [3.2.4 - Hardness](#324---hardness)
+    - [3.2.5 - Cryptographic Applications](#325---cryptographic-applications)
+  - [3.3 - Ring-SIS](#33---ring-sis)
+  - [3.4 - Ring-LWE](#34---ring-lwe)
+</details>
+<br />
+
+# Ch02 - Early Results
 
 1. Why do we need worse-case to average-case reductions in lattice-based cryptography?
 
@@ -23,11 +44,11 @@
 
 <br />
 
-## Ch03 - Modern Foundations
+# Ch03 - Modern Foundations
 
-### 3.1 - SIS Problem 
+## 3.1 - SIS Problem
 
-**Definition of SIS problem**
+### 3.1.1 - Definition 
 
 Given a matrix $A \in \mathbb{Z}_q^{n \times m}$ and a positive integer $\beta$, the Short Integer Solution (SIS) problem asks to find a non-zero integer vector $z \in \mathbb{Z}^m$ such that:
 $$
@@ -36,7 +57,7 @@ $$
 
 <br />
 
-### 3.2 - Observations on the SIS Problem
+### 3.2 - Observations
 
 1. If no constraint on $\| z \| \le \beta$, then it is easy to find a solution via Gauss elimination. Furthermore, in order to ensure the solution of $z$ is non-trivial, we have to constrain parameter $\beta \lt q$, otherwise many trivial solutions exists, for example $z = [q, 0, ..., 0] \in \mathbb{Z}^m$.
 
@@ -54,7 +75,7 @@ $$
 
 <br />
 
-### 3.3 - Compression of SIS Instances
+### 3.3 - Normal Form 
 
 Actually, SIS instances can often be compressed without changing the underlying problem significantly. Given a matrix $A \in \mathbb{Z}_q^{n \times m}$, one can compress the size of instance $A$ by $n$ columns through a technique from linear algebra called **Hermite normal form (HNF)**.
 
@@ -200,3 +221,69 @@ $$
 this newly set satisfies the second SIVP condition with high probability.
 
 <br />
+
+## 3.2 - LWE
+
+### 3.2.1 - Definition
+
+**LWE distribution**
+
+For a secret vector $s \in \mathbb{Z}_q^n$ and an error distribution $\chi$ over $\mathbb{Z}_q$, the LWE distribution $A_{s, \chi}$ is defined as the distribution over pairs $(a, b) \in \mathbb{Z}_q^n \times \mathbb{Z}_q$ where $a$ is chosen uniformly at random from $\mathbb{Z}_q^n$ and $b = \langle a, s \rangle + e \mod q$ with $e$ sampled from $\chi$.
+
+<br />
+
+**Search-LWE problem**
+
+Given access to $m$ independent samples $(a_i, b_i)$ from the LWE distribution $A_{s, \chi}$ for some secret $s \in \mathbb{Z}_q^n$ and error distribution $\chi$, the search-LWE problem asks to find the secret vector $s$.    
+
+<br />
+
+**Decision-LWE problem**
+
+Given access to $m$ independent samples $(a_i, b_i)$ from either the LWE distribution $A_{s, \chi}$ for some secret $s \in \mathbb{Z}_q^n$ and error distribution $\chi$, or from the uniform distribution over $\mathbb{Z}_q^n \times \mathbb{Z}_q$, the decision-LWE problem asks to distinguish which distribution the samples come from.
+
+<br />
+
+### 3.2.2 - Observations
+
+1. Without error vector $e$, the solution of LWE problem can be easily solved by Gauss elimination, as it reduces to a system of linear equations over $\mathbb{Z}_q$.
+
+2. Given sampled integer matrix $A \in \mathbb{Z}_q^{n \times m}$, define lattice $\mathcal{L}(A)$ over $\mathbb{Z}^m$ (not in $\mathbb{R}^m$) by :
+    $$
+        \mathcal{L}(A) = \{ A^t s + q \mathbb{Z}^m : s \in \mathbb{Z}_q^n \}.
+    $$
+    Its orthogonal lattice is given by 
+    $$
+        \mathcal{L}^\perp(A) = \{ z \in \mathbb{Z}^m : A z = 0 \pmod q \}.
+    $$
+    And dual lattice of $\mathcal{L}(A)^\perp$ is given by
+    $$
+        \mathcal{L}^\perp(A)^* = \{ \frac{A^t s}{q} + k : s \in \mathbb{Z}_q^n, k \in \mathbb{Z}^m \}. 
+    $$
+
+    By definition, for any $x \in \mathcal{L}(A)$, $z \in \mathcal{L}^\perp(A)$, and $y \in \mathcal{L}^{\perp}(A)^*$, we have
+    $$
+        \langle z, x \rangle \equiv 0 \pmod q, \quad \langle y, z \rangle \in \mathbb{Z}.
+    $$
+
+3. For any given sample $(a_i, b_i) \in A_{s, \chi}$, we have
+    $$
+        \langle (-s, 1), (a_i, b_i) \rangle = - \langle s, a_i \rangle + b_i \equiv e_i \pmod q. 
+    $$
+    Without error $e_i$, we can be sure that 
+    $$
+        \langle (-s, 1), (a_i, b_i) \rangle \equiv 0 \pmod q.
+    $$
+    which implies that the samples $x = (a_i, b_i)$ lie in some hyperplane in the direction of $(-s, 1)$.
+
+<br />
+
+### 3.2.3 - Normal Form
+
+### 3.2.4 - Hardness
+
+### 3.2.5 - Cryptographic Applications
+
+## 3.3 - Ring-SIS
+
+## 3.4 - Ring-LWE
