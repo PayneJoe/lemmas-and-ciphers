@@ -280,9 +280,69 @@ Given access to $m$ independent samples $(a_i, b_i)$ from either the LWE distrib
 
 ### 3.2.3 - Normal Form
 
+Similar with what we did on HNF of SIS instance, we split LWE instance matrix $A \in \mathbb{Z}_q^{n \times m}$ into two parts as
+$$
+    A = [A_1 \mid A_2],
+$$
+where $A_1 \in \mathbb{Z}_q^{n \times n}$ is invertible over $\mathbb{Z}_q$ and $A_2 \in \mathbb{Z}_q^{n \times (m-n)}$. Accordingly, we split error vector $e \in \mathbb{Z}_q^m$ into two parts as
+$$
+    e = [e_1 \mid e_2],
+$$
+where $e_1 \in \mathbb{Z}_q^n$ and $e_2 \in \mathbb{Z}_q^{m-n}$. Then the LWE instance can be rewritten as
+$$
+    A_1^t s + e_1 \equiv b_1 \pmod q \in \mathbb{Z}_q^n, \quad A_2^t s + e_2 \equiv b_2 \pmod q \in \mathbb{Z}_q^{m-n},
+$$
+where $b = [b_1 \mid b_2]$ is the corresponding split of the LWE sample vector $b \in \mathbb{Z}_q^m$. 
+
+<br />
+
+An LWE instance $(A, b) \in \mathbb{Z}_q^{n \times m} \times \mathbb{Z}_q^m$ can be compressed into $(\overline{A}, \overline{b}) \in \mathbb{Z}_q^{n \times (m-n)} \times \mathbb{Z}_q^{m-n}$, where
+$$
+    \overline{A} = -A_1^{-1} A_2 \pmod q, \quad \overline{b} = (\overline{A})^t b_1 + b_2 = (\overline{A})^t e_1 + e_2 \pmod q.
+$$
+The new LWE matrix $\overline{A}$ satisfies $A_1 \overline{A} + A_2 = 0 \pmod q$, ensuring that the compressed LWE instance $(\overline{A}, \overline{b})$ is equivalent to the original instance $(A, b)$ modulo $q$.
+
+<br />
+
 ### 3.2.4 - Hardness
 
+TODO
+
+<br />
+
 ### 3.2.5 - Cryptographic Applications
+
+**Setup**
+
+Generate *pub-key* and *secret-key* as follows :
+$$
+b = A^T s + e \pmod q
+$$
+where LWE instance $(A, b) \in \mathbb{Z}_q^{n \times m} \times \mathbb{Z}_q^m$ is the *public-key* which is shared between prover and verifier, $s \in \mathbb{Z}_q^n$ is the *secret-key* which is kept private by the prover, and $e \in \mathbb{Z}_q^m$ is the error vector sampled from the appropriate distribution which is kept secret by the prover.
+
+**Encryption**
+
+To encrypt a bit message $\mu \in \{0, 1\}$, the sender samples a random vector $r \in \mathbb{Z}_2^m$ and computes the ciphertext as
+$$
+\begin{aligned}
+u &= A r \pmod q \\
+v &= b^T r + \mu \lfloor q/2 \rfloor \pmod q
+\end{aligned}
+$$
+where $(u, v)$ is the ciphertext corresponding to the bit message $\mu$.
+
+**Decryption**
+
+To decrypt the ciphertext $(u, v)$, the receiver computes
+$$
+\mu' = v - s^T u = e^T r + \mu \lfloor q/2 \rfloor \pmod q.
+$$
+If $\mu' \approx 0 \pmod q$, the decrypted bit is $0$, and if $\mu' \approx \lfloor q/2 \rfloor \pmod q$, the decrypted bit is $1$. The correctness relies on the fact that the error term $e^T r$ is small enough to distinguish between the two cases.
+
+> [!Important]
+> How to ensure $e^T r$ is small enough for correct decryption? 
+
+<br />
 
 ## 3.3 - Ring-SIS
 
