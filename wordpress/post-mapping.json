@@ -114,5 +114,13 @@
   "../docs/cryptography/a-decade-of-lattice-cryptography/index.md": {
     "postId": 309,
     "link": "https://paynejoe.com/index-8/"
+  },
+  "../docs/cryptography/lwe-reductions/index.md": {
+    "postId": 314,
+    "link": "https://paynejoe.com/index-9/"
+  },
+  "../docs/cryptography/lwe-reductions/lwe-reductions.md": {
+    "postId": 316,
+    "link": "https://paynejoe.com/lwe-reductions/"
   }
 }
