@@ -12,7 +12,8 @@
     - [3.2.1 - Definition](#321---definition)
     - [3.2.2 - Observations](#322---observations)
     - [3.2.3 - Normal Form](#323---normal-form)
-    - [3.2.4 - Hardness](#324---hardness)
+    - [3.2.4 - Hardness of ssLWE](#324---hardness-of-sslwe)
+- [\\end{pmatrix}](#endpmatrix)
     - [3.2.5 - Cryptographic Applications](#325---cryptographic-applications)
   - [3.3 - Ring-SIS](#33---ring-sis)
   - [3.4 - Ring-LWE](#34---ring-lwe)
@@ -304,10 +305,138 @@ The new LWE matrix $\overline{A}$ satisfies $A_1 \overline{A} + A_2 = 0 \pmod q$
 
 <br />
 
-### 3.2.4 - Hardness
+### 3.2.4 - Hardness of ssLWE
 
-TODO
+**Definition : ssLWE Problem**
 
+Upon LWE problem, if we restrict the domain from which the secret vector $s$ and error vector $e$ are drawn to be small, we obtain the short secret LWE (ssLWE) problem. More specifically, both $s$ and $e$ are drawn from a bounded range $[-B, B]^n$ for some small bound $B$.
+$$
+s, e \in [ -B, B ]^n
+$$
+where $B \le \sqrt{\frac{q}{4(2n + 1)}}$, and $q > 6(2n + 1)$ ensures the uniquenss of the solution to the ssLWE instance.
+
+<br />
+
+**Definition : LWE Lattice**
+
+$$
+\mathcal{L}(A) = \{ A x \pmod q : x \in \mathbb{Z}^n \}
+$$
+where $A \in \mathbb{Z}_q^{m \times n}$ is the matrix from the LWE instance, whose columns are linearly independent over $\mathbb{Z}_q$.
+
+<br />
+
+**Definition : BDD Problem**
+
+![BBD Problem](./img/bbd-problem.png)
+
+Given an integer lattice $\mathcal{L}(A) \subseteq \mathbb{Z}_q^m$, vector $b \in \mathbb{Z}_q^m$ and distance bound $\alpha > 0$, the Bounded Distance Decoding (BDD) problem asks to find the unique lattice vector $y \in \mathcal{L}(A)$ such that
+$$
+    \| y - b \| < \alpha. 
+$$
+
+<br />
+
+**Reduction : ssLWE to BDD**
+
+For the ssLWE problem, if we could find the closest lattice vector $y \in \mathcal{L}(A)$ from target vector $b$, then the secret $s$ can be easily solved in the linear system defined by the LWE instance : 
+$$
+s = A^{-1} (y - b) \pmod q.
+$$
+So, the ssLWE problem can be reduced to the BDD problem.
+
+**Reduction : BDD to SVP**
+
+We known that :
+$$
+\| b - y \|=  \| e \| \le \sqrt{2} B
+$$
+
+Let $\alpha = \sqrt{2} B$, By Kannan's embedding technic, if 
+$$
+\alpha < \frac{\lambda_1({L}(A))}{\sqrt{2}}
+$$
+then the BDD problem can be reduced to SVP. That is, if we find the  solution of a SVP instance, then the BDD problem can be solved as well. Next, we will construct the SVP instance whose solution corresponds to the solution of the BDD problem.
+
+<details>
+<summary> Kannan's Embedding Reduction from BDD to SVP </summary>
+
+Suppose $y \in \mathcal{L}(A)$ is the only closest lattice vector from the target vector $b$ in the BDD problem. 
+
+**Step 1:**
+
+Define a new basis matrix :
+$$
+A' = \begin{pmatrix}
+A & -b \\
+0 & \alpha
+\end{pmatrix}
+$$
+obviously the last column $[-b, \alpha]^T$ is linearly independent from other columns of $A'$, so a new lattice is expanded $\mathcal{L}(A')$ with dimension $n + 1$. Any lattice vector can be expressed as :
+$$
+\begin{pmatrix}
+A x - cb \\
+c \alpha
+\end{pmatrix}
+= 
+\begin{pmatrix}
+v - c b \\
+c \alpha
+\end{pmatrix}
+$$
+where $v \in \mathcal{L}(A)$ and $c \in \mathbb{Z}$. We will show that $(v, c) = (y, 1)$ is the unique solution of the SVP instance on $\mathcal{L}(A')$. 
+
+**Step 2:**
+
+Let $\widetilde{v} = [y - b, \alpha]^T \in \mathcal{L}(A')$, since $\| e \| \le \alpha$, then we have 
+$$ 
+\| \widetilde{v} \| = \sqrt{\| y - b \|^2 + \alpha^2} = \sqrt{\| e \|^2 + \alpha^2} \le \sqrt{2} \alpha
+$$
+the only condition for Kannan's embedding technic is $\alpha < \frac{\lambda_1({L}(A))}{\sqrt{2}}$. In this case, we can conclude that :
+$$
+\lambda_1(\mathcal{L}(A')) \le \| \widetilde{v} \| \le \sqrt{2} \alpha <  \lambda_1(\mathcal{L}(A)) 
+$$
+So, if we can prove that 
+$$
+\lambda_1(\mathcal{L}(A')) = \| \widetilde{v} \|
+$$
+then with the help of the solution of SVP instance on $\mathcal{L}(A')$, we can obtain its scalar vector$[x, c]$, further the solution of BDD problem $y = A x$ is solved as well. 
+
+**Step 3:**
+
+Suppose $v' = \lambda_1(\mathcal{L}(A')) = [v - c b, c \alpha]^T$, let's consider four cases :
+
+1. if $c = 0$, then  
+    $$
+    \| v' \| = \| v \| \ge \lambda_1(\mathcal{L}(A)) \ge \| \widetilde{v} \|
+    $$
+    contradiction happens.
+2. if $|c| \ge 2$, then
+    $$
+    \| v' \| = \sqrt{\| v - c b \|^2 + (c \alpha)^2} \ge |c| \alpha \ge 2 \alpha > \sqrt{2} \alpha \ge \| \widetilde{v} \|
+    $$
+    contradiction happens as well.
+3. if $c = -1$ and $-v$ is not the closest lattice vector $y$ ($-v \ne y$) then
+    $$
+        \| v' \| = \sqrt{\| v + b \|^2 + \alpha^2} = \sqrt{\| (-v) - b \|^2 + \alpha^2} \ge \alpha \ge \| \widetilde{v} \|
+    $$
+    contradiction happens.
+4. if $c = 1$ and $v$ is not the closest lattice vector $y$ ($v \ne y$) then
+    $$
+    \| v' \| = \sqrt{\| v - b \|^2 + \alpha^2} \gt \sqrt{\| y - b \|^2 + \alpha^2} = \| \widetilde{v} \|
+    $$
+    contradiction happens.
+    
+The only remaining case is when $c = 1$ and $v = y$ (or $c = -1$ and $-v = y$), in which case we have :
+$$ 
+\| v' \| = \sqrt{\| v - b \|^2 + \alpha^2} = \sqrt{\| y - b \|^2 + \alpha^2} = \| \widetilde{v} \|
+$$
+or 
+$$
+\| v' \| = \sqrt{\| -v - b \|^2 + \alpha^2} = \sqrt{\| y - b \|^2 + \alpha^2} = \| \widetilde{v} \|
+$$
+
+</details>
 <br />
 
 ### 3.2.5 - Cryptographic Applications
