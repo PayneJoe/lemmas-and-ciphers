@@ -122,5 +122,9 @@
   "../docs/cryptography/lwe-reductions/lwe-reductions.md": {
     "postId": 316,
     "link": "https://paynejoe.com/lwe-reductions/"
+  },
+  "../docs/cryptography/ring-lwe-reduction.md": {
+    "postId": 322,
+    "link": "https://paynejoe.com/ring-lwe-reduction/"
   }
 }
