@@ -307,6 +307,19 @@ The new LWE matrix $\overline{A}$ satisfies $A_1 \overline{A} + A_2 = 0 \pmod q$
 
 ### 3.2.4 - Hardness of ssLWE
 
+$$
+\text{worst-case approximate Lattice Problems} \le \text{average-case ssLWE} \le \text{BDD} \le \text{worst-case exact SVP}
+$$
+
+The hardness chain tells us :
+
+1. the worst-case approximate lattice problems are believed to be computationally hard, no efficient algorithm is known to solve them in general.
+2. the worst-case exact lattice problem is at least as $\gamma$ times hard as the worst-case approximate lattice problem, where $\gamma$ is the approximation factor.
+3. the hardness of most LWE variant problems, including ssLWE, are based on worst-case approximate lattice problems. 
+3. ssLWE problem can also be reduced to BDD problem, then further to worst-case exact SVP problem (not approximate SVP).
+
+<br />
+
 **Definition : ssLWE Problem**
 
 Upon LWE problem, if we restrict the domain from which the secret vector $s$ and error vector $e$ are drawn to be small, we obtain the short secret LWE (ssLWE) problem. More specifically, both $s$ and $e$ are drawn from a bounded range $[-B, B]^n$ for some small bound $B$.
