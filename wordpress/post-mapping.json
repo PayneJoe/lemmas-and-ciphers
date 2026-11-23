@@ -126,5 +126,9 @@
   "../docs/cryptography/ring-lwe-reduction.md": {
     "postId": 322,
     "link": "https://paynejoe.com/ring-lwe-reduction/"
+  },
+  "../docs/cryptography/falcon.md": {
+    "postId": 325,
+    "link": "https://paynejoe.com/falcon/"
   }
 }
